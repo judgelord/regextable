@@ -28,9 +28,6 @@ cleanFROMcolumn <- function(FROM){
     # replace with comma
     stringr::str_replace(post_nominal_letters, replacement = ",") %>%
 
-    # remove paragraph breaks
-    stringr::str_replace_all("\n", " ") %>%
-
     # remove periods
     stringr::str_replace_all("\\.", " ") %>%
 
