@@ -15,14 +15,6 @@ cleanFROMcolumn <- function(FROM){
     stringr::str_remove('\\+') %>%
     stringr::str_remove("\u2014") %>% #em dash
 
-    # remove common names in quotes
-    psub(sprintf('\\"(%s)\\"', common_names),
-         "", ignore.case = TRUE)  %>%
-
-    # remove common names in parentheses
-    psub(sprintf('\\((%s)\\)', common_names),
-         "", ignore.case = TRUE) %>%
-
     # remove paragraph breaks
     stringr::str_replace_all("\n", " ") %>%
 
@@ -60,8 +52,8 @@ cleanFROMcolumn <- function(FROM){
     stringr::str_replace(",+ |, ,", ", ") %>%
     stringr::str_replace_all(",,", ",") %>%
 
-    #removing spaces before commas
-    stringr::str_replace(" ,", ", ") %>%
+    #remove multiple spaces before and after commas
+    stringr::str_replace_all("\\s*,\\s*", ", ")
 
     # replace spaces with a single space
     stringr::str_squish()
