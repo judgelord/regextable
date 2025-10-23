@@ -18,15 +18,9 @@ cleanFROMcolumn <- function(FROM){
     # remove paragraph breaks
     stringr::str_replace_all("\n", " ") %>%
 
-    # remove extra white space inside strings
-    stringr::str_squish() %>%
-
     # fix misplaced commas
     #FROM <- gsub("(\\w+) ,(\\w+)|(\\w+) , (\\w+)", "\\1, \\2", FROM)
     stringr::str_replace_all(" , | ,|,", ", ") %>%
-
-    # remove extra white space inside strings again
-    stringr::str_squish() %>%
 
     # remove
     stringr::str_remove(generational_suffixes) %>%
@@ -37,15 +31,8 @@ cleanFROMcolumn <- function(FROM){
     # remove paragraph breaks
     stringr::str_replace_all("\n", " ") %>%
 
-    # remove extra white space inside strings again
-    stringr::str_squish() %>%
-
-    # trim down extra spaces
-    stringr::str_squish() %>%
-
     # remove periods
     stringr::str_replace_all("\\.", " ") %>%
-    stringr::str_squish() %>%
 
     #removing commas that repeat
     stringr::str_replace_all(",{2,}", ",") %>%
