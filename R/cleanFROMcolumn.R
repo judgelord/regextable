@@ -47,13 +47,11 @@ cleanFROMcolumn <- function(FROM){
     stringr::str_replace_all("\\.", " ") %>%
     stringr::str_squish() %>%
 
-    #removing double commas
-    stringr::str_replace(",+ |, ,", ", ") %>%
-    stringr::str_replace(",+ |, ,", ", ") %>%
-    stringr::str_replace_all(",,", ",") %>%
+    #removing commas that repeat
+    stringr::str_replace_all(",{2,}", ",") %>%
 
     #remove multiple spaces before and after commas
-    stringr::str_replace_all("\\s*,\\s*", ", ")
+    stringr::str_replace_all("\\s*,\\s*", ", ") %>% 
 
     # replace spaces with a single space
     stringr::str_squish()
