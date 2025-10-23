@@ -1,6 +1,6 @@
-# This function cleans up text from which member names will be extracted.
+# This function cleans up text.
 # SUCH CODE SHOULD BE CONSOLIDATED HERE
-# It is used in extractMemberNames etc. to preprocess text.
+# Based from legislators package but simplified to be more generic.
 cleanFROMcolumn <- function(FROM){
 
   #gsub() appropriate for piping
@@ -47,17 +47,6 @@ cleanFROMcolumn <- function(FROM){
 
     # remove extra white space inside strings again
     stringr::str_squish() %>%
-
-    # Delete titles that appear after a commma
-    # FROM %<>% str_replace(", (SEN|Sen)(-|\\b)", ", ")
-    #FROM <- gsub(", (REP|Rep)(-|\\b)", ", ", FROM)
-
-    # Replace titles at the beginning of a string or not after a comma
-    stringr::str_replace("\\b(SEN|Sen)( |- | - |\\. |\\.)|^S( |- | - |\\. |\\.)",
-                "Senator ") %>%
-
-    stringr::str_replace("\\b(REP|Rep)( |- | - |\\. |\\.)|^R( |- | - |\\. |\\.)|Congressman|Congresswoman",
-                "Representative ") %>%
 
     # trim down extra spaces
     stringr::str_squish() %>%
