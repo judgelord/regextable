@@ -1,5 +1,4 @@
 # This function cleans up text.
-# SUCH CODE SHOULD BE CONSOLIDATED HERE
 # Based from legislators package but simplified to be more generic.
 cleanFROMcolumn <- function(FROM){
 
@@ -12,31 +11,13 @@ cleanFROMcolumn <- function(FROM){
 
   # remove +
   FROM %>%
+    trimws() %>% #removes leading and trailing white space
     stringr::str_remove('\\+') %>%
     stringr::str_remove("\u2014") %>% #em dash
-
-    # remove paragraph breaks
-    stringr::str_replace_all("\n", " ") %>%
-
-    # fix misplaced commas
-    #FROM <- gsub("(\\w+) ,(\\w+)|(\\w+) , (\\w+)", "\\1, \\2", FROM)
-    stringr::str_replace_all(" , | ,|,", ", ") %>%
-
-    # remove
-    stringr::str_remove(generational_suffixes) %>%
-
-    # replace with comma
-    stringr::str_replace(post_nominal_letters, replacement = ",") %>%
-
-    # remove periods
-    stringr::str_replace_all("\\.", " ") %>%
-
-    #removing commas that repeat
-    stringr::str_replace_all(",{2,}", ",") %>%
-
-    #remove multiple spaces before and after commas
-    stringr::str_replace_all("\\s*,\\s*", ", ") %>% 
-
-    # replace spaces with a single space
-    stringr::str_squish()
+    stringr::str_replace_all("\n", " ") %>% # remove paragraph breaks
+    stringr::str_replace_all(" , | ,|,", ", ") %>% # fix misplaced commas
+    stringr::str_replace_all("\\.", " ") %>% #remove periods
+    stringr::str_replace_all(",{2,}", ",") %>% #removing commas that repeat
+    stringr::str_replace_all("\\s*,\\s*", ", ") %>% #remove multiple spaces before and after commas
+    stringr::str_squish() # replace spaces with a single space
 }
