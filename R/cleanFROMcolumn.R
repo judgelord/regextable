@@ -9,7 +9,6 @@ cleanFROMcolumn <- function(FROM){
     gsub(pattern = pattern, replacement = replacement, x = x, ...)
   }
 
-  # remove +
   FROM %>%
     trimws() %>% #removes leading and trailing white space
     stringr::str_remove('\\+') %>%
