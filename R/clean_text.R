@@ -2,13 +2,6 @@
 # Based from legislators package but simplified to be more generic.
 clean_text <- function(FROM){
 
-  #gsub() appropriate for piping
-  #Can use stringr::str_replace_all() but maybe regex rules are different,
-  #e.g., https://stackoverflow.com/q/62471164/6348551
-  psub <- function(x, pattern, replacement, ...) {
-    gsub(pattern = pattern, replacement = replacement, x = x, ...)
-  }
-
   FROM %>%
     trimws() %>% #removes leading and trailing white space
     stringr::str_remove('\\+') %>%
