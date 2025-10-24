@@ -1,5 +1,7 @@
 # This function cleans up text.
 # Based from legislators package but simplified to be more generic.
+library(dplyr)
+library(stringr)
 clean_text <- function(FROM){
 
   FROM %>%
