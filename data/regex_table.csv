@@ -1,0 +1,4 @@
+pattern,replacement
+co\.,company
+inc\.,incorporated
+\s+&\s+, and 
