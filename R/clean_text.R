@@ -1,7 +1,10 @@
-# This function cleans up text.
-# Based from legislators package but simplified to be more generic.
-library(dplyr)
-library(stringr)
+#' @title Clean Text
+#' @description Cleans a character vector (trims spaces, fixes punctuation, etc.).
+#' @param FROM Character vector to clean.
+#' @return Cleaned character vector.
+#' @import dplyr
+#' @import stringr
+#' @export
 clean_text <- function(FROM){
 
   FROM %>%
