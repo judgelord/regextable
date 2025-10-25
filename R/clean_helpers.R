@@ -20,8 +20,7 @@ clean_all_columns <- function(df) {
 
 # Clean a single column and apply regex table
 clean_column_with_table <- function(df, col_name, table) {
-  df[[col_name]] <- clean_text(.data[[col_name]]) %>% apply_regextable(table)
-  df
+  df[[col_name]] <- clean_text(df[[col_name]]) %>% apply_regextable(table)
 }
 
 # Clean all character columns and apply regex table
