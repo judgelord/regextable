@@ -1,0 +1,144 @@
+---
+title: "legislators"
+logo: '`r here::here("man/figures/logo.png")`'
+author: "Devin Judge-Lord"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{legislators}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  cache = FALSE,
+  collapse = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  tidy = FALSE,
+  fig.align='center',
+  fig.path = "../man/figures/",
+  R.options = list(width = 200)
+)
+
+
+str_fix <- function(x){
+  stringr::str_replace_all(x, "\\$", "\\\\$") |> 
+    stringr::str_remove_all("`|\\\\bf|\\\\br")
+}
+
+# format kable for document type 
+kable <- function(...){
+  if (knitr::is_latex_output()){
+    head(..., 25) |>
+      knitr::kable(booktabs = TRUE, format = 'latex') |>
+      kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
+  } else {
+    head(..., 50) |>
+      dplyr::mutate_all(str_fix) |>
+    knitr::kable(escape = TRUE) |>
+      kableExtra::kable_styling() |>
+      kableExtra::scroll_box(height = "400px")
+  }
+}
+
+# head <- function(...){
+#   head(...) |> 
+#   kable() 
+# }
+```
+
+
+### Find U.S. legislator names in messy text with typos and inconsistent name formats
+
+
+Install this package with 
+```
+devtools::install_github("judgelord/legislators")
+```
+
+```{r, message=FALSE}
+library(legislators)
+```
+
+## Data
+
+This package relies on a dataframe of permutations of the names of members of Congress. This dataframe builds on the basic structure of voteview.com data, especially the `bioname` field. From this and other corrections, it constructs a regular expression search `pattern` and conditions under which this pattern should yield a match (e.g., when that pattern has a unique match to a member of Congress in a given Congress). `pattern` differs from Congress to Congress because some member move from the House to the Senate and because members with similar names join or leave Congress. Users can customize the provided `members` data and supply their updated version to `extractMemberName()`.
+
+```{r}
+data("members")
+
+members |> kable()
+```
+
+---
+
+Before searching the text, several functions clean it and "fix" common human typos and OCR errors that frustrate matching. Some of these corrections are currently supplied by `MemberNameTypos.R`. In future versions, `typos` will be supplied as a dataframe instead, and all types of corrections (cleaning, typos, OCR errors) will be optional. Additionally, users will be able to customize the `typos` dataframe and provide it as an argument to `extractMemberName()`. 
+
+```{r}
+data("typos")
+
+typos |> kable()
+```
+
+---
+
+## Basic Usage
+
+The main function is `extractMemberName()` returns a dataframe of the names and ICPSR ID numbers of members of Congress in a supplied vector of text. 
+
+- in the future, `extractMemberName()` may default to returning a list of dataframes the same length as the supplied data
+
+For example, we can use `extractMemberName()` to detect the names of members of Congress in the text of the Congressional Record. Let's start with the text of the Congressional Record from 3/1/2007, scraped and parsed using methods described [here](https://github.com/judgelord/cr). 
+
+```{r, eval = FALSE, include= FALSE}
+# clean up example data from cr repo
+cr2007_03_01 %<>% 
+  select(date, speaker, header, url, url_txt) |>
+  #filter(!str_detect(chamber, "Ext")) |>
+  filter(!str_detect(speaker, "^NA$"))
+
+save(cr2007_03_01, file = here::here("data", "cr2007_03_01.rda"))
+```
+
+```{r}
+data("cr2007_03_01")
+
+cr2007_03_01 |> kable()
+```
+
+---
+
+This is an extremely simple example because the text strings containing the names of the members of Congress (`speaker`) are short and do not contain much other text. However, `extractMemberName()` is also capable of searching longer and much messier texts, including text where names are not consistently formatted or where they contain common typos introduced by humans or common OCR errors. Indeed, these functions were developed to identify members of Congress in ugly text data like [this](https://judgelord.github.io/corr/corr_pres.html#22). 
+
+To better match member names, this function currently requires either:
+
+- a column "congress" (this can be created from a date) or 
+- a vector of congresses to limit the search to (`congresses`)
+
+### `extractMemberName()`
+
+```{r, message=TRUE}
+cr2007_03_01$congress <- 110
+
+# extract legislator names and match to voteview ICPSR numbers
+cr <- extractMemberName(data = cr2007_03_01, 
+                        col_name = "speaker", # The text strings to search
+                        congress = "congress", # This argument is not required in this case because the data contain a "congress" column
+                        members = members # Member names augmented from voteview come with this package, but users can also supply a customised data frame
+                        )
+
+cr |> kable()
+```
+
+---
+
+In this example, all observations are in the 110th Congress, so we only search for members who served in the 110th. Because each row's `speaker` text contains only one member in this case, `data_row_id` and `match_id` are the same. Where multiple members are detected, there may be multiple matches per `data_row_id`. 
+
+
+Because `extractMemberName` links each detected name to ICPSR IDs from voteview.com, we already have some information, like state and district for each legislator detected in the text (scroll all the way to the right). 
+
+Other data from voteview.com and other sources can be merged in on `icpsr`. 

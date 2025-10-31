@@ -1,0 +1,11 @@
+^legislators\.Rproj$
+^\.Rproj\.user$
+^hex$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^data/make_members$
+^data/raw$
+^archive$
+^_dev$
+^README\.Rmd$
