@@ -53,3 +53,4 @@ apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", 
 }
 
 #Acronym-based regex application
+
