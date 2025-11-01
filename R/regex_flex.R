@@ -6,6 +6,7 @@
 #' @param date_col Name of the date column (default: "date")
 #' @param date_start Start date for filtering
 #' @param date_end End date for filtering
+#' @param remove_acronyms  Logical, if TRUE removes acronym patterns (default: TRUE)
 #' @return Modified data frame
 #' @import dplyr
 #' @import stringr
