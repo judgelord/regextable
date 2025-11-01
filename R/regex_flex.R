@@ -43,28 +43,41 @@ apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", 
 
   #Process all rows if no date range specified
   else{
-    rows_to_process<-rep(TRUE, nrow(df))
+    rows_to_process <- rep(TRUE, nrow(df))
   }
 
   # Apply regex only to selected rows
   df[[col_name]]<-as.character(df[[col_name]])  #ensure character
-  df[[col_name]][rows_to_process]<-apply_regextable(df[[col_name]][rows_to_process], regex_table)
+  df[[col_name]][rows_to_process] <- apply_regextable(df[[col_name]][rows_to_process], regex_table)
 
   return(df)
 }
 
 
 #Acronym-based regex application
-apply_regextable_acronyms<-function(df, col_name, regex_table, remove_acronyms=TRUE){
+apply_regextable_acronyms <- function(df, col_name, regex_table, remove_acronyms=TRUE){
 
   if(!col_name %in% names(df)) stop("Column '", col_name, "' not found in data frame")
 
   if(remove_acronyms){
-    regex_table<-regex_table[!grepl("^[A-Z]{2,}$", regex_table$pattern), ]#keeps only rows with no acronyms
+    regex_table <- regex_table[!grepl("^[A-Z]{2,}$", regex_table$pattern), ]#keeps only rows with no acronyms
   }
 
-  df[[col_name]]<-as.character(df[[col_name]])
-  df[[col_name]]<-apply_regextable(df[[col_name]], regex_table) #only non-acronyms patterns in the table will be applied to the column
+  df[[col_name]] <- as.character(df[[col_name]])
+  df[[col_name]] <- apply_regextable(df[[col_name]], regex_table) #only non-acronyms patterns in the table will be applied to the column
 
   return(df)
+}
+
+#
+apply_regextable_pattern <- function(df, col_name, regex_table, pattern="pattern"){
+
+  if(!col_name %in% names(df)){
+    stop("Column '", col_name, "' not found in data frame")
+  }
+
+  if(!pattern %in% names(regex_table)){
+    stop("Pattern '", pattern, "' not found in regex table")
+  }
+
 }
