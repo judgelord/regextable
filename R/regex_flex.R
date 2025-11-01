@@ -11,6 +11,7 @@
 #' @import stringr
 #' @export
 
+#Date-based regex application
 apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", date_start = NULL, date_end = NULL) {
 
   #Input validation
@@ -50,3 +51,5 @@ apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", 
 
   return(df)
 }
+
+#Acronym-based regex application
