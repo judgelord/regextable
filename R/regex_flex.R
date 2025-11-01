@@ -1,18 +1,16 @@
-#' @title Flexible Regex Application
+#' @title Date-based Regex Application
 #' @description Apply user specific flexible regex_table methods
 #' @param df Data frame to process
 #' @param col_name Name of the column to apply regex transformations to
 #' @param regex_table Regex table specifying pattern-replacement pairs
 #' @param date_col Name of the date column (default: "date")
-#' @param date_start Start date for filtering
-#' @param date_end End date for filtering
-#' @param remove_acronyms  Logical, if TRUE removes acronym patterns (default: TRUE)
+#' @param date_start Start date for filtering (optional)
+#' @param date_end End date for filtering (optional)
 #' @return Modified data frame
 #' @import dplyr
 #' @import stringr
 #' @export
 
-#Date-based regex application
 apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", date_start = NULL, date_end = NULL) {
 
   #Input validation
@@ -53,8 +51,15 @@ apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", 
   return(df)
 }
 
+#' @title Acronym-based Regex Application
+#' @description Apply regex transformations with optional acronym filtering
+#' @param df Data frame to process
+#' @param col_name Name of the column to apply regex transformations to
+#' @param regex_table Regex table specifying pattern-replacement pairs
+#' @param remove_acronyms Logical, if TRUE removes acronym patterns (default: TRUE)
+#' @return Modified data frame
+#' @export
 
-#Acronym-based regex application
 apply_regextable_acronyms <- function(df, col_name, regex_table, remove_acronyms=TRUE){
 
   if(!col_name %in% names(df)) stop("Column '", col_name, "' not found in data frame")
@@ -69,7 +74,15 @@ apply_regextable_acronyms <- function(df, col_name, regex_table, remove_acronyms
   return(df)
 }
 
-#User-specified regextable pattern application ex. inclusive, strict, etc.
+#' @title Pattern-specific Regex Application
+#' @description Apply regex transformations using a specific pattern column from regex_table
+#' @param df Data frame to process
+#' @param col_name Name of the column to apply regex transformations to
+#' @param regex_table Regex table containing multiple pattern columns
+#' @param pattern Name of the pattern column to use (default: "pattern")
+#' @return Modified data frame
+#' @export
+
 apply_regextable_pattern <- function(df, col_name, regex_table, pattern="pattern"){
 
   #Checks if column name and pattern are found in df and table
@@ -81,7 +94,7 @@ apply_regextable_pattern <- function(df, col_name, regex_table, pattern="pattern
   }
 
   #creates temp_table using chosen pattern column
-  temp_table <- data.frame(pattern=regex_table[[pattern]], replacement=regex_table$replacement, stringAsFactors=FALSE)
+  temp_table <- data.frame(pattern=regex_table[[pattern]], replacement=regex_table$replacement, stringsAsFactors=FALSE)
 
   #applies replacement based on the chosen pattern set
   df[[col_name]] <- as.character(df[[col_name]])
