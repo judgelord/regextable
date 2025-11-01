@@ -9,7 +9,7 @@ clean_text <- function(FROM){
 
   FROM %>%
     trimws() %>% #removes leading and trailing white space
-    stringr::str_to_lower() #makes str lowercase for consistency
+    stringr::str_to_lower() %>% #makes str lowercase for consistency
     stringr::str_remove('\\+') %>%
     stringr::str_remove("\u2014") %>% #em dash
     stringr::str_replace_all("\n", " ") %>% # remove paragraph breaks
