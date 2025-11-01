@@ -80,4 +80,9 @@ apply_regextable_pattern <- function(df, col_name, regex_table, pattern="pattern
     stop("Pattern '", pattern, "' not found in regex table")
   }
 
+  temp_table <- data.frame(pattern=regex_table[[pattern]],replacement=regex_table$replacement,stringAsFactors=FALSE)
+  df[[col_name]] <- as.character(df[[col_name]])
+  df[[col_name]] <- apply_regextable(df[[col_name]],temp_table)
+
+  return(df)
 }
