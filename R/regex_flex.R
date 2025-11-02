@@ -30,13 +30,13 @@ apply_regextable_date <- function(df, col_name, regex_table, date_col = "date", 
     }
     
     rows_to_process <- df[[date_col]] >= date_start & df[[date_col]] <= date_end
-  }else{
+  }
+  else{
     rows_to_process <- rep(TRUE, nrow(df))
   }
-  
-  if(any(rows_to_process)){
-    df[[col_name]][rows_to_process] <- apply_regextable(as.character(df[[col_name]][rows_to_process]), regex_table)
-  }
+
+  #apply regextable to any rows that are within the dates
+  if(any(rows_to_process)) df[[col_name]][rows_to_process] <- apply_regextable(as.character(df[[col_name]][rows_to_process]), regex_table)
   
   df
 }
