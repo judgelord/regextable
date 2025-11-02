@@ -74,12 +74,8 @@ apply_regextable_acronyms <- function(df, col_name, regex_table, remove_acronyms
 apply_regextable_pattern <- function(df, col_name, regex_table, pattern="pattern"){
 
   #Checks if column name and pattern are found in df and table
-  if(!col_name %in% names(df)){
-    stop("Column '", col_name, "' not found in data frame")
-  }
-  if(!pattern %in% names(regex_table)){
-    stop("Pattern '", pattern, "' not found in regex table")
-  }
+  if(!col_name %in% names(df)) stop("Column '", col_name, "' not found in data frame")
+  if(!pattern %in% names(regex_table)) stop("Pattern '", pattern, "' not found in regex table")
 
   #creates temp_table using chosen pattern column
   temp_table <- data.frame(pattern=regex_table[[pattern]], replacement=regex_table$replacement, stringsAsFactors=FALSE)
