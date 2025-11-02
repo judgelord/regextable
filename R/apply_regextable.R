@@ -8,11 +8,16 @@
 apply_regextable <- function(x, table) {
   stopifnot(is.character(x)) #checks if x is a character vector
   stopifnot(all(c("pattern", "replacement") %in% names(table))) #makes sure the table has columns named pattern and replacement
-  
-  #loops over each row in regextable and replaces all occurrences of patterns
-  for (i in seq_len(nrow(table))) { 
-    x <- gsub(table$pattern[i], table$replacement[i], x, perl = TRUE, ignore.case = TRUE)
+  if(!requireNamespace("stringi", quietly = TRUE)){
+    stop("Package 'stringi' required for this function") #use stringi for vectorized operations
   }
   
-  x
+  #replaces all matches in a character vector
+  stringi::stri_replace_all_regex(
+    str=x,
+    pattern=table$pattern,
+    replacement=table$replacement,
+    vectorize_all=FALSE, #applies all patterns to each string in one pass
+    opts_regex=list(case_insensitive=TRUE)
+  )
 }
