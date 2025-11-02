@@ -1,11 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## legislators: Find legislator names in messy text <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
+## regextable: Apply pattern-based text cleaning and replacement <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
 
 ### Installation
 
-    devtools::install_github("judgelord/legislators")
+    devtools::install_github("judgelord/regextable")
 
 ``` r
 library(legislators)
