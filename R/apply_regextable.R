@@ -8,7 +8,7 @@
 apply_regextable <- function(x, table) {
   stopifnot(is.character(x)) #checks if x is a character vector
   stopifnot(all(c("pattern", "replacement") %in% names(table))) #makes sure the table has columns named pattern and replacement
-  stopifnot(requireNamespace("stringi", quietly=TRUE)) #use stringi for vectorized operations
+  stopifnot(requireNamespace("stringi", quietly=TRUE)) #check stringi for vectorized operations
   
   #replaces all matches in a character vector
   stringi::stri_replace_all_regex(
