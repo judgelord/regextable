@@ -10,48 +10,60 @@
 extract <- function(data,
                     col_name,
                     regex_table,
+                    pattern_col = "pattern",
+                    id_col = NULL,
+                    date_start = NULL,
+                    date_end = NULL,
+                    strict = TRUE,
                     verbose = TRUE) {
   
-  # --- Process data and col_name ---
-  if (is.data.frame(data)) {
-    if (ncol(data) > 1) {
-      if (missing(col_name)) stop("`col_name` must be specified.")
-      if (!col_name %in% names(data))
-        stop("The value supplied to `col_name` must be a column in `data`.")
-      if (!is.character(data[[col_name]]))
-        stop("The column named in `col_name` must be a character vector.")
-    } else {
-      if (!is.character(data[[1]]))
-        stop("`data` does not contain a character vector to extract patterns from.")
-      if (missing(col_name)) col_name <- names(data)
-    }
-  } else if (is.character(data) && is.null(dim(data))) {
+  #Process data
+  if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     if (missing(col_name)) col_name <- "text"
-  } else {
-    stop("`data` must be a data frame or a character vector.")
-  }
-  
-  # --- Process regex table ---
-  if (!"pattern" %in% names(regex_table))
-    stop("`regex_table` must have a 'pattern' column.")
+  } else if (is.data.frame(data)) {
+    if (missing(col_name) || !col_name %in% names(data))
+      stop("Please provide a valid column name for `col_name`.")
+  } else stop("`data` must be a data frame or character vector.")
   
   data$data_id <- seq_len(nrow(data))
   
-  # --- Extract matches ---
+  #Process regex table
+  if (!pattern_col %in% names(regex_table))
+    stop("`pattern_col` not found in `regex_table`.")
+  
+  #Optional date filtering
+  if (!is.null(date_start) || !is.null(date_end)) {
+    if (!"date" %in% names(regex_table))
+      stop("regex_table has no 'date' column for filtering")
+    date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
+    date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
+    regex_table <- regex_table[regex_table$date >= date_start &
+                                 regex_table$date <= date_end, ]
+  }
+  
+  #Optional strict/inclusive pattern selection
+  #Could be handled here or with a helper function
+  
+  #Extract matches
   if (verbose) message("Extracting pattern matches...")
   
   matches <- lapply(seq_len(nrow(data)), function(i) {
     text_i <- data[[col_name]][i]
-    hits <- regex_table$pattern[sapply(regex_table$pattern, function(p)
-      grepl(p, text_i, ignore.case = TRUE, perl = TRUE))]
-    if (length(hits) > 0) {
-      data.frame(
+    hit_rows <- sapply(regex_table[[pattern_col]], function(p) 
+      grepl(p, text_i, ignore.case = TRUE, perl = TRUE))
+    hits <- regex_table[hit_rows, , drop = FALSE]
+    if (nrow(hits) > 0) {
+      out <- data.frame(
         data_id = i,
-        pattern = hits,
         text = text_i,
+        pattern = hits[[pattern_col]],
         stringsAsFactors = FALSE
       )
+      if (!is.null(id_col) && id_col %in% names(hits)) {
+        out$id <- hits[[id_col]]
+      }
+      out
     } else NULL
   })
   
