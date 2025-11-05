@@ -60,6 +60,10 @@ extract <- function(data,
         pattern = hits[[pattern_col]],
         stringsAsFactors = FALSE
       )
+      # include speaker if available in original data
+      if ("speaker" %in% names(data)) {
+        out$speaker <- data$speaker[i]
+      }
       if (!is.null(id_col) && id_col %in% names(hits)) {
         out$id <- hits[[id_col]]
       }
