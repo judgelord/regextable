@@ -53,8 +53,9 @@ extract <- function(data,
   
   # Filter regex_table by date
   if (!is.null(date_start) || !is.null(date_end)) {
-    if (is.null(date_col) || !date_col %in% names(regex_table))
+    if (is.null(date_col) || !date_col %in% names(regex_table)){
       stop("Please provide a valid `date_col` in regex_table for filtering.")
+    }
     date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
     date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
     regex_table <- regex_table[regex_table[[date_col]] >= date_start & 
@@ -67,9 +68,11 @@ extract <- function(data,
     patterns <- paste0("\\b(", patterns, ")\\b")
   }
   
-  if (verbose) message("Extracting pattern matches...")
+  if (verbose) {
+    message("Extracting pattern matches...")
+  }
   
-  # Optimized matchign with vector
+  # Optimized matching with vector
   text_vector <- data[[original_col]]
   
   # Combine all patterns into single regex
@@ -79,7 +82,9 @@ extract <- function(data,
   has_match <- grepl(combined_pattern, text_vector, ignore.case = TRUE, perl = TRUE)
   
   if (sum(has_match) == 0) {
-    if (verbose) message("No matches found.")
+    if (verbose) {
+      message("No matches found.")
+    }
     return(create_empty_output(id_col))
   }
   
@@ -101,7 +106,9 @@ extract <- function(data,
     matched_data <- matched_data[!is.na(matched_data$pattern), , drop = FALSE]
   }
   
-  if (verbose) message("Done. Found ", nrow(matched_data), " matches.")
+  if (verbose) {
+    message("Done. Found ", nrow(matched_data), " matches.")
+  }
   return(matched_data)
 }
 
@@ -111,6 +118,8 @@ create_empty_output <- function(id_col) {
     pattern = character(),
     stringsAsFactors = FALSE
   )
-  if (!is.null(id_col)) out[[id_col]] <- character()
+  if (!is.null(id_col)) {
+    out[[id_col]] <- character()
+  }
   return(out)
 }
