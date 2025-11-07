@@ -28,7 +28,7 @@ extract <- function(data,
                     clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Input validation and preparation
+  # Input validation
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     if (missing(col_name)) col_name <- "text"
@@ -42,9 +42,7 @@ extract <- function(data,
   
   # Text cleaning
   if (clean_text) {
-    if (!requireNamespace("stringr", quietly = TRUE))
-      stop("Package 'stringr' is required for text cleaning.")
-    data[[original_col]] <- stringr::str_squish(tolower(data[[original_col]]))
+    data[[original_col]] <- clean_text(data[[original_col]])
   }
   
   # Filter regex_table by date
@@ -55,22 +53,6 @@ extract <- function(data,
     date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
     regex_table <- regex_table[regex_table[[date_col]] >= date_start & 
                                  regex_table[[date_col]] <= date_end, , drop = FALSE]
-  }
-  
-  # Apply user-specified pattern filter
-  if (!is.null(pattern_filter)) {
-    if (is.character(pattern_filter) && pattern_filter %in% names(regex_table)) {
-      # If user gives a column name, ask interactively or require specific values
-      if (verbose) message("Filtering regex table by column: ", pattern_filter)
-      # Example: regex_table$type == "strict"
-      # You can refine this for your dataset, e.g. only keep strict patterns
-      regex_table <- regex_table[regex_table[[pattern_filter]] == "strict", , drop = FALSE]
-    } else if (is.vector(pattern_filter)) {
-      # If user passes vector of allowed pattern names
-      regex_table <- regex_table[regex_table[[pattern_col]] %in% pattern_filter, , drop = FALSE]
-    } else {
-      stop("`pattern_filter` must be a column name or vector of pattern values.")
-    }
   }
   
   # Get patterns after filtering
