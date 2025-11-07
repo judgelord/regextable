@@ -1,5 +1,5 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup table to extract pattern matches from supplied text.
+#' @description Uses A regex lookup to extract pattern matches from data frame.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Name of the variable in `data` containing text to search.
 #' @param regex_table A regex lookup table with at least a pattern column.
@@ -14,7 +14,7 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; whether to display basic progress messages.
-#' @return A data frame with one row per match, including data_id, original text, pattern, and optional ID.
+#' @return A data frame with one row per match and with all columns.
 #' @export
 
 extract <- function(data,
