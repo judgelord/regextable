@@ -31,13 +31,19 @@ extract <- function(data,
   # Input validation
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
-    if (missing(col_name)) col_name <- "text"
-  } else if (is.data.frame(data)) {
-    if (missing(col_name) || !col_name %in% names(data))
+    if (missing(col_name)) {
+      col_name <- "text"
+    } 
+  } 
+  else if (is.data.frame(data)) {
+    if (missing(col_name) || !col_name %in% names(data)){
       stop("Please provide a valid column name for `col_name`.")
-  } else stop("`data` must be a data frame or character vector.")
-  
-  data$data_id <- seq_len(nrow(data))
+    }
+  } 
+  else {
+    stop("`data` must be a data frame or character vector.")
+  }
+
   original_col <- col_name
   
   # Text cleaning
@@ -101,7 +107,6 @@ extract <- function(data,
 
 create_empty_output <- function(id_col) {
   out <- data.frame(
-    data_id = integer(),
     text = character(),
     pattern = character(),
     stringsAsFactors = FALSE
