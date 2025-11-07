@@ -31,7 +31,7 @@ extract <- function(data,
                     clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Convert character vector to data frame
+  # Input validation and preparation (keep your existing code)
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     if (missing(col_name)) col_name <- "text"
@@ -43,45 +43,17 @@ extract <- function(data,
   data$data_id <- seq_len(nrow(data))
   original_col <- col_name
   
-  # Optional text cleaning
+  # Text cleaning
   if (clean_text) {
     if (!requireNamespace("stringr", quietly = TRUE))
       stop("Package 'stringr' is required for text cleaning.")
     data[[original_col]] <- stringr::str_squish(tolower(data[[original_col]]))
   }
   
-  # Filter regex_table by date
-  if (!is.null(date_start) || !is.null(date_end)) {
-    if (is.null(date_col) || !date_col %in% names(regex_table))
-      stop("Please provide a valid `date_col` in regex_table for filtering.")
-    date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
-    date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
-    regex_table <- regex_table[regex_table[[date_col]] >= date_start & 
-                                 regex_table[[date_col]] <= date_end, , drop = FALSE]
-  }
+  # Filter regex_table (keep your existing filtering logic)
+  # [Your existing filtering code here...]
   
-  # Apply user-specified pattern filter
-  if (!is.null(pattern_filter)) {
-    if (is.character(pattern_filter) && pattern_filter %in% names(regex_table)) {
-      # If user gives a column name, ask interactively or require specific values
-      if (verbose) message("Filtering regex table by column: ", pattern_filter)
-      # Example: regex_table$type == "strict"
-      # You can refine this for your dataset, e.g. only keep strict patterns
-      regex_table <- regex_table[regex_table[[pattern_filter]] == "strict", , drop = FALSE]
-    } else if (is.vector(pattern_filter)) {
-      # If user passes vector of allowed pattern names
-      regex_table <- regex_table[regex_table[[pattern_col]] %in% pattern_filter, , drop = FALSE]
-    } else {
-      stop("`pattern_filter` must be a column name or vector of pattern values.")
-    }
-  }
-  
-  # Remove acronyms if requested
-  if (remove_acronyms && pattern_col %in% names(regex_table)) {
-    regex_table <- regex_table[!grepl("^[A-Z]{2,}$", regex_table[[pattern_col]]), , drop = FALSE]
-  }
-  
-  # Adjust patterns for strict matching
+  # Get patterns after filtering
   patterns <- regex_table[[pattern_col]]
   if (strict) {
     patterns <- paste0("\\b(", patterns, ")\\b")
@@ -89,28 +61,49 @@ extract <- function(data,
   
   if (verbose) message("Extracting pattern matches...")
   
-  matches <- lapply(seq_len(nrow(data)), function(i) {
-    text_i <- as.character(data[[original_col]][i])
-    hit_rows <- sapply(patterns, function(p) grepl(p, text_i, ignore.case = TRUE, perl = TRUE))
-    if (any(hit_rows)) {
-      # return the entire row for this data_id
-      out <- data[i, , drop = FALSE]
-      out$pattern <- patterns[hit_rows][1] # or paste all matches together if multiple
-      out
-    } else NULL
-  })
-
+  # OPTIMIZED MATCHING APPROACH
+  text_vector <- data[[original_col]]
   
-  out <- do.call(rbind, matches)
+  # Combine all patterns into single regex (much faster)
+  combined_pattern <- paste(patterns, collapse = "|")
   
-  if (is.null(out)) {
-    out <- data.frame(data_id = integer(),
-                      text = character(),
-                      pattern = character(),
-                      stringsAsFactors = FALSE)
-    if (!is.null(id_col)) out$id <- character()
+  # Vectorized matching
+  has_match <- grepl(combined_pattern, text_vector, ignore.case = TRUE, perl = TRUE)
+  
+  if (sum(has_match) == 0) {
+    if (verbose) message("No matches found.")
+    return(create_empty_output(id_col))
   }
   
-  if (verbose) message("Done.")
+  # Get matching rows
+  matched_data <- data[has_match, , drop = FALSE]
+  
+  # Extract which pattern matched (using str_extract for actual pattern)
+  if (requireNamespace("stringr", quietly = TRUE)) {
+    matched_data$pattern <- stringr::str_extract(
+      matched_data[[original_col]], 
+      combined_pattern
+    )
+  } else {
+    # Fallback - less precise but still better than original
+    matched_data$pattern <- sapply(matched_data[[original_col]], function(x) {
+      matches <- patterns[sapply(patterns, function(p) grepl(p, x, ignore.case = TRUE))]
+      if (length(matches) > 0) matches[1] else NA
+    })
+    matched_data <- matched_data[!is.na(matched_data$pattern), , drop = FALSE]
+  }
+  
+  if (verbose) message("Done. Found ", nrow(matched_data), " matches.")
+  return(matched_data)
+}
+
+create_empty_output <- function(id_col) {
+  out <- data.frame(
+    data_id = integer(),
+    text = character(),
+    pattern = character(),
+    stringsAsFactors = FALSE
+  )
+  if (!is.null(id_col)) out[[id_col]] <- character()
   return(out)
 }
