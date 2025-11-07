@@ -9,6 +9,8 @@
 #' @param date_start Optional start date for filtering regex_table.
 #' @param date_end Optional end date for filtering regex_table.
 #' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
+#' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
+#' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; whether to display basic progress messages.
 #' @return A data frame with one row per match, including data_id, original text, pattern, and optional ID.
 #' @export
@@ -22,9 +24,11 @@ extract <- function(data,
                     date_start = NULL,
                     date_end = NULL,
                     strict = TRUE,
+                    remove_acronyms = FALSE,
+                    clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Process data
+  # Convert character vector to data frame
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     if (missing(col_name)) col_name <- "text"
@@ -33,14 +37,19 @@ extract <- function(data,
       stop("Please provide a valid column name for `col_name`.")
   } else stop("`data` must be a data frame or character vector.")
   
+  data_id <- seq_len(nrow(data))
   original_col <- col_name
-  data$data_id <- seq_len(nrow(data))
+  data$data_id <- data_id
   
-  # Process regex table
-  if (!pattern_col %in% names(regex_table))
-    stop("`pattern_col` not found in `regex_table`.")
+  # Optional text cleaning
+  if (clean_text) {
+    if (!requireNamespace("stringr", quietly = TRUE)) {
+      stop("Package 'stringr' is required for text cleaning.")
+    }
+    data[[original_col]] <- stringr::str_squish(tolower(data[[original_col]]))
+  }
   
-  # Optional date filtering
+  # Filter regex_table by date
   if (!is.null(date_start) || !is.null(date_end)) {
     if (is.null(date_col) || !date_col %in% names(regex_table))
       stop("Please provide a valid `date_col` in regex_table for filtering.")
@@ -50,21 +59,24 @@ extract <- function(data,
                                  regex_table[[date_col]] <= date_end, , drop = FALSE]
   }
   
-  # Extract matches
+  # Remove acronyms if requested
+  if (remove_acronyms && "pattern" %in% names(regex_table)) {
+    regex_table <- regex_table[!grepl("^[A-Z]{2,}$", regex_table[[pattern_col]]), , drop = FALSE]
+  }
+  
+  # Adjust patterns for strict matching
+  patterns <- regex_table[[pattern_col]]
+  if (strict) {
+    patterns <- paste0("\\b(", patterns, ")\\b")
+  }
+  
+  # Matching
   if (verbose) message("Extracting pattern matches...")
   
   matches <- lapply(seq_len(nrow(data)), function(i) {
     text_i <- as.character(data[[original_col]][i])
-    
-    # Adjust patterns for strict vs inclusive
-    patterns <- regex_table[[pattern_col]]
-    if (strict) {
-      patterns <- paste0("\\b(", patterns, ")\\b")  # whole-word matching
-    }
-    
     hit_rows <- sapply(patterns, function(p) grepl(p, text_i, ignore.case = TRUE, perl = TRUE))
     hits <- regex_table[hit_rows, , drop = FALSE]
-    
     if (nrow(hits) > 0) {
       out <- data.frame(
         data_id = i,
@@ -81,7 +93,6 @@ extract <- function(data,
   
   out <- do.call(rbind, matches)
   
-  # Ensure consistent output
   if (is.null(out)) {
     out <- data.frame(data_id = integer(),
                       text = character(),
