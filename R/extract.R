@@ -92,20 +92,14 @@ extract <- function(data,
   matches <- lapply(seq_len(nrow(data)), function(i) {
     text_i <- as.character(data[[original_col]][i])
     hit_rows <- sapply(patterns, function(p) grepl(p, text_i, ignore.case = TRUE, perl = TRUE))
-    hits <- regex_table[hit_rows, , drop = FALSE]
-    if (nrow(hits) > 0) {
-      out <- data.frame(
-        data_id = i,
-        text = text_i,
-        pattern = hits[[pattern_col]],
-        stringsAsFactors = FALSE
-      )
-      if (!is.null(id_col) && id_col %in% names(hits)) {
-        out$id <- hits[[id_col]]
-      }
+    if (any(hit_rows)) {
+      # return the entire row for this data_id
+      out <- data[i, , drop = FALSE]
+      out$pattern <- patterns[hit_rows][1] # or paste all matches together if multiple
       out
     } else NULL
   })
+
   
   out <- do.call(rbind, matches)
   
