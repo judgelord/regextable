@@ -101,7 +101,9 @@ extract <- function(data,
     # If no match
     matched_data$pattern <- sapply(matched_data[[original_col]], function(x) {
       matches <- patterns[sapply(patterns, function(p) grepl(p, x, ignore.case = TRUE))]
-      if (length(matches) > 0) matches[1] else NA
+      if (length(matches) > 0) {
+        matches[1] else NA
+      }
     })
     matched_data <- matched_data[!is.na(matched_data$pattern), , drop = FALSE]
   }
