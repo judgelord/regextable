@@ -99,8 +99,8 @@ extract <- function(data,
       matched_data[[original_col]], 
       combined_pattern
     )
-  } else {
-    # If no match
+  } 
+  else {
     matched_data$pattern <- sapply(matched_data[[original_col]], function(x) {
       matches <- patterns[sapply(patterns, function(p) grepl(p, x, ignore.case = TRUE))]
       if (length(matches) > 0) {
@@ -117,5 +117,5 @@ extract <- function(data,
 }
 
 create_empty_output <- function() {
-  data.frame(text = character(), pattern = character(), stringsAsFactors = FALSE)
+  data.frame(text = character(), pattern = character(), stringsAsFactors = FALSE )
 }
