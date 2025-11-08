@@ -83,8 +83,14 @@ extract <- function(data,
   
   # Remove acronyms from pattern in regex_table
   if (remove_acronyms) {
-    is_acronym <- grepl("^[A-Z]+$")
+    is_acronym <- grepl("^[A-Z]+$", patterns)
     patterns <- patterns[!is_acronym]
+    if (length(patterns)==0) {
+      if (verbose) {
+        message("No patterns after matching")
+      }
+      return(create_empty_output())
+    }
   }
   
   if (strict) {
@@ -121,5 +127,5 @@ extract <- function(data,
 
 # Creates empty output
 create_empty_output <- function() {
-  data.frame(text = character(), pattern = character(), stringsAsFactors = FALSE )
+  data.frame(text = character(), stringsAsFactors = FALSE )
 }
