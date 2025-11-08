@@ -6,9 +6,9 @@
 #' @param pattern_col Name of the regex pattern column in regex_table (default "pattern").
 #' @param id_col Optional column in `data` used to filter rows before matching.
 #' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
-#' @param date_col Optional column in regex_table for date filtering.
-#' @param date_start Optional start date for filtering regex_table.
-#' @param date_end Optional end date for filtering regex_table.
+#' @param date_col Optional column in 'data' for date filtering.
+#' @param date_start Optional start date for filtering 'data'.
+#' @param date_end Optional end date for filtering 'data'.
 #' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
@@ -53,15 +53,26 @@ extract <- function(data,
     data[[original_col]] <- clean_text(data[[original_col]])
   }
   
-  # Filter regex_table by date
-  if (!is.null(date_start) || !is.null(date_end)) {
-    if (is.null(date_col) || !date_col %in% names(regex_table)){
-      stop("Please provide a valid `date_col` in regex_table for filtering.")
+  # Optional: filter data by ID
+  if (!is.null(id_filter)) {
+    if (is.null(id_col) || !id_col %in% names(data)) {
+      stop("If 'id_filter' is used, a valid 'id_col' in 'data' must be specified")
     }
-    date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
-    date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
-    regex_table <- regex_table[regex_table[[date_col]] >= date_start & 
-                                 regex_table[[date_col]] <= date_end, , drop = FALSE]
+    else {
+      data <- data[data[[id_col]] %in% id_filter, , drop=FALSE]
+    }
+  }
+  
+  # Optional: filter data by date
+  if (!is.null(date_start) || !is.null(date_end)) {
+    if (is.null(date_col) || !date_col %in% names(data)) {
+      stop("Please provide a valid `date_col` in 'data' for filtering.")
+    }
+    else {
+      date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
+      date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
+      data <- data[data[[date_col]] >= date_start & data[[date_col]] <= date_end, , drop = FALSE]
+    }
   }
   
   # Get patterns after filtering
