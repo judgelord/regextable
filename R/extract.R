@@ -2,9 +2,10 @@
 #' @description Uses A regex lookup to extract pattern matches from data frame.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
-#' @param regex_table A regex lookup table with at least a pattern column.
-#' @param pattern_col Name of the column in regex_table with regex patterns (default "pattern").
-#' @param id_col Optional column in regex_table to include as an identifier in the output.
+#' @param regex_table A regex lookup table with at least one pattern column.
+#' @param pattern_col Name of the regex pattern column in regex_table (default "pattern").
+#' @param id_col Optional column in `data` used to filter rows before matching.
+#' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
 #' @param date_col Optional column in regex_table for date filtering.
 #' @param date_start Optional start date for filtering regex_table.
 #' @param date_end Optional end date for filtering regex_table.
@@ -20,6 +21,7 @@ extract <- function(data,
                     regex_table,
                     pattern_col = "pattern",
                     id_col = NULL,
+                    id_filter = NULL,
                     date_col = NULL,
                     date_start = NULL,
                     date_end = NULL,
@@ -114,14 +116,6 @@ extract <- function(data,
   return(matched_data)
 }
 
-create_empty_output <- function(id_col) {
-  out <- data.frame(
-    text = character(),
-    pattern = character(),
-    stringsAsFactors = FALSE
-  )
-  if (!is.null(id_col)) {
-    out[[id_col]] <- character()
-  }
-  return(out)
+create_empty_output <- function() {
+  data.frame(text = character(), pattern = character(), stringsAsFactors = FALSE)
 }
