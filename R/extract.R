@@ -80,6 +80,13 @@ extract <- function(data,
   
   # Get a vector of patterns from regex_table
   patterns <- regex_table[[pattern_col]]
+  
+  # Remove acronyms from pattern in regex_table
+  if (remove_acronyms) {
+    is_acronym <- grepl("^[A-Z]+$")
+    patterns <- patterns[!is_acronym]
+  }
+  
   if (strict) {
     patterns <- paste0("\\b(", patterns, ")\\b")
   }
@@ -101,26 +108,11 @@ extract <- function(data,
     if (verbose) {
       message("No matches found.")
     }
-    return(create_empty_output(id_col))
+    return(create_empty_output())
   }
   
   # Get matching rows
   matched_data <- data[has_match, , drop = FALSE]
-  
-  # Extract which pattern matched
-  if (requireNamespace("stringr", quietly = TRUE)) {
-    matched_data$pattern <- stringr::str_extract(matched_data[[original_col]], combined_pattern)
-  } 
-  else {
-    matched_data$pattern <- sapply(matched_data[[original_col]], function(x) {
-      matches <- patterns[sapply(patterns, function(p) grepl(p, x, ignore.case = TRUE))]
-      if (length(matches) > 0) {
-        matches[1] else NA
-      }
-    })
-    matched_data <- matched_data[!is.na(matched_data$pattern), , drop = FALSE]
-  }
-  
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
