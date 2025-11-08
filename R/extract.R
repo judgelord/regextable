@@ -51,7 +51,7 @@ extract <- function(data,
 
   original_col <- col_name
   
-  # Optional: text cleaning
+  # Text cleaning
   if (clean_text) {
     data[[original_col]] <- clean_text(data[[original_col]])
   }
@@ -78,7 +78,7 @@ extract <- function(data,
     }
   }
   
-  # Get patterns from regex_table
+  # Get a vector of patterns from regex_table
   patterns <- regex_table[[pattern_col]]
   if (strict) {
     patterns <- paste0("\\b(", patterns, ")\\b")
@@ -109,10 +109,7 @@ extract <- function(data,
   
   # Extract which pattern matched
   if (requireNamespace("stringr", quietly = TRUE)) {
-    matched_data$pattern <- stringr::str_extract(
-      matched_data[[original_col]], 
-      combined_pattern
-    )
+    matched_data$pattern <- stringr::str_extract(matched_data[[original_col]], combined_pattern)
   } 
   else {
     matched_data$pattern <- sapply(matched_data[[original_col]], function(x) {
@@ -130,6 +127,7 @@ extract <- function(data,
   return(matched_data)
 }
 
+# Creates empty output
 create_empty_output <- function() {
   data.frame(text = character(), pattern = character(), stringsAsFactors = FALSE )
 }
