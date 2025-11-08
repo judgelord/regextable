@@ -94,6 +94,8 @@ extract <- function(data,
   }
   
   if (strict) {
+    patterns <- patterns[!is.na(patterns)]
+    patterns <- gsub("([.?*+^$()\\[\\]{}|\\\\])", "\\\\\\1", patterns)
     patterns <- paste0("\\b(", patterns, ")\\b")
   }
   
