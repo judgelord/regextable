@@ -74,6 +74,7 @@ extract <- function(data,
     else {
       date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
       date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
+      data[[date_col]] <- as.Date(data[[date_col]])
       data <- data[data[[date_col]] >= date_start & data[[date_col]] <= date_end, , drop = FALSE]
     }
   }
