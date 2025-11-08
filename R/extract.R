@@ -45,6 +45,9 @@ extract <- function(data,
   else {
     stop("`data` must be a data frame or character vector.")
   }
+  if (!pattern_col %in% names(regex_table) || all(is.na(regex_table[pattern_col]))) {
+    stop("Please provide a valid pattern column name for 'pattern_col'")
+  }
 
   original_col <- col_name
   
@@ -75,7 +78,7 @@ extract <- function(data,
     }
   }
   
-  # Get patterns after filtering
+  # Get patterns from regex_table
   patterns <- regex_table[[pattern_col]]
   if (strict) {
     patterns <- paste0("\\b(", patterns, ")\\b")
