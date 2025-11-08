@@ -48,7 +48,7 @@ extract <- function(data,
 
   original_col <- col_name
   
-  # Text cleaning
+  # Optional: text cleaning
   if (clean_text) {
     data[[original_col]] <- clean_text(data[[original_col]])
   }
