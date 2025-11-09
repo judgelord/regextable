@@ -59,7 +59,7 @@ extract <- function(data,
   }
   
   # Optional: Replace typos
-  if (!is.null(typos)) {
+  if (!is.null(typo_table)) {
     data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   }
   
