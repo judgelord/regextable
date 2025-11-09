@@ -15,6 +15,7 @@
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; whether to display basic progress messages.
 #' @return A data frame with one row per match and with all columns.
+#' @export
 
 extract <- function(data,
                     col_name,
