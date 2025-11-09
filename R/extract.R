@@ -88,6 +88,8 @@ extract <- function(data,
   
   # Get a vector of patterns from regex_table
   patterns <- regex_table[[pattern_col]]
+  patterns <- trimws(patterns)
+  patterns <- stringr::str_squish(patterns)
   
   # Remove acronyms from pattern in regex_table
   if (remove_acronyms) {
