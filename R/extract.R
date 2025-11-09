@@ -9,7 +9,7 @@
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
-#' @param typos Optional typo table to fix typos
+#' @param typo_table Optional table to fix typos
 #' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
@@ -26,7 +26,7 @@ extract <- function(data,
                     date_col = NULL,
                     date_start = NULL,
                     date_end = NULL,
-                    typos = NULL,
+                    typo_table = NULL,
                     strict = TRUE,
                     remove_acronyms = FALSE,
                     clean_text = TRUE,
@@ -60,7 +60,7 @@ extract <- function(data,
   
   # Optional: Replace typos
   if (!is.null(typos)) {
-    data[[original_col]] <- fix_typos(data[[original_col]], typos, verbose)
+    data[[original_col]] <- fix_typos(data[[original_col]], typo_table, verbose)
   }
   
   # Optional: filter data by ID
