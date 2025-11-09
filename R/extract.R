@@ -9,7 +9,7 @@
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
-#' @param typo_table Optional table to fix typos
+#' @param typo_table Optional table to fix typos in 'data'.
 #' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
@@ -58,7 +58,7 @@ extract <- function(data,
     data[[original_col]] <- clean_text(data[[original_col]])
   }
   
-  # Optional: Replace typos
+  # Optional: replace typos
   if (!is.null(typo_table)) {
     data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   }
@@ -97,7 +97,7 @@ extract <- function(data,
     patterns <- patterns[!is_acronym]
     if (length(patterns)==0) {
       if (verbose) {
-        message("No patterns after matching")
+        message("No patterns after removing acronyms.")
       }
       return(create_empty_output())
     }
@@ -136,7 +136,13 @@ extract <- function(data,
   return(matched_data)
 }
 
-# Creates empty output
+
+#' @title Create Empty Output
+#' @description Returns an empty data frame with the same columns as 'data'.
+#' @param data A data frame to copy column structure from.
+#' @return An empty data frame with 0 rows.
+#' @keywords internal
+
 create_empty_output <- function(data) {
   data[0, , drop = FALSE]
 }
