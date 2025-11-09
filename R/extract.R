@@ -123,7 +123,7 @@ extract <- function(data,
     if (verbose) {
       message("No matches found.")
     }
-    return(create_empty_output())
+    return(create_empty_output(data))
   }
   
   # Get matching rows
@@ -135,6 +135,6 @@ extract <- function(data,
 }
 
 # Creates empty output
-create_empty_output <- function() {
-  data.frame(text = character(), stringsAsFactors = FALSE )
+create_empty_output <- function(data) {
+  data[0, , drop = FALSE]
 }
