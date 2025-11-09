@@ -60,7 +60,7 @@ extract <- function(data,
   
   # Optional: Replace typos
   if (!is.null(typos)) {
-    data[[original_col]] <- fix_typos(data[[original_col]], typo_table, verbose)
+    data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   }
   
   # Optional: filter data by ID
