@@ -8,6 +8,7 @@
 ```r
 devtools::install_github("judgelord/regextable")
 library(regextable)
+```
 
 ## extract()
 
@@ -47,7 +48,8 @@ This makes `extract()` flexible for extracting specific patterns while keeping t
 result <- extract(data = my_data, 
                   col_name = "text", 
                   regex_table = my_patterns)
-                  
+```
+               
 ### Future Development
 - Add support for `typo_table` to correct known text errors before matching.
 - Improve strict matching rules for patterns that may need more inclusive or more restrictive word boundaries.  
