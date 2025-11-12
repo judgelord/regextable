@@ -5,7 +5,6 @@
 ## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/>
 =======
 ## regextable: Apply pattern-based text cleaning and lookup
->>>>>>> 36f69c08618aaf3de40be67c81ba90b5acf97547
 
 ### Installation
 
