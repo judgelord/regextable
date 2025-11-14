@@ -56,7 +56,7 @@ extract <- function(data,
     data[[original_col]] <- clean_text(data[[original_col]])
   }
   
-  # Optional: replace typos
+  # Optional: replace typos - to be implemented later
   #if (!is.null(typo_table)) {
   #  data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   #}
