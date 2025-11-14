@@ -120,7 +120,7 @@ extract <- function(data,
   
   # Get matching rows
   matched_data <- data[has_match, , drop = FALSE]
-  matched_data$matched_pattern <- stringi::stri_extract_first_regex(matched_data[[col_name]], combined_pattern)
+  matched_data$matched_pattern <- stringi::stri_extract_first_regex(matched_data[[original_col]], combined_pattern)
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
