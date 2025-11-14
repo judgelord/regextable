@@ -1,5 +1,5 @@
 #' @title Extract pattern matches from text
-#' @description Uses A regex lookup to extract pattern matches from data frame.
+#' @description Uses a regex lookup to extract pattern matches from a data frame. Typo correction planned for future versions.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with at least one pattern column.
@@ -9,7 +9,7 @@
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
-#' @param typo_table Optional table to fix typos in 'data'.
+#' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
 #' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
@@ -59,9 +59,9 @@ extract <- function(data,
   }
   
   # Optional: replace typos
-  if (!is.null(typo_table)) {
-    data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
-  }
+  #if (!is.null(typo_table)) {
+  #  data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
+  #}
   
   # Optional: filter data by ID
   if (!is.null(id_filter)) {
