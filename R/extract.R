@@ -3,7 +3,7 @@
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with at least one pattern column.
-#' @param pattern_col Name of the regex pattern column in regex_table (default "pattern").
+#' @param pattern_col Name of the regex pattern column in regex_table.
 #' @param return_cols Optional vector of column names to include in the output.
 #' @param id_col Optional column in `data` used to filter rows before matching.
 #' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
@@ -13,7 +13,7 @@
 #' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
-#' @param verbose Logical; whether to display basic progress messages.
+#' @param verbose Logical; if TRUE, displays progress messages.
 #' @return A data frame with one row per match. If `return_cols` is specified, 
 #' only those columns plus `matched_pattern` are returned.
 #' @export
@@ -54,7 +54,6 @@ extract <- function(data,
 
   original_col <- col_name
   
-  # Text cleaning
   if (clean_text) {
     data[[original_col]] <- clean_text(data[[original_col]])
   }
@@ -64,7 +63,7 @@ extract <- function(data,
   #  data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   #}
   
-  # Optional: filter data by ID
+  # Filter data by ID.
   if (!is.null(id_filter)) {
     if (is.null(id_col) || !id_col %in% names(data)) {
       stop("If 'id_filter' is used, a valid 'id_col' in 'data' must be specified")
@@ -74,7 +73,7 @@ extract <- function(data,
     }
   }
   
-  # Optional: filter data by date
+  # Filter data by date.
   if (!is.null(date_start) || !is.null(date_end)) {
     if (is.null(date_col) || !date_col %in% names(data)) {
       stop("Please provide a valid `date_col` in 'data' for filtering.")
@@ -87,12 +86,12 @@ extract <- function(data,
     }
   }
   
-  # Get a vector of patterns from regex_table
+  # Get a vector of patterns from regex_table.
   patterns <- regex_table[[pattern_col]]
   patterns <- trimws(patterns)
   patterns <- stringr::str_squish(patterns)
   
-  # Remove patterns that are all-caps acronyms (2+ letters) if requested
+  # Remove patterns that are all-caps acronyms (2+ letters) if requested.
   if (remove_acronyms) {
     is_acronym <- grepl("^[A-Z]{2,}$", patterns)
     patterns <- patterns[!is_acronym]
@@ -108,7 +107,7 @@ extract <- function(data,
     message("Extracting pattern matches...")
   }
   
-  # Vectorized detection
+  # Vectorized detection.
   text_vector <- data[[original_col]]
   combined_pattern <- paste(patterns, collapse = "|")
   
@@ -121,14 +120,14 @@ extract <- function(data,
     return(create_empty_output(data))
   }
   
-  # Get matching rows
+  # Get matching rows.
   matched_data <- data[has_match, , drop = FALSE]
   matched_data$matched_pattern <- stringi::stri_extract_first_regex(matched_data[[original_col]], combined_pattern)
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
   
-  # Optional: handle user-specified return columns
+  # Handle user-specified return columns.
   if (!is.null(return_cols)) {
     needed <- unique(c(return_cols, original_col, "matched_pattern"))
     if (!is.null(id_col)) {
