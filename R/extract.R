@@ -4,6 +4,7 @@
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with at least one pattern column.
 #' @param pattern_col Name of the regex pattern column in regex_table (default "pattern").
+#' @param return_cols Optional vector of column names to include in the output.
 #' @param id_col Optional column in `data` used to filter rows before matching.
 #' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
 #' @param date_col Optional column in 'data' for date filtering.
@@ -13,13 +14,15 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; whether to display basic progress messages.
-#' @return A data frame with one row per match and with all columns.
+#' @return A data frame with one row per match. If `return_cols` is specified, 
+#' only those columns plus `matched_pattern` are returned.
 #' @export
 
 extract <- function(data,
                     col_name,
                     regex_table,
                     pattern_col = "pattern",
+                    return_cols = NULL,
                     id_col = NULL,
                     id_filter = NULL,
                     date_col = NULL,
@@ -124,6 +127,17 @@ extract <- function(data,
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
+  
+  # Optional: handle user-specified return columns
+  if (!is.null(return_cols)) {
+    needed <- unique(c(return_cols, original_col, "matched_pattern"))
+    if (!is.null(id_col)) {
+      needed <- unique(c(id_col, needed))
+    }
+    needed <- needed[needed %in% names(matched_data)]
+    matched_data <- matched_data[, needed, drop = FALSE]
+  }
+  
   return(matched_data)
 }
 
