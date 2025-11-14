@@ -10,7 +10,6 @@
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
 #' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
-#' @param strict Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; whether to display basic progress messages.
@@ -27,7 +26,6 @@ extract <- function(data,
                     date_start = NULL,
                     date_end = NULL,
                     typo_table = NULL,
-                    strict = TRUE,
                     remove_acronyms = FALSE,
                     clean_text = TRUE,
                     verbose = TRUE) {
@@ -101,11 +99,6 @@ extract <- function(data,
       }
       return(create_empty_output())
     }
-  }
-  
-  if (strict) {
-    patterns <- patterns[!is.na(patterns)]
-    patterns <- paste0("\\b(", patterns, ")\\b")
   }
   
   if (verbose) {
