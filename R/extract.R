@@ -56,7 +56,7 @@ extract <- function(data,
     data[[original_col]] <- clean_text(data[[original_col]])
   }
   
-  # Optional: replace typos - to be implemented later
+  # TODO: implement typo_table correction in future versions
   #if (!is.null(typo_table)) {
   #  data[[original_col]] <- apply_typos(data[[original_col]], typo_table, verbose)
   #}
@@ -89,7 +89,7 @@ extract <- function(data,
   patterns <- trimws(patterns)
   patterns <- stringr::str_squish(patterns)
   
-  # Remove acronyms from pattern in regex_table
+  # Remove patterns that are all-caps acronyms (2+ letters) if requested
   if (remove_acronyms) {
     is_acronym <- grepl("^[A-Z]{2,}$", patterns)
     patterns <- patterns[!is_acronym]
@@ -105,14 +105,11 @@ extract <- function(data,
     message("Extracting pattern matches...")
   }
   
-  # Optimized matching with vector
+  # Vectorized detection
   text_vector <- data[[original_col]]
-  
-  # Combine all patterns into single regex
   combined_pattern <- paste(patterns, collapse = "|")
   
-  # Vectorized matching
-  has_match <- grepl(combined_pattern, text_vector, ignore.case = TRUE, perl = TRUE)
+  has_match <- stringi::stri_detect_regex(text_vector, combined_pattern, case_insensitive = TRUE)
   
   if (sum(has_match) == 0) {
     if (verbose) {
@@ -123,6 +120,7 @@ extract <- function(data,
   
   # Get matching rows
   matched_data <- data[has_match, , drop = FALSE]
+  matched_data$matched_pattern <- stringi::stri_extract_first_regex(matched_data[[col_name]], combined_pattern)
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
@@ -137,5 +135,7 @@ extract <- function(data,
 #' @keywords internal
 
 create_empty_output <- function(data) {
-  data[0, , drop = FALSE]
+  empty_df <- data[0, , drop = FALSE]
+  empty_df$matched_pattern <- character(0)
+  empty_df
 }
