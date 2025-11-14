@@ -91,7 +91,7 @@ extract <- function(data,
   
   # Remove acronyms from pattern in regex_table
   if (remove_acronyms) {
-    is_acronym <- grepl("^[A-Z]+$", patterns)
+    is_acronym <- grepl("^[A-Z]{2,}$", patterns)
     patterns <- patterns[!is_acronym]
     if (length(patterns)==0) {
       if (verbose) {
