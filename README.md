@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/>
@@ -13,26 +12,29 @@ library(regextable)
 ## extract()
 
 ### Description
-Uses a regex lookup to extract pattern matches from a data frame or character vector.
+Uses a regex lookup to extract pattern matches from a data frame or character vector. Returns a data frame containing the original columns plus a matched_pattern column for each detected pattern.
 
-### Parameters
+### Required Parameters
 - **data**: A data frame or character vector containing the text to search.
 - **col_name**: Column name in the data frame containing text to search through.
 - **regex_table**: A regex lookup table with at least one pattern column.
-- **pattern_col**: Name of the regex pattern column in `regex_table` (default `"pattern"`).
-- **id_col**: Optional column in `data` used to filter rows before matching.
-- **id_filter**: Optional value or vector of IDs to restrict which rows of `data` are matched.
-- **date_col**: Optional column in `data` for date filtering.
-- **date_start**: Optional start date for filtering `data`.
-- **date_end**: Optional end date for filtering `data`.
-- **typo_table**: Optional table to fix typos in `data`.
-- **strict**: Logical; if TRUE, matches are treated as whole-word; if FALSE, partial matches allowed.
-- **remove_acronyms**: Logical; if TRUE, removes all-uppercase patterns from `regex_table`.
-- **clean_text**: Logical; if TRUE, applies basic text cleaning to the input before matching.
-- **verbose**: Logical; whether to display basic progress messages.
+
+### Optional Parameters
+- **pattern_col**: (default "pattern") Name of the regex pattern column in regex_table.
+- **return_cols**: (default NULL) Vector of columns to include in the output.
+- **id_col**: (default NULL) Column in data used for filtering rows before matching.
+- **id_filter**: (default NULL) Value(s) of IDs to restrict which rows are matched.
+- **date_col**: (default NULL) Column in data containing dates for filtering.
+- **date_start**: (default NULL) Start date for filtering rows.
+- **date_end**: (default NULL) End date for filtering rows.
+- **typo_table**: (default NULL) Table of typos to correct in data. (planned for future versions)
+- **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
+- **clean_text**: (default TRUE) If TRUE, applies basic text cleaning before matching.
+- **batch_size**: (default 1000) Number of patterns to process per batch.
+- **verbose**: (default TRUE) If TRUE, displays progress messages.
 
 ### Returns
-A data frame with one row per match and all original columns from `data`.
+A data frame with one row per match, including specified or all original columns from 'data' plus a matched_pattern column.
 
 ### Overview
 The `extract()` function searches a data frame or character vector for text patterns defined in a regex table.  
@@ -42,12 +44,37 @@ Additional optional arguments include ID filtering, start and end dates, typo co
 This makes `extract()` flexible for extracting specific patterns while keeping the full dataset structure intact.
 
 
-### Example
+### Basic Example
 ```r
-# Example usage
-result <- extract(data = my_data, 
-                  col_name = "text", 
-                  regex_table = my_patterns)
+# Example data
+data(cr)  # Example dataset in the package
+head(cr$text)
+
+# Extract using default pattern column
+result <- extract(
+  data = cr,
+  col_name = "text",
+  regex_table = my_patterns
+)
+
+head(result)
+```
+###Advanced Example
+```r
+result_advanced <- extract(
+  data = cr,
+  col_name = "text",
+  regex_table = my_patterns,
+  id_col = "id",
+  id_filter = c(101, 102),
+  date_col = "date",
+  date_start = "2023-01-01",
+  date_end = "2023-06-30",
+  remove_acronyms = TRUE,
+  return_cols = c("id", "text")
+)
+
+head(result_advanced)
 ```
                
 ### Future Development
