@@ -60,7 +60,6 @@ result <- extract(
 head(result)
 
 #Advanced Usage (with optional arguments)
-# Filter by ID and date, remove acronyms, and select specific columns
 result_advanced <- extract(
   data = cr,
   col_name = "text",
