@@ -44,7 +44,7 @@ Additional optional arguments include ID filtering, start and end dates, typo co
 This makes `extract()` flexible for extracting specific patterns while keeping the full dataset structure intact.
 
 
-### Example
+### Basic Example
 ```r
 # Example data
 data(cr)  # Example dataset in the package
@@ -58,8 +58,9 @@ result <- extract(
 )
 
 head(result)
-
-#Advanced Usage (with optional arguments)
+```
+###Advanced Example
+```r
 result_advanced <- extract(
   data = cr,
   col_name = "text",
