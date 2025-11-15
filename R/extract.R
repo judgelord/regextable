@@ -107,18 +107,12 @@ extract <- function(data,
     message("Extracting pattern matches...")
   }
   
-  
+  # Vectorized detection.
   text_vector <- data[[original_col]]
-  matches_list <- achmd::acm_grep(
-    patterns,
-    text_vector,
-    ignore.case = TRUE,
-    fixed = FALSE, 
-    value = FALSE
-  )
+  combined_pattern <- paste(patterns, collapse = "|")
   
-  has_match <- sapply(matches_list, function(x) length(x) > 0)
-    
+  has_match <- stringi::stri_detect_regex(text_vector, combined_pattern, case_insensitive = TRUE)
+  
   if (sum(has_match) == 0) {
     if (verbose) {
       message("No matches found.")
@@ -128,11 +122,7 @@ extract <- function(data,
   
   # Get matching rows.
   matched_data <- data[has_match, , drop = FALSE]
-  matched_data$matched_pattern <- sapply(
-    matches_list[has_match],
-    function(ix) patterns[ix[1]]
-  )
-  
+  matched_data$matched_pattern <- stringi::stri_extract_first_regex(matched_data[[original_col]], combined_pattern)
   if (verbose) {
     message("Done. Found ", nrow(matched_data), " matches.")
   }
