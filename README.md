@@ -34,7 +34,7 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 - **verbose**: (default TRUE) If TRUE, displays progress messages.
 
 ### Returns
-A data frame with one row per match and all original columns from `data`.
+A data frame with one row per match, including specified or all original columns from 'data' plus a matched_pattern column.
 
 ### Overview
 The `extract()` function searches a data frame or character vector for text patterns defined in a regex table.  
@@ -46,10 +46,35 @@ This makes `extract()` flexible for extracting specific patterns while keeping t
 
 ### Example
 ```r
-# Example usage
-result <- extract(data = my_data, 
-                  col_name = "text", 
-                  regex_table = my_patterns)
+# Example data
+data(cr)  # Example dataset in the package
+head(cr$text)
+
+# Extract using default pattern column
+result <- extract(
+  data = cr,
+  col_name = "text",
+  regex_table = my_patterns
+)
+
+head(result)
+
+#Advanced Usage (with optional arguments)
+# Filter by ID and date, remove acronyms, and select specific columns
+result_advanced <- extract(
+  data = cr,
+  col_name = "text",
+  regex_table = my_patterns,
+  id_col = "id",
+  id_filter = c(101, 102),
+  date_col = "date",
+  date_start = "2023-01-01",
+  date_end = "2023-06-30",
+  remove_acronyms = TRUE,
+  return_cols = c("id", "text")
+)
+
+head(result_advanced)
 ```
                
 ### Future Development
