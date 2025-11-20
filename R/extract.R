@@ -1,152 +1,245 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup to extract pattern matches from a data frame, efficiently using batching. Returns original text.
+#' @description Uses a regex lookup to extract pattern matches from text efficiently.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
-#' @param regex_table A regex lookup table with at least one pattern column.
+#' @param regex_table A regex lookup table with pattern and metadata columns.
 #' @param pattern_col Name of the regex pattern column in regex_table.
-#' @param return_cols Optional vector of column names to include in the output.
-#' @param id_col Optional column in `data` used to filter rows before matching.
-#' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
-#' @param date_col Optional column in 'data' for date filtering.
-#' @param date_start Optional start date for filtering 'data'.
-#' @param date_end Optional end date for filtering 'data'.
-#' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
-#' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
+#' @param id_col Optional column in `data` to use as identifier in output.
+#' @param group_cols Optional vector of column names to group the matching by (like congress/chamber/state in original).
+#' @param return_cols Optional vector of column names from regex_table to include in output.
+#' @param priority_col Optional column name to use for match priority (e.g., "congress" - higher values = higher priority).
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
-#' @param batch_size Integer; number of patterns per batch.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A data frame with one row per match. Returns original text column plus `matched_pattern`.
+#' @param cl Optional cluster for parallel processing.
+#' @return A data frame with one row per text entry containing the best match.
 #' @export
 extract <- function(data,
                     col_name,
                     regex_table,
                     pattern_col = "pattern",
-                    return_cols = NULL,
                     id_col = NULL,
-                    id_filter = NULL,
-                    date_col = NULL,
-                    date_start = NULL,
-                    date_end = NULL,
-                    typo_table = NULL,
-                    remove_acronyms = FALSE,
+                    group_cols = NULL,
+                    return_cols = NULL,
+                    priority_col = NULL,
                     clean_text = TRUE,
-                    batch_size = 1000,
-                    verbose = TRUE) {
+                    verbose = TRUE,
+                    cl = NULL) {
   
-  # Input validation 
-  if (is.character(data) && is.null(dim(data))) {
-    original_text <- data
-    data <- data.frame(text = data, stringsAsFactors = FALSE)
-    if (missing(col_name)) col_name <- "text"
-  } else if (is.data.frame(data)) {
+  # Process data and col_name (same as before)
+  if (is.data.frame(data)) {
     if (missing(col_name) || !col_name %in% names(data)) {
       stop("Please provide a valid column name for `col_name`.")
     }
-    original_text <- data[[col_name]]  # store original text
+    if (!is.character(data[[col_name]])) {
+      stop("the variable named in `col_name` must be a character vector")
+    }
+  } else if (is.character(data) && is.null(dim(data))) {
+    data <- data.frame(text = data, stringsAsFactors = FALSE)
+    col_name <- "text"
   } else {
-    stop("`data` must be a data frame or character vector.")
+    stop("`data` must be a data frame or a character vector")
   }
   
-  if (!pattern_col %in% names(regex_table) || all(is.na(regex_table[[pattern_col]]))) {
-    stop("Please provide a valid pattern column name for 'pattern_col'")
+  # Validate regex_table
+  if (!pattern_col %in% names(regex_table)) {
+    stop("`pattern_col` must be a column in `regex_table`")
   }
   
-  # Optional text cleaning
-  cleaned_text <- data[[col_name]]
+  # Set up progress bar
+  opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
+  on.exit(pbapply::pboptions(opb))
+  
+  # Add data_id if not provided
+  if (is.null(id_col)) {
+    data$data_id <- seq_len(nrow(data))
+    id_col <- "data_id"
+  } else if (!id_col %in% names(data)) {
+    stop("`id_col` must be a column in `data`")
+  }
+  
+  # Clean text if requested
   if (clean_text) {
-    cleaned_text <- clean_text(cleaned_text)
+    data[[col_name]] <- clean_text(data[[col_name]])
   }
   
-  # ID filtering
-  if (!is.null(id_filter)) {
-    if (is.null(id_col) || !id_col %in% names(data)) {
-      stop("If 'id_filter' is used, a valid 'id_col' in 'data' must be specified")
+  # Process group columns
+  if (!is.null(group_cols)) {
+    valid_groups <- group_cols[group_cols %in% names(data) & group_cols %in% names(regex_table)]
+    if (length(valid_groups) == 0) {
+      group_cols <- NULL
+    } else {
+      group_cols <- valid_groups
     }
-    data <- data[data[[id_col]] %in% id_filter, , drop = FALSE]
-    cleaned_text <- cleaned_text[data[[id_col]] %in% id_filter]
-    original_text <- original_text[data[[id_col]] %in% id_filter]
   }
   
-  # Date filtering
-  if (!is.null(date_start) || !is.null(date_end)) {
-    if (is.null(date_col) || !date_col %in% names(data)) {
-      stop("Please provide a valid `date_col` in 'data' for filtering.")
+  # If no group columns, process all data at once
+  if (is.null(group_cols)) {
+    result <- extract_matches_per_group(
+      data = data,
+      col_name = col_name,
+      regex_table = regex_table,
+      pattern_col = pattern_col,
+      id_col = id_col,
+      priority_col = priority_col,
+      group_values = NULL,
+      verbose = verbose,
+      cl = cl
+    )
+  } else {
+    # Process by groups
+    unique_groups <- unique(data[group_cols])
+    
+    if (verbose) {
+      message(sprintf("Processing %d unique group combinations", nrow(unique_groups)))
     }
-    date_start <- if (!is.null(date_start)) as.Date(date_start) else -Inf
-    date_end <- if (!is.null(date_end)) as.Date(date_end) else Inf
-    data[[date_col]] <- as.Date(data[[date_col]])
-    keep_idx <- data[[date_col]] >= date_start & data[[date_col]] <= date_end
-    data <- data[keep_idx, , drop = FALSE]
-    cleaned_text <- cleaned_text[keep_idx]
-    original_text <- original_text[keep_idx]
+    
+    result_list <- pbapply::pblapply(seq_len(nrow(unique_groups)), function(i) {
+      group_vals <- unique_groups[i, , drop = FALSE]
+      
+      # Filter data for this group
+      group_data <- data
+      for (col in group_cols) {
+        group_data <- group_data[group_data[[col]] == group_vals[[col]], ]
+      }
+      
+      if (nrow(group_data) == 0) return(NULL)
+      
+      # Filter regex_table for this group  
+      group_regex <- regex_table
+      for (col in group_cols) {
+        group_regex <- group_regex[group_regex[[col]] == group_vals[[col]], ]
+      }
+      
+      if (nrow(group_regex) == 0) return(NULL)
+      
+      extract_matches_per_group(
+        data = group_data,
+        col_name = col_name,
+        regex_table = group_regex,
+        pattern_col = pattern_col,
+        id_col = id_col,
+        priority_col = priority_col,
+        group_values = group_vals,
+        verbose = FALSE
+      )
+    }, cl = cl)
+    
+    result <- dplyr::bind_rows(result_list)
   }
   
-  # Prepare patterns
-  patterns <- regex_table[[pattern_col]]
-  patterns <- stringr::str_squish(trimws(patterns))
-  patterns <- patterns[nchar(patterns) > 0 & !duplicated(patterns)]
-  
-  if (remove_acronyms) {
-    patterns <- patterns[!grepl("^[A-Z]{2,}$", patterns)]
-    if (length(patterns) == 0) return(create_empty_output(data))
-  }
-  
-  if (verbose) message("Starting batch pattern detection with ", length(patterns), " patterns...")
-  
-  # Batching for detection
-  batches <- split(patterns, ceiling(seq_along(patterns) / batch_size))
-  has_match <- logical(length(cleaned_text))
-  
-  for (i in seq_along(batches)) {
-    if (verbose) message("Processing batch ", i, "/", length(batches))
-    batch_pattern <- paste0("(", paste(batches[[i]], collapse = ")|("), ")")
-    has_match <- has_match | stringi::stri_detect_regex(cleaned_text, batch_pattern, case_insensitive = TRUE)
-  }
-  
-  if (sum(has_match) == 0) {
-    if (verbose) message("No matches found.")
-    return(create_empty_output(data))
-  }
-  
-  # Extract matched patterns efficiently
-  matched_data <- data[has_match, , drop = FALSE]
-  matched_text <- cleaned_text[has_match]
-  original_matched_text <- original_text[has_match]
-  matched_patterns <- rep(NA_character_, length(matched_text))
-  
-  for (i in seq_along(batches)) {
-    batch <- batches[[i]]
-    batch_pattern <- paste0("(", paste(batch, collapse = ")|("), ")")
-    unmatched_idx <- which(is.na(matched_patterns))
-    if (length(unmatched_idx) == 0) break
-    extracted <- stringi::stri_extract_first_regex(matched_text[unmatched_idx], batch_pattern, case_insensitive = TRUE)
-    matched_patterns[unmatched_idx[!is.na(extracted)]] <- extracted[!is.na(extracted)]
-  }
-  
-  # Assign original text back
-  matched_data[[col_name]] <- original_matched_text
-  matched_data$matched_pattern <- matched_patterns
-  
-  # Return requested columns
+  # Select return columns
   if (!is.null(return_cols)) {
-    needed <- unique(c(return_cols, col_name, "matched_pattern"))
-    if (!is.null(id_col)) needed <- unique(c(id_col, needed))
-    needed <- needed[needed %in% names(matched_data)]
-    matched_data <- matched_data[, needed, drop = FALSE]
+    available_cols <- return_cols[return_cols %in% names(result)]
+    result <- result[c(id_col, available_cols, setdiff(names(result), c(id_col, available_cols)))]
   }
   
-  if (verbose) message("Done. Found ", nrow(matched_data), " matches.")
-  return(matched_data)
+  return(result)
 }
 
-
-#' @title Create Empty Output
-#' @description Returns an empty data frame with the same columns as 'data'.
-#' @param data A data frame to copy column structure from.
-#' @return An empty data frame with 0 rows.
+#' @title Extract matches for a specific group (with priority)
+#' @description Internal function to extract the BEST match for each text entry
 #' @keywords internal
-create_empty_output <- function(data) {
-  empty_df <- data[0, , drop = FALSE]
-  empty_df$matched_pattern <- character(0)
-  empty_df
+extract_matches_per_group <- function(data,
+                                      col_name,
+                                      regex_table,
+                                      pattern_col,
+                                      id_col,
+                                      priority_col = NULL,
+                                      group_values = NULL,
+                                      verbose = FALSE,
+                                      cl = NULL) {
+  
+  if (nrow(data) == 0 || nrow(regex_table) == 0) {
+    return(NULL)
+  }
+  
+  text <- data[[col_name]]
+  patterns <- unique(na.omit(regex_table[[pattern_col]]))
+  
+  if (verbose) {
+    message(sprintf("Matching %d patterns against %d text entries", 
+                    length(patterns), length(text)))
+  }
+  
+  # Find ALL matches first
+  matches_list <- pbapply::pblapply(patterns, function(pattern) {
+    matched_rows <- which(stringi::stri_detect_regex(text, pattern, case_insensitive = TRUE))
+    if (length(matched_rows) > 0) {
+      # For each match, get the matching rows from regex_table
+      matching_regex_rows <- regex_table[regex_table[[pattern_col]] == pattern, ]
+      
+      # Create a row for each combination of data row and regex row
+      expanded_matches <- expand.grid(
+        data_id = data[[id_col]][matched_rows],
+        pattern = pattern,
+        stringsAsFactors = FALSE
+      )
+      
+      # Add all columns from regex_table EXCEPT the pattern column to avoid duplicates
+      regex_cols_to_add <- setdiff(names(matching_regex_rows), pattern_col)
+      
+      if (length(regex_cols_to_add) > 0) {
+        result <- cbind(
+          expanded_matches, 
+          matching_regex_rows[rep(1, nrow(expanded_matches)), regex_cols_to_add, drop = FALSE]
+        )
+      } else {
+        result <- expanded_matches
+      }
+      
+      return(result)
+    } else {
+      return(NULL)
+    }
+  }, cl = cl)
+  
+  all_matches <- dplyr::bind_rows(matches_list)
+  
+  if (nrow(all_matches) == 0) {
+    return(NULL)
+  }
+  
+  # Select the BEST match for each data_id
+  if (!is.null(priority_col) && priority_col %in% names(all_matches)) {
+    # Use priority column (e.g., higher congress = more recent = better match)
+    best_matches <- all_matches %>%
+      dplyr::group_by(.data$data_id) %>%
+      dplyr::arrange(dplyr::desc(.data[[priority_col]])) %>%
+      dplyr::slice(1) %>%
+      dplyr::ungroup()
+  } else {
+    # No priority column, just take the first match (original behavior)
+    best_matches <- all_matches %>%
+      dplyr::group_by(.data$data_id) %>%
+      dplyr::slice(1) %>%
+      dplyr::ungroup()
+  }
+  
+  # Join with original data to get all columns
+  result <- dplyr::left_join(best_matches, 
+                             data, 
+                             by = setNames(id_col, "data_id"))
+  
+  # Add group values if provided
+  if (!is.null(group_values)) {
+    for (col in names(group_values)) {
+      result[[col]] <- group_values[[col]]
+    }
+  }
+  
+  # Reorder columns to put ID first
+  result <- result[c("data_id", setdiff(names(result), "data_id"))]
+  
+  return(result)
+}
+
+#' @title Clean text
+#' @description Basic text cleaning function
+#' @param x Character vector to clean
+#' @return Cleaned character vector
+#' @export
+clean_text <- function(x) {
+  x <- stringi::stri_trim_both(x)
+  x <- stringi::stri_replace_all_regex(x, "\\s+", " ")
+  x
 }
