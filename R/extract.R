@@ -1,29 +1,37 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup to extract pattern matches from text efficiently.
+#' @description Uses a regex lookup to extract pattern matches from a data frame, efficiently using batching. Returns original text.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
-#' @param regex_table A regex lookup table with pattern and metadata columns.
+#' @param regex_table A regex lookup table with at least one pattern column.
 #' @param pattern_col Name of the regex pattern column in regex_table.
-#' @param id_col Optional column in `data` to use as identifier in output.
-#' @param group_cols Optional vector of column names to group the matching by (like congress/chamber/state in original).
-#' @param return_cols Optional vector of column names from regex_table to include in output.
-#' @param priority_col Optional column name to use for match priority (e.g., "congress" - higher values = higher priority).
+#' @param return_cols Optional vector of column names to include in the output.
+#' @param id_col Optional column in `data` used to filter rows before matching.
+#' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
+#' @param date_col Optional column in 'data' for date filtering.
+#' @param date_start Optional start date for filtering 'data'.
+#' @param date_end Optional end date for filtering 'data'.
+#' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
+#' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A data frame with one row per text entry containing the best match.
+#' @return A data frame with one row per match. Returns original text column plus `matched_pattern`.
 #' @export
 extract <- function(data,
                     col_name,
                     regex_table,
                     pattern_col = "pattern",
-                    id_col = NULL,
-                    group_cols = NULL,
                     return_cols = NULL,
-                    priority_col = NULL,
+                    id_col = NULL,
+                    id_filter = NULL,
+                    date_col = NULL,
+                    date_start = NULL,
+                    date_end = NULL,
+                    typo_table = NULL,
+                    remove_acronyms = FALSE,
                     clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Process data and col_name (same as before)
+  # Process data and col_name
   if (is.data.frame(data)) {
     if (missing(col_name) || !col_name %in% names(data)) {
       stop("Please provide a valid column name for `col_name`.")
@@ -59,6 +67,56 @@ extract <- function(data,
     stop("`id_col` must be a column in `data`")
   }
   
+  # Apply ID filter if specified
+  if (!is.null(id_filter)) {
+    data <- data[data[[id_col]] %in% id_filter, ]
+    if (nrow(data) == 0) {
+      if (verbose) message("No data remaining after ID filter")
+      return(NULL)
+    }
+  }
+  
+  # Apply date filter if specified
+  if (!is.null(date_col)) {
+    if (!date_col %in% names(data)) {
+      stop("`date_col` must be a column in `data`")
+    }
+    
+    # Convert date_col to Date if not already
+    if (!inherits(data[[date_col]], "Date")) {
+      data[[date_col]] <- as.Date(data[[date_col]])
+    }
+    
+    if (!is.null(date_start)) {
+      data <- data[data[[date_col]] >= as.Date(date_start), ]
+    }
+    if (!is.null(date_end)) {
+      data <- data[data[[date_col]] <= as.Date(date_end), ]
+    }
+    
+    if (nrow(data) == 0) {
+      if (verbose) message("No data remaining after date filter")
+      return(NULL)
+    }
+  }
+  
+  # Remove acronyms if requested
+  if (remove_acronyms) {
+    # Remove patterns that are all uppercase (acronyms)
+    is_acronym <- grepl("^[A-Z]+$", regex_table[[pattern_col]])
+    regex_table <- regex_table[!is_acronym, ]
+    if (nrow(regex_table) == 0) {
+      if (verbose) message("No patterns remaining after removing acronyms")
+      return(NULL)
+    }
+  }
+  
+  # Apply typo correction if specified
+  if (!is.null(typo_table)) {
+    if (verbose) message("Applying typo correction...")
+    data[[col_name]] <- correct_typos(data[[col_name]], typo_table)
+  }
+  
   # Store original text separately - don't modify the original data structure
   original_text <- data[[col_name]]
   
@@ -70,68 +128,15 @@ extract <- function(data,
     data_for_matching <- data
   }
   
-  # Process group columns
-  if (!is.null(group_cols)) {
-    valid_groups <- group_cols[group_cols %in% names(data) & group_cols %in% names(regex_table)]
-    if (length(valid_groups) == 0) {
-      group_cols <- NULL
-    } else {
-      group_cols <- valid_groups
-    }
-  }
-  
-  # If no group columns, process all data at once
-  if (is.null(group_cols)) {
-    result <- extract_matches_per_group(
-      data = data_for_matching,
-      col_name = col_name,
-      regex_table = regex_table,
-      pattern_col = pattern_col,
-      id_col = id_col,
-      priority_col = priority_col,
-      group_values = NULL,
-      verbose = verbose)
-  } else {
-    # Process by groups
-    unique_groups <- unique(data_for_matching[group_cols])
-    
-    if (verbose) {
-      message(sprintf("Processing %d unique group combinations", nrow(unique_groups)))
-    }
-    
-    result_list <- pbapply::pblapply(seq_len(nrow(unique_groups)), function(i) {
-      group_vals <- unique_groups[i, , drop = FALSE]
-      
-      # Filter data for this group
-      group_data <- data_for_matching
-      for (col in group_cols) {
-        group_data <- group_data[group_data[[col]] == group_vals[[col]], ]
-      }
-      
-      if (nrow(group_data) == 0) return(NULL)
-      
-      # Filter regex_table for this group  
-      group_regex <- regex_table
-      for (col in group_cols) {
-        group_regex <- group_regex[group_regex[[col]] == group_vals[[col]], ]
-      }
-      
-      if (nrow(group_regex) == 0) return(NULL)
-      
-      extract_matches_per_group(
-        data = group_data,
-        col_name = col_name,
-        regex_table = group_regex,
-        pattern_col = pattern_col,
-        id_col = id_col,
-        priority_col = priority_col,
-        group_values = group_vals,
-        verbose = FALSE
-      )
-    }, cl = cl)
-    
-    result <- dplyr::bind_rows(result_list)
-  }
+  # Process the data
+  result <- extract_matches_per_group(
+    data = data_for_matching,
+    col_name = col_name,
+    regex_table = regex_table,
+    pattern_col = pattern_col,
+    id_col = id_col,
+    verbose = verbose
+  )
   
   # Restore original text in the output
   if (!is.null(result) && nrow(result) > 0) {
@@ -171,18 +176,15 @@ extract <- function(data,
   return(result)
 }
 
-#' @title Extract matches for a specific group (with priority)
-#' @description Internal function to extract the BEST match for each text entry
+#' @title Extract matches for a specific group
+#' @description Internal function to extract matches for each text entry
 #' @keywords internal
 extract_matches_per_group <- function(data,
                                       col_name,
                                       regex_table,
                                       pattern_col,
                                       id_col,
-                                      priority_col = NULL,
-                                      group_values = NULL,
-                                      verbose = FALSE,
-                                      cl = NULL) {
+                                      verbose = FALSE) {
   
   if (nrow(data) == 0 || nrow(regex_table) == 0) {
     return(NULL)
@@ -228,7 +230,7 @@ extract_matches_per_group <- function(data,
     } else {
       return(NULL)
     }
-  }, cl = cl)
+  })
   
   all_matches <- dplyr::bind_rows(matches_list)
   
@@ -236,33 +238,33 @@ extract_matches_per_group <- function(data,
     return(NULL)
   }
   
-  # Select the BEST match for each data_id
-  if (!is.null(priority_col) && priority_col %in% names(all_matches)) {
-    # Use priority column (e.g., higher congress = more recent = better match)
-    best_matches <- all_matches %>%
-      dplyr::group_by(.data$data_id) %>%
-      dplyr::arrange(dplyr::desc(.data[[priority_col]])) %>%
-      dplyr::slice(1) %>%
-      dplyr::ungroup()
-  } else {
-    # No priority column, just take the first match (original behavior)
-    best_matches <- all_matches %>%
-      dplyr::group_by(.data$data_id) %>%
-      dplyr::slice(1) %>%
-      dplyr::ungroup()
-  }
+  # Take the first match for each data_id (original behavior)
+  best_matches <- all_matches %>%
+    dplyr::group_by(.data$data_id) %>%
+    dplyr::slice(1) %>%
+    dplyr::ungroup()
   
   # Join with original data to get all columns
   result <- dplyr::left_join(best_matches, 
                              data, 
                              by = setNames(id_col, "data_id"))
   
-  # Add group values if provided
-  if (!is.null(group_values)) {
-    for (col in names(group_values)) {
-      result[[col]] <- group_values[[col]]
-    }
+  return(result)
+}
+
+#' @title Correct typos in text
+#' @description Internal function to correct typos using a typo table
+#' @keywords internal
+correct_typos <- function(text, typo_table) {
+  # Basic implementation - replace typos with corrections
+  # Assumes typo_table has columns "typo" and "correction"
+  if (!all(c("typo", "correction") %in% names(typo_table))) {
+    stop("typo_table must have 'typo' and 'correction' columns")
   }
   
-  return(result)
+  for (i in seq_len(nrow(typo_table))) {
+    text <- gsub(typo_table$typo[i], typo_table$correction[i], text, ignore.case = TRUE)
+  }
+  
+  return(text)
 }
