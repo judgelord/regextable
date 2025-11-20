@@ -10,7 +10,6 @@
 #' @param priority_col Optional column name to use for match priority (e.g., "congress" - higher values = higher priority).
 #' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @param cl Optional cluster for parallel processing.
 #' @return A data frame with one row per text entry containing the best match.
 #' @export
 extract <- function(data,
@@ -22,8 +21,7 @@ extract <- function(data,
                     return_cols = NULL,
                     priority_col = NULL,
                     clean_text = TRUE,
-                    verbose = TRUE,
-                    cl = NULL) {
+                    verbose = TRUE) {
   
   # Process data and col_name (same as before)
   if (is.data.frame(data)) {
@@ -92,9 +90,7 @@ extract <- function(data,
       id_col = id_col,
       priority_col = priority_col,
       group_values = NULL,
-      verbose = verbose,
-      cl = cl
-    )
+      verbose = verbose)
   } else {
     # Process by groups
     unique_groups <- unique(data_for_matching[group_cols])
