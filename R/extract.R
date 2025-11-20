@@ -33,9 +33,12 @@ extract <- function(data,
     if (!is.character(data[[col_name]])) {
       stop("the variable named in `col_name` must be a character vector")
     }
+    # Store original column order
+    original_col_order <- names(data)
   } else if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
+    original_col_order <- names(data)
   } else {
     stop("`data` must be a data frame or a character vector")
   }
@@ -53,13 +56,20 @@ extract <- function(data,
   if (is.null(id_col)) {
     data$data_id <- seq_len(nrow(data))
     id_col <- "data_id"
+    original_col_order <- c(original_col_order, "data_id")
   } else if (!id_col %in% names(data)) {
     stop("`id_col` must be a column in `data`")
   }
   
-  # Clean text if requested
+  # Store original text separately - don't modify the original data structure
+  original_text <- data[[col_name]]
+  
+  # Clean text if requested (only for matching, we'll keep original in output)
   if (clean_text) {
-    data[[col_name]] <- clean_text(data[[col_name]])
+    data_for_matching <- data
+    data_for_matching[[col_name]] <- clean_text(data[[col_name]])
+  } else {
+    data_for_matching <- data
   }
   
   # Process group columns
@@ -75,7 +85,7 @@ extract <- function(data,
   # If no group columns, process all data at once
   if (is.null(group_cols)) {
     result <- extract_matches_per_group(
-      data = data,
+      data = data_for_matching,
       col_name = col_name,
       regex_table = regex_table,
       pattern_col = pattern_col,
@@ -87,7 +97,7 @@ extract <- function(data,
     )
   } else {
     # Process by groups
-    unique_groups <- unique(data[group_cols])
+    unique_groups <- unique(data_for_matching[group_cols])
     
     if (verbose) {
       message(sprintf("Processing %d unique group combinations", nrow(unique_groups)))
@@ -97,7 +107,7 @@ extract <- function(data,
       group_vals <- unique_groups[i, , drop = FALSE]
       
       # Filter data for this group
-      group_data <- data
+      group_data <- data_for_matching
       for (col in group_cols) {
         group_data <- group_data[group_data[[col]] == group_vals[[col]], ]
       }
@@ -127,10 +137,39 @@ extract <- function(data,
     result <- dplyr::bind_rows(result_list)
   }
   
-  # Select return columns
-  if (!is.null(return_cols)) {
+  # Restore original text in the output
+  if (!is.null(result) && nrow(result) > 0) {
+    # Replace the cleaned text with original text
+    result[[col_name]] <- original_text[match(result[[id_col]], data[[id_col]])]
+    
+    # Reorder columns to match original data structure
+    existing_cols <- names(result)
+    
+    # Start with ID column
+    final_cols <- id_col
+    
+    # Add original data columns in their original order (that exist in result)
+    for (col in original_col_order) {
+      if (col %in% existing_cols && !col %in% final_cols) {
+        final_cols <- c(final_cols, col)
+      }
+    }
+    
+    # Add any remaining columns from regex matching
+    remaining_cols <- setdiff(existing_cols, final_cols)
+    final_cols <- c(final_cols, remaining_cols)
+    
+    # Reorder the result
+    result <- result[final_cols]
+  }
+  
+  # Select return columns if specified
+  if (!is.null(return_cols) && !is.null(result)) {
     available_cols <- return_cols[return_cols %in% names(result)]
-    result <- result[c(id_col, available_cols, setdiff(names(result), c(id_col, available_cols)))]
+    if (length(available_cols) > 0) {
+      # Keep ID column and specified return columns
+      result <- result[c(id_col, available_cols)]
+    }
   }
   
   return(result)
@@ -169,7 +208,7 @@ extract_matches_per_group <- function(data,
       matching_regex_rows <- regex_table[regex_table[[pattern_col]] == pattern, ]
       
       # Create a row for each combination of data row and regex row
-      expanded_matches <- expand.grid(
+      expanded_matches <- data.frame(
         data_id = data[[id_col]][matched_rows],
         pattern = pattern,
         stringsAsFactors = FALSE
@@ -179,15 +218,17 @@ extract_matches_per_group <- function(data,
       regex_cols_to_add <- setdiff(names(matching_regex_rows), pattern_col)
       
       if (length(regex_cols_to_add) > 0) {
-        result <- cbind(
-          expanded_matches, 
-          matching_regex_rows[rep(1, nrow(expanded_matches)), regex_cols_to_add, drop = FALSE]
-        )
+        # Create a data frame with the regex columns, preserving original names
+        regex_data <- matching_regex_rows[rep(1, nrow(expanded_matches)), regex_cols_to_add, drop = FALSE]
+        
+        # Use cbind to ensure column names are preserved
+        result <- cbind(expanded_matches, regex_data)
+        rownames(result) <- NULL  # Clean up row names
+        
+        return(result)
       } else {
-        result <- expanded_matches
+        return(expanded_matches)
       }
-      
-      return(result)
     } else {
       return(NULL)
     }
@@ -226,9 +267,6 @@ extract_matches_per_group <- function(data,
       result[[col]] <- group_values[[col]]
     }
   }
-  
-  # Reorder columns to put ID first
-  result <- result[c("data_id", setdiff(names(result), "data_id"))]
   
   return(result)
 }
