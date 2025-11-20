@@ -232,14 +232,3 @@ extract_matches_per_group <- function(data,
   
   return(result)
 }
-
-#' @title Clean text
-#' @description Basic text cleaning function
-#' @param x Character vector to clean
-#' @return Cleaned character vector
-#' @export
-clean_text <- function(x) {
-  x <- stringi::stri_trim_both(x)
-  x <- stringi::stri_replace_all_regex(x, "\\s+", " ")
-  x
-}
