@@ -17,6 +17,7 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 ```{r}
 load("data/members.rda")
 load("data/cr2007_03_01.rda")
+data(members)
 head(members)
 ```
 
