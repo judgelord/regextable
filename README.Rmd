@@ -38,8 +38,8 @@ library(regextable)
 This package relies on a dataframe (`members`) and a dataframe ('cr2007_03_01')
 
 ```{r}
-data("members")
-data("cr2007_03_01")
+load("data/members.rda")
+load("data/cr2007_03_01.rda")
 head(members)
 ```
 
