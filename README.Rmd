@@ -38,11 +38,6 @@ library(regextable)
 This package relies on a dataframe (`members`) and a dataframe ('cr2007_03_01')
 
 ```{r}
-devtools::document()
-devtools::build()
-devtools::install()
-library(regextable)
-
 data("members")
 data("cr2007_03_01")
 head(members)

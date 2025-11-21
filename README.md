@@ -1,90 +1,185 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/>
+## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
 
 ### Installation
-```{r}
-devtools::install_github("judgelord/regextable") 
+
+    devtools::install_github("judgelord/regextable")
+
+``` r
 library(regextable)
 ```
 
-## extract()
+## Data
 
-### Description
-Uses a regex lookup to extract pattern matches from a data frame or character vector. Returns a data frame containing the original columns plus a matched_pattern column for each detected pattern.
+This package relies on a dataframe (`members`) and a dataframe
+(‘cr2007_03_01’)
 
-### Data
-```{r}
-devtools::document()
-devtools::build()
-devtools::install()
-library(regextable)
-
+``` r
 data("members")
 data("cr2007_03_01")
 head(members)
 ```
 
-### Required Parameters
-- **data**: A data frame or character vector containing the text to search.
-- **col_name**: Column name in the data frame containing text to search through.
-- **regex_table**: A regex lookup table with at least one pattern column.
+    #> # A tibble: 6 × 9
+    #>   congress chamber   bioname                      pattern                                                                                          icpsr state_abbrev district_code first_name last_name
+    #>      <dbl> <chr>     <chr>                        <chr>                                                                                            <dbl> <chr>                <dbl> <chr>      <chr>    
+    #> 1      117 President TRUMP, Donald John           "donald trump|donald john trump|\\bd trump|donald j trump|don trump|don john trump|don j trump|… 99912 USA                      0 Donald     TRUMP    
+    #> 2      117 President BIDEN, Joseph Robinette, Jr. "joseph biden|joseph robinette biden|\\bj biden|joseph r biden|joe biden|joe robinette biden|jo… 99913 USA                      0 Joseph     BIDEN    
+    #> 3      117 House     ROGERS, Mike Dennis          "mike rogers|mike dennis rogers|\\bm rogers|mike d rogers|michael rogers|michael dennis rogers|… 20301 AL                       3 Mike       ROGERS   
+    #> 4      117 House     SEWELL, Terri                "terri sewell|\\bt sewell|terri a sewell|\\bna sewell|(^|senator |representative )sewell\\b|sew… 21102 AL                       7 Terri      SEWELL   
+    #> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm brooks|\\bna brooks|(^|senator |representative )brooks\\b|brooks, mo|brooks mo|… 21193 AL                       5 Mo         BROOKS   
+    #> 6      117 House     PALMER, Gary James           "gary palmer|gary james palmer|\\bg palmer|gary j palmer|\\bna palmer|(^|senator |representativ… 21500 AL                       6 Gary       PALMER
 
-### Optional Parameters
-- **pattern_col**: (default "pattern") Name of the regex pattern column in regex_table.
-- **return_cols**: (default NULL) Vector of columns to include in the output.
-- **id_col**: (default NULL) Column in data used for filtering rows before matching.
-- **id_filter**: (default NULL) Value(s) of IDs to restrict which rows are matched.
-- **date_col**: (default NULL) Column in data containing dates for filtering.
-- **date_start**: (default NULL) Start date for filtering rows.
-- **date_end**: (default NULL) End date for filtering rows.
-- **typo_table**: (default NULL) Table of typos to correct in data. (planned for future versions)
-- **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
-- **clean_text**: (default TRUE) If TRUE, applies basic text cleaning before matching.
-- **do_clean_text**: (default TRUE) Clean text before matching.
-- **verbose**: (default TRUE) If TRUE, displays progress messages.
+# Find U.S. legislator names in messy text with typos and inconsistent name formats
 
-### Returns
-A data frame with one row per match, including specified or all original columns from 'data' plus a matched_pattern column.
+## Basic Usage
 
-### Overview
-The `extract()` function searches a data frame or character vector for text patterns defined in a regex table.  
-By default, it performs strict, whole-word matching and returns all columns from the input data for rows that match any pattern.  
-Users can optionally specify which columns to return and which pattern column in the regex table to use.  
-Additional optional arguments include ID filtering, start and end dates, typo correction, and text cleaning.  
-This makes `extract()` flexible for extracting specific patterns while keeping the full dataset structure intact.
+The main function, `extractMemberName()`, returns a dataframe of the
+names and ICPSR ID numbers of members of Congress in a supplied vector
+of text.
 
+> in the future, `extractMemberName()` may default to returning a list
+> of dataframes the same length as the supplied data
 
-### Basic Example
-```r
-# Extract using default pattern column
-result <- extract(
-  data = cr2007_03_01,
-  col_name = "header",
-  regex_table = members
-)
+For example, we can use `extractMemberName()` to detect the names of
+members of Congress in the text of the Congressional Record. Let’s start
+with text from the Congressional Record from 3/1/2007, scraped and
+parsed using methods described
+[here](https://judgelord.github.io/congressionalrecord/).
 
-head(result)
+``` r
+data("cr2007_03_01")
+
+head(cr2007_03_01)
 ```
-###Advanced Example
-```r
-result_advanced <- extract(
-  data = cr,
-  col_name = "text",
-  regex_table = my_patterns,
-  id_col = "id",
-  id_filter = c(101, 102),
-  date_col = "date",
-  date_start = "2023-01-01",
-  date_end = "2023-06-30",
-  remove_acronyms = TRUE,
-  return_cols = c("id", "text")
-)
 
-head(result_advanced)
+    #> # A tibble: 6 × 5
+    #>   date       speaker                             header                                                                                                                                    url   url_txt
+    #>   <date>     <chr>                               <chr>                                                                                                                                     <chr> <chr>  
+    #> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35                                     http… https:…
+    #> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol.… http… https:…
+    #> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35                                                            http… https:…
+    #> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35                                                           http… https:…
+    #> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT                                                                            http… https:…
+    #> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AMERICA; Congressional Record Vol. 153, No. 35                               http… https:…
+
+``` r
+head(cr2007_03_01$url)
 ```
-               
-### Future Development
-- Add support for `typo_table` to correct known text errors before matching.
-- Improve strict matching rules for patterns that may need more inclusive or more restrictive word boundaries.  
-- Enable user-defined ID systems (e.g., corporations, campaigns) and control whether text is returned with matches. 
+
+    #> [1] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2"
+    #> [2] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3"
+    #> [3] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4"
+    #> [4] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5"
+    #> [5] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1"
+    #> [6] "https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E432-2"
+
+This is an extremely simple example because the text strings containing
+the names of the members of Congress in the `speaker` column are short,
+consistently formatted, and do not contain much other text. However,
+`extractMemberName()` can also search much longer and messier texts,
+including text where names are not consistently formatted or where they
+contain common typos introduced by humans or common OCR errors. Indeed,
+these functions were developed to identify members of Congress in ugly
+text data like
+[this](https://judgelord.github.io/corr/corr_pres.html#22).
+
+To better match member names, this function currently requires either:
+
+- a column “congress” (this can be created from a date) or
+- a vector of congresses to limit the search to supplied to the
+  `congresses` argument
+
+For illustration, I show both options in the example below.
+
+Member names augmented from voteview come with the `legislators`
+package, but users can also supply a customized version of these data to
+the `members` argument.
+
+### `extractMemberName()`
+
+``` r
+# extract legislator names and match to voteview ICPSR numbers
+cr <- extractMemberName(data = cr2007_03_01, 
+                        col_name = "speaker", # The text strings to search
+                        congress = 110,
+                        cl = 4 #Use 4 cores (on Mac)
+)
+```
+
+    #> Fixing typos...
+    #> Searching data for members of the 110th congress, n = 154 (123 distinct strings).
+
+``` r
+cr
+```
+
+    #> # A tibble: 193 × 14
+    #>    data_id icpsr bioname                    last_name first_name congress chamber state_abbrev district_code date       speaker                          header                            url   url_txt
+    #>      <int> <dbl> <chr>                      <chr>     <chr>         <dbl> <chr>   <chr>                <dbl> <date>     <chr>                            <chr>                             <chr> <chr>  
+    #>  1       1 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING JARRETT MUCK FOR ACH… http… https:…
+    #>  2       2 29906 UDALL, Mark                UDALL     Mark            110 House   CO                       2 2007-03-01 hon mark udall;mr udall          INTRODUCING A CONCURRENT RESOLUT… http… https:…
+    #>  3       3 20136 LANGEVIN, James            LANGEVIN  James           110 House   RI                       2 2007-03-01 hon james r langevin;mr langevin BIOSURVEILLANCE ENHANCEMENT ACT … http… https:…
+    #>  4       4 20501 COSTA, Jim                 COSTA     Jim             110 House   CA                      20 2007-03-01 hon jim costa;mr costa           A TRIBUTE TO THE LIFE OF MRS. VE… http… https:…
+    #>  5       5 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING JARRETT MUCK FOR ACH… http… https:…
+    #>  6       6 29339 BISHOP, Sanford Dixon, Jr. BISHOP    Sanford         110 House   GA                       2 2007-03-01 hon sanford d bishop;mr bishop   IN HONOR OF SYNOVUS BEING NAMED … http… https:…
+    #>  7       7 15072 TOWNS, Edolphus            TOWNS     Edolphus        110 House   NY                      10 2007-03-01 hon edolphus towns;mr towns      NEW PUNJAB CHIEF MINISTER URGED … http… https:…
+    #>  8       8 29576 DAVIS, Thomas M., III      DAVIS     Thomas          110 House   VA                      11 2007-03-01 hon tom davis;mr tom davis       HONORING THE 30TH ANNIVERSARY OF… http… https:…
+    #>  9       9 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING BRIAN PATRICK WESSLI… http… https:…
+    #> 10      10 29906 UDALL, Mark                UDALL     Mark            110 House   CO                       2 2007-03-01 hon mark udall;mr udall          INTRODUCTION OF ROYALTY-IN-KIND … http… https:…
+    #> # ℹ 183 more rows
+
+In this example, all observations are in the 110th Congress, so we only
+search for members who served in the 110th.
+
+Because `extractMemberName()` links each detected name to ICPSR IDs from
+voteview.com, we already have some information, like state and district
+for each legislator detected in the text (scroll to the right).
+
+## TODO
+
+### Dynamic data
+
+- [ ] make some kind of version-controlled spreadsheet where users can
+  submit additional nicknames, maiden names, etc. to augment the
+  voteview data. This is currently done in
+  data/make_members/nameCongress.R, but it would not be easy for users
+  to edit and then re-make the regex table.
+- [ ] make some sort of version-controlled spreadsheet where users can
+  submit common typos they find. Currently, typos.R generates typos.rda,
+  which is loaded with the package.
+
+### Vignettes
+
+- [ ] Add a vignette using messy OCRed legislator letters to FERC from
+  replication data for [“Legislator Advocacy on Behalf of Constituents
+  and Corporate Donors”](https://judgelord.github.io/research/ferc/)
+- [ ] Add a vignette using [public comment
+  data](https://github.com/judgelord/rulemaking) (sparse legislator
+  names)
+
+### Functions
+
+- [x] `extractMemberName()` needs options to supply custom typos and
+  additions to the main regex table
+- [x] correcting OCR errors and typos should be optional in
+  `extractMemberName()`
+- [ ] integrate with the [`congress`](https://github.com/ippsr/congress)
+  and/or [`congressData`](https://github.com/IPPSR/congress) packages.
+  For example, we may want a function (`augmentCongress` or
+  `augment_legislators`?) to join in identifiers for other datasets on
+  ICPSR numbers. Perhaps this is best left to users using the `congress`
+  package.
+- [ ] Additionally, `committees.R` provides a crosswalk for Stewart
+  ICPSR numbers
+- [ ] Support dates for congress
+
+### Documentation
+
+- [ ] Document helper functions for `extractMemberName()`
+- [x] Document additional functions that help prep text for best
+  matching
+- [ ] Document example data (including FERC and public comment data for
+  new vignettes)
