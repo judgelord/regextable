@@ -14,7 +14,7 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A data frame with one row per match. Returns original text column plus `matched_pattern`.
+#' @return A data frame with one row per match. Returns original text column plus `pattern`.
 #' @export
 extract <- function(data,
                     col_name,
@@ -147,27 +147,10 @@ extract <- function(data,
   
   # Restore original text in the output
   if (!is.null(result) && nrow(result) > 0) {
-    # Replace the cleaned text with original text
     result[[col_name]] <- original_text[match(result[[id_col]], data[[id_col]])]
-    
-    # Reorder columns to match original data structure
     existing_cols <- names(result)
-    
-    # Start with ID column
-    final_cols <- id_col
-    
-    # Add original data columns in their original order (that exist in result)
-    for (col in original_col_order) {
-      if (col %in% existing_cols && !col %in% final_cols) {
-        final_cols <- c(final_cols, col)
-      }
-    }
-    
-    # Add any remaining columns from regex matching
-    remaining_cols <- setdiff(existing_cols, final_cols)
-    final_cols <- c(final_cols, remaining_cols)
-    
-    # Reorder the result
+    final_cols <- original_col_order[original_col_order %in% existing_cols]
+    final_cols <- c(final_cols, setdiff(existing_cols, final_cols))
     result <- result[final_cols]
   }
   
@@ -214,7 +197,7 @@ extract_matches_per_group <- function(data,
       # Create a row for each combination of data row and regex row
       expanded_matches <- data.frame(
         temp_col = data[[id_col]][matched_rows],  # Temporary name
-        matched_pattern = pattern,
+        pattern = pattern,
         stringsAsFactors = FALSE
       )
       # Set the correct column name
