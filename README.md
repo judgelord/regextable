@@ -11,14 +11,35 @@
 library(regextable)
 ```
 
+## extract()
+
+### Description
+
+`extract()` is the core function of the regextable package. It uses a
+user-supplied regex lookup table to extract pattern matches from a data
+frame or character vector. The function returns a data frame containing
+the original columns plus a `pattern` column for each detected pattern
+or only user specified columns.
+
+This package is generic: it works with any text data and any regex
+table. For example, you can extract names, companies, acronyms, or other
+entities from text. Users can supply their own data frames and pattern
+tables to adapt `extract()` to their needs.
+
 ## Data
 
-This package relies on a dataframe (`members`) and a dataframe
-(‘cr2007_03_01’)
+This package operates on a data frame containing text to search and a
+corresponding regex lookup table containing patterns to match. Users
+must supply both the text data and the regex table, allowing extract()
+to work with any dataset or domain.
+
+For example, you can provide a table of names, companies, or acronyms as
+the regex table, and any data frame of text as input. The included
+example datasets (`members` and `cr2007_03_01`) demonstrate usage, but
+these are not defaults, you can use any data you like.
 
 ``` r
 data("members")
-data("cr2007_03_01")
 head(members)
 ```
 
@@ -32,9 +53,91 @@ head(members)
     #> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm brooks|\\bna brooks|(^|senator |representative )brooks\\b|brooks, mo|brooks mo|… 21193 AL                       5 Mo         BROOKS   
     #> 6      117 House     PALMER, Gary James           "gary palmer|gary james palmer|\\bg palmer|gary j palmer|\\bna palmer|(^|senator |representativ… 21500 AL                       6 Gary       PALMER
 
-# Find U.S. legislator names in messy text with typos and inconsistent name formats
+``` r
+data("cr2007_03_01")
+head(cr2007_03_01)
+```
 
-## Basic Usage
+    #> # A tibble: 6 × 5
+    #>   date       speaker                             header                                                                                                                                    url   url_txt
+    #>   <date>     <chr>                               <chr>                                                                                                                                     <chr> <chr>  
+    #> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35                                     http… https:…
+    #> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol.… http… https:…
+    #> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35                                                            http… https:…
+    #> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35                                                           http… https:…
+    #> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT                                                                            http… https:…
+    #> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AMERICA; Congressional Record Vol. 153, No. 35                               http… https:…
+
+### Required Parameters
+
+- **data**: A data frame or character vector containing the text to
+  search.
+- **col_name**: Column name in the data frame containing text to search
+  through.
+- **regex_table**: A regex lookup table with at least one pattern
+  column.
+
+### Optional Parameters
+
+- **pattern_col**: (default “pattern”) Name of the regex pattern column
+  in regex_table.
+- **return_cols**: (default NULL) Vector of columns to include in the
+  output.
+- **id_col**: (default NULL) Column in data used for filtering rows
+  before matching.
+- **id_filter**: (default NULL) Value(s) of IDs to restrict which rows
+  are matched.
+- **date_col**: (default NULL) Column in data containing dates for
+  filtering.
+- **date_start**: (default NULL) Start date for filtering rows.
+- **date_end**: (default NULL) End date for filtering rows.
+- **typo_table**: (default NULL) Table of typos to correct in data.
+  (planned for future versions)
+- **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase
+  patterns from regex_table.
+- **clean_text**: (default TRUE) If TRUE, applies basic text cleaning
+  before matching.
+- **do_clean_text**: (default TRUE) Clean text before matching.
+- **verbose**: (default TRUE) If TRUE, displays progress messages.
+
+### Returns
+
+A data frame with one row per match, including: - All original columns
+from `data` (or `return_cols` if specified) - `pattern` — the first
+regex pattern matched in each row
+
+### Basic Usage
+
+``` r
+# Extract patterns using only required arguments
+#result <- extract(
+#  data = cr2007_03_01,
+#  col_name = "header",
+#  regex_table = members
+#)
+
+#head(result)
+```
+
+### Advanced Usage
+
+``` r
+# Extract with optional parameters
+#result_advanced <- extract(
+#  data = cr2007_03_01,
+#  col_name = "text",
+#  regex_table = members,
+#  id_col = "id",
+#  id_filter = c(101, 102),
+#  date_col = "date",
+#  date_start = "2023-01-01",
+#  date_end = "2023-06-30",
+#  remove_acronyms = TRUE,
+#  return_cols = c("id", "text")
+#)
+
+#head(result_advanced)
+```
 
 The main function, `extractMemberName()`, returns a dataframe of the
 names and ICPSR ID numbers of members of Congress in a supplied vector

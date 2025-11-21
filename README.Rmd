@@ -34,6 +34,8 @@ library(regextable)
 ```
 
 ## extract()
+
+### Description
 `extract()` is the core function of the regextable package. It uses a user-supplied regex lookup table to extract pattern matches from a data frame or character vector. The function returns a data frame containing the original columns plus a `pattern` column for each detected pattern or only user specified columns.
 
 This package is generic: it works with any text data and any regex table. For example, you can extract names, companies, acronyms, or other entities from text. Users can supply their own data frames and pattern tables to adapt `extract()` to their needs.
@@ -50,9 +52,62 @@ data("cr2007_03_01")
 head(cr2007_03_01)
 ```
 
-#  Find U.S. legislator names in messy text with typos and inconsistent name formats
+### Required Parameters
+- **data**: A data frame or character vector containing the text to search.
+- **col_name**: Column name in the data frame containing text to search through.
+- **regex_table**: A regex lookup table with at least one pattern column.
 
-## Basic Usage
+### Optional Parameters
+- **pattern_col**: (default "pattern") Name of the regex pattern column in regex_table.
+- **return_cols**: (default NULL) Vector of columns to include in the output.
+- **id_col**: (default NULL) Column in data used for filtering rows before matching.
+- **id_filter**: (default NULL) Value(s) of IDs to restrict which rows are matched.
+- **date_col**: (default NULL) Column in data containing dates for filtering.
+- **date_start**: (default NULL) Start date for filtering rows.
+- **date_end**: (default NULL) End date for filtering rows.
+- **typo_table**: (default NULL) Table of typos to correct in data. (planned for future versions)
+- **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
+- **clean_text**: (default TRUE) If TRUE, applies basic text cleaning before matching.
+- **do_clean_text**: (default TRUE) Clean text before matching.
+- **verbose**: (default TRUE) If TRUE, displays progress messages.
+
+### Returns
+A data frame with one row per match, including:
+- All original columns from `data` (or `return_cols` if specified)
+- `pattern` — the first regex pattern matched in each row
+
+### Basic Usage
+
+```{r}
+# Extract patterns using only required arguments
+#result <- extract(
+#  data = cr2007_03_01,
+#  col_name = "header",
+#  regex_table = members
+#)
+
+#head(result)
+```
+
+### Advanced Usage
+```{r}
+# Extract with optional parameters
+#result_advanced <- extract(
+#  data = cr2007_03_01,
+#  col_name = "text",
+#  regex_table = members,
+#  id_col = "id",
+#  id_filter = c(101, 102),
+#  date_col = "date",
+#  date_start = "2023-01-01",
+#  date_end = "2023-06-30",
+#  remove_acronyms = TRUE,
+#  return_cols = c("id", "text")
+#)
+
+#head(result_advanced)
+```
+
 
 The main function, `extractMemberName()`, returns a dataframe of the names and ICPSR ID numbers of members of Congress in a supplied vector of text. 
 

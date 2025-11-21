@@ -2,5 +2,8 @@
 
 export(apply_typos)
 export(clean_text)
+export(extractMemberName)
+export(fix_typos)
 import(dplyr)
 import(stringr)
+importFrom(dplyr,`%>%`)
