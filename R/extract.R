@@ -112,10 +112,10 @@ extract <- function(data,
   }
   
   # Apply typo correction if specified
-  if (!is.null(typo_table)) {
-    if (verbose) message("Applying typo correction...")
-    data[[col_name]] <- correct_typos(data[[col_name]], typo_table)
-  }
+  #if (!is.null(typo_table)) {
+    #if (verbose) message("Applying typo correction...")
+    #data[[col_name]] <- correct_typos(data[[col_name]], typo_table)
+  #}
   
   # Store original text separately - don't modify the original data structure
   original_text <- data[[col_name]]
