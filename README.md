@@ -15,8 +15,8 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 
 ### Data
 ```{r}
-data("cr2007_03_01")
-data("members")
+load("data/members.rda")
+load("data/cr2007_03_01.rda")
 head(members)
 ```
 
