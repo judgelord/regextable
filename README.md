@@ -109,15 +109,29 @@ regex pattern matched in each row
 ### Basic Usage
 
 ``` r
-# Extract patterns using only required arguments
-#result <- extract(
-#  data = cr2007_03_01,
-#  col_name = "header",
-#  regex_table = members
-#)
-
-#head(result)
+#Extract patterns using only required arguments
+result <- extract(
+  data = cr2007_03_01,
+  col_name = "header",
+  regex_table = members
+)
 ```
+
+    #> Matching 14752 patterns against 154 text entries
+
+``` r
+head(result)
+```
+
+    #> # A tibble: 6 × 7
+    #>   date       speaker                              header                                                                                                      url                url_txt data_id pattern
+    #>   <date>     <chr>                                <chr>                                                                                                       <chr>              <chr>     <int> <chr>  
+    #> 1 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        NEW PUNJAB CHIEF MINISTER URGED TO WORK FOR SIKH SOVEREIGNTY; Congressional Record Vol. 153, No. 35         https://www.congr… https:…       7 "harry…
+    #> 2 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        SIKH EDITOR WRITES TO PRESIDENT BUSH, URGES SUPPORT FOR SIKH FREEDOM; Congressional Record Vol. 153, No. 35 https://www.congr… https:…      23 "georg…
+    #> 3 2007-03-01 HON. GABRIELLE GIFFORDS;Ms. GIFFORDS CROSS PARTY LINES TO PASS COMPREHENSIVE IMMIGRATION REFORM; Congressional Record Vol. 153, No. 35           https://www.congr… https:…      31 "olive…
+    #> 4 2007-03-01 HON. GREGORY W. MEEKS;Mr. MEEKS      BLACK HISTORY MONTH; Congressional Record Vol. 153, No. 35                                                  https://www.congr… https:…      43 "diane…
+    #> 5 2007-03-01 Mr. KUCINICH                         KUCINICH OPPOSED TO ATTACK ON IRAN; Congressional Record Vol. 153, No. 35                                   https://www.congr… https:…      80 "denni…
+    #> 6 2007-03-01 Mr. PENCE                            PENCE EXCHANGE WITH AMBASSADOR RICHARD C. HOLBROOK; Congressional Record Vol. 153, No. 35                   https://www.congr… https:…      82 "grego…
 
 ### Advanced Usage
 

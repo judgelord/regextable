@@ -79,14 +79,14 @@ A data frame with one row per match, including:
 ### Basic Usage
 
 ```{r}
-# Extract patterns using only required arguments
-#result <- extract(
-#  data = cr2007_03_01,
-#  col_name = "header",
-#  regex_table = members
-#)
+#Extract patterns using only required arguments
+result <- extract(
+  data = cr2007_03_01,
+  col_name = "header",
+  regex_table = members
+)
 
-#head(result)
+head(result)
 ```
 
 ### Advanced Usage
