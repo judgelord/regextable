@@ -15,9 +15,13 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 
 ### Data
 ```{r}
-load("data/members.rda")
-load("data/cr2007_03_01.rda")
-data(members)
+devtools::document()
+devtools::build()
+devtools::install()
+library(regextable)
+
+data("members")
+data("cr2007_03_01")
 head(members)
 ```
 
