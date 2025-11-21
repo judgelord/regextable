@@ -114,13 +114,13 @@ extract <- function(data,
   # Apply typo correction if specified
   #if (!is.null(typo_table)) {
     #if (verbose) message("Applying typo correction...")
-    #data[[col_name]] <- correct_typos(data[[col_name]], typo_table)
+    #data[[col_name]] <- fix_typos(data[[col_name]], typo_table)
   #}
   
   # Store original text separately - don't modify the original data structure
   original_text <- data[[col_name]]
   
-  # Clean text if requested (only for matching, we'll keep original in output)
+  # Clean text if requested (only for matching, keep original in output)
   if (clean_text) {
     data_for_matching <- data
     data_for_matching[[col_name]] <- clean_text(data[[col_name]])
@@ -250,21 +250,4 @@ extract_matches_per_group <- function(data,
                              by = setNames(id_col, "data_id"))
   
   return(result)
-}
-
-#' @title Correct typos in text
-#' @description Internal function to correct typos using a typo table
-#' @keywords internal
-correct_typos <- function(text, typo_table) {
-  # Basic implementation - replace typos with corrections
-  # Assumes typo_table has columns "typo" and "correction"
-  if (!all(c("typo", "correction") %in% names(typo_table))) {
-    stop("typo_table must have 'typo' and 'correction' columns")
-  }
-  
-  for (i in seq_len(nrow(typo_table))) {
-    text <- gsub(typo_table$typo[i], typo_table$correction[i], text, ignore.case = TRUE)
-  }
-  
-  return(text)
 }
