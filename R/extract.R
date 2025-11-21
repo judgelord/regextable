@@ -12,7 +12,7 @@
 #' @param date_end Optional end date for filtering 'data'.
 #' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
-#' @param clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
+#' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @return A data frame with one row per match. Returns original text column plus `matched_pattern`.
 #' @export
@@ -28,7 +28,7 @@ extract <- function(data,
                     date_end = NULL,
                     typo_table = NULL,
                     remove_acronyms = FALSE,
-                    clean_text = TRUE,
+                    do_clean_text = TRUE,
                     verbose = TRUE) {
   
   # Process data and col_name
@@ -121,7 +121,7 @@ extract <- function(data,
   original_text <- data[[col_name]]
   
   # Clean text if requested (only for matching, keep original in output)
-  if (clean_text) {
+  if (do_clean_text) {
     data_for_matching <- data
     data_for_matching[[col_name]] <- clean_text(data[[col_name]])
   } else {
@@ -212,21 +212,8 @@ extract_matches_per_group <- function(data,
         stringsAsFactors = FALSE
       )
       
-      # Add all columns from regex_table EXCEPT the pattern column to avoid duplicates
-      regex_cols_to_add <- setdiff(names(matching_regex_rows), pattern_col)
+      return(expanded_matches)
       
-      if (length(regex_cols_to_add) > 0) {
-        # Create a data frame with the regex columns, preserving original names
-        regex_data <- matching_regex_rows[rep(1, nrow(expanded_matches)), regex_cols_to_add, drop = FALSE]
-        
-        # Use cbind to ensure column names are preserved
-        result <- cbind(expanded_matches, regex_data)
-        rownames(result) <- NULL  # Clean up row names
-        
-        return(result)
-      } else {
-        return(expanded_matches)
-      }
     } else {
       return(NULL)
     }
@@ -247,7 +234,7 @@ extract_matches_per_group <- function(data,
   # Join with original data to get all columns
   result <- dplyr::left_join(best_matches, 
                              data, 
-                             by = setNames(id_col, "data_id"))
+                             by = id_col)
   
   return(result)
 }
