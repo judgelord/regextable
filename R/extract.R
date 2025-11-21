@@ -103,7 +103,7 @@ extract <- function(data,
   # Remove acronyms if requested
   if (remove_acronyms) {
     # Remove patterns that are all uppercase (acronyms)
-    is_acronym <- grepl("^[A-Z]+$", regex_table[[pattern_col]])
+    is_acronym <- grepl("^[A-Z]{2,}$", regex_table[[pattern_col]])
     regex_table <- regex_table[!is_acronym, ]
     if (nrow(regex_table) == 0) {
       if (verbose) message("No patterns remaining after removing acronyms")
