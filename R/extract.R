@@ -1,8 +1,8 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup to extract pattern matches from a data frame, efficiently using batching. Returns original text.
+#' @description Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
-#' @param regex_table A regex lookup table with at least one pattern column.
+#' @param regex_table A regex lookup table with a pattern column.
 #' @param pattern_col Name of the regex pattern column in regex_table.
 #' @param return_cols Optional vector of column names to include in the output.
 #' @param id_col Optional column in `data` used to filter rows before matching.
