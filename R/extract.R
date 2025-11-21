@@ -78,7 +78,7 @@ extract <- function(data,
     data <- data[data[[id_col]] %in% id_filter, ]
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after ID filter")
-      return(NULL)
+      return(data.frame())
     }
   }
   
@@ -102,7 +102,7 @@ extract <- function(data,
     
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after date filter")
-      return(NULL)
+      return(data.frame())
     }
   }
   
@@ -113,7 +113,7 @@ extract <- function(data,
     regex_table <- regex_table[!is_acronym, ]
     if (nrow(regex_table) == 0) {
       if (verbose) message("No patterns remaining after removing acronyms")
-      return(NULL)
+      return(data.frame())
     }
   }
   
@@ -195,7 +195,7 @@ extract_matches_per_group <- function(data,
                                       verbose = FALSE) {
   
   if (nrow(data) == 0 || nrow(regex_table) == 0) {
-    return(NULL)
+    return(data.frame())
   }
   
   text <- data[[col_name]]
@@ -213,22 +213,24 @@ extract_matches_per_group <- function(data,
       
       # Create a row for each combination of data row and regex row
       expanded_matches <- data.frame(
-        data_id = data[[id_col]][matched_rows],
-        pattern = pattern,
+        temp_col = data[[id_col]][matched_rows],  # Temporary name
+        matched_pattern = pattern,
         stringsAsFactors = FALSE
       )
+      # Set the correct column name
+      names(expanded_matches)[1] <- id_col
       
       return(expanded_matches)
       
     } else {
-      return(NULL)
+      return(data.frame())
     }
   })
   
   all_matches <- dplyr::bind_rows(matches_list)
   
   if (nrow(all_matches) == 0) {
-    return(NULL)
+    return(data.frame())
   }
   
   # Take the first match for each data_id (original behavior)
