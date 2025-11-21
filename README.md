@@ -4,11 +4,8 @@
 
 ### Installation
 
-```{r}
-data("cr2007_03_01")
-data("members")
-head(members)
-```
+devtools::install_github("judgelord/regextable") 
+library(regextable)
 
 ## extract()
 
@@ -16,7 +13,7 @@ head(members)
 Uses a regex lookup to extract pattern matches from a data frame or character vector. Returns a data frame containing the original columns plus a matched_pattern column for each detected pattern.
 
 ### Data
-```r
+```{r}
 data("cr2007_03_01")
 data("members")
 head(members)
