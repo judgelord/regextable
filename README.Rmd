@@ -20,40 +20,28 @@ knitr::opts_chunk$set(
 )
 ```
 
-## legislators: Find legislator names in messy text <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
+## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
 
 
 
 ### Installation
 ```
-devtools::install_github("judgelord/legislators")
+devtools::install_github("judgelord/regextable")
 ```
 
 ```{r, message=FALSE}
-library(legislators)
+library(regextable)
 ```
 
 ## Data
 
-This package relies on a dataframe (`members`) of permutations of the names of members of Congress. This dataframe builds on the basic structure of voteview.com data, especially the `bioname` field. From this and other corrections, it constructs a regular expression search `pattern` and conditions under which this pattern should yield a match (e.g., when that pattern has a unique match to a member of Congress in a given Congress). `pattern` differs from Congress to Congress because some members move from the House to the Senate and because members with similar names join or leave Congress. Users can customize the provided `members` data and supply their updated version to `extractMemberName()`.
+This package relies on a dataframe (`members`) and a dataframe ('cr2007_03_01')
 
 ```{r}
 data("members")
-
+data("cr2007_03_01")
 head(members)
 ```
-
----
-
-Before searching the text, several functions clean it and "fix" common human typos and OCR errors that frustrate matching. These corrections are currently supplied in the `typos` dataset, and all types of corrections (cleaning, typos, OCR errors) are optional. Additionally, users can customize the `typos` dataset and provide it as an argument to `extractMemberName()`. 
-
-```{r}
-data("typos")
-
-head(typos)
-```
-
----
 
 #  Find U.S. legislator names in messy text with typos and inconsistent name formats
 
