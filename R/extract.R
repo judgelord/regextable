@@ -49,6 +49,12 @@ extract <- function(data,
     stop("`data` must be a data frame or a character vector")
   }
   
+  # Check for empty data
+  if (nrow(data) == 0) {
+    if (verbose) message("Input data is empty")
+    return(data.frame())  # Return empty frame instead of NULL for consistency
+  }
+  
   # Validate regex_table
   if (!pattern_col %in% names(regex_table)) {
     stop("`pattern_col` must be a column in `regex_table`")
@@ -204,8 +210,6 @@ extract_matches_per_group <- function(data,
   matches_list <- pbapply::pblapply(patterns, function(pattern) {
     matched_rows <- which(stringi::stri_detect_regex(text, pattern, case_insensitive = TRUE))
     if (length(matched_rows) > 0) {
-      # For each match, get the matching rows from regex_table
-      matching_regex_rows <- regex_table[regex_table[[pattern_col]] == pattern, ]
       
       # Create a row for each combination of data row and regex row
       expanded_matches <- data.frame(
