@@ -4,9 +4,10 @@
 
 ### Installation
 
-```r
-devtools::install_github("judgelord/regextable")
-library(regextable)
+```{r}
+data("cr2007_03_01")
+data("members")
+head(members)
 ```
 
 ## extract()
