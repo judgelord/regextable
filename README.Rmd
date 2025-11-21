@@ -1,0 +1,130 @@
+---
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  cache = FALSE,
+  collapse = FALSE,
+  warning = FALSE,
+  message = TRUE,
+  tidy = FALSE,
+  fig.align='center',
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  R.options = list(width = 200)
+)
+```
+
+## legislators: Find legislator names in messy text <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
+
+
+
+### Installation
+```
+devtools::install_github("judgelord/legislators")
+```
+
+```{r, message=FALSE}
+library(legislators)
+```
+
+## Data
+
+This package relies on a dataframe (`members`) of permutations of the names of members of Congress. This dataframe builds on the basic structure of voteview.com data, especially the `bioname` field. From this and other corrections, it constructs a regular expression search `pattern` and conditions under which this pattern should yield a match (e.g., when that pattern has a unique match to a member of Congress in a given Congress). `pattern` differs from Congress to Congress because some members move from the House to the Senate and because members with similar names join or leave Congress. Users can customize the provided `members` data and supply their updated version to `extractMemberName()`.
+
+```{r}
+data("members")
+
+head(members)
+```
+
+---
+
+Before searching the text, several functions clean it and "fix" common human typos and OCR errors that frustrate matching. These corrections are currently supplied in the `typos` dataset, and all types of corrections (cleaning, typos, OCR errors) are optional. Additionally, users can customize the `typos` dataset and provide it as an argument to `extractMemberName()`. 
+
+```{r}
+data("typos")
+
+head(typos)
+```
+
+---
+
+#  Find U.S. legislator names in messy text with typos and inconsistent name formats
+
+## Basic Usage
+
+The main function, `extractMemberName()`, returns a dataframe of the names and ICPSR ID numbers of members of Congress in a supplied vector of text. 
+
+> in the future, `extractMemberName()` may default to returning a list of dataframes the same length as the supplied data
+
+For example, we can use `extractMemberName()` to detect the names of members of Congress in the text of the Congressional Record. Let's start with text from the Congressional Record from 3/1/2007, scraped and parsed using methods described [here](https://judgelord.github.io/congressionalrecord/). 
+
+```{r}
+data("cr2007_03_01")
+
+head(cr2007_03_01)
+
+head(cr2007_03_01$url)
+```
+
+This is an extremely simple example because the text strings containing the names of the members of Congress in the `speaker` column are short, consistently formatted, and do not contain much other text. However, `extractMemberName()` can also search much longer and messier texts, including text where names are not consistently formatted or where they contain common typos introduced by humans or common OCR errors. Indeed, these functions were developed to identify members of Congress in ugly text data like [this](https://judgelord.github.io/corr/corr_pres.html#22). 
+
+To better match member names, this function currently requires either:
+
+- a column "congress" (this can be created from a date) or 
+- a vector of congresses to limit the search to supplied to the `congresses` argument
+
+For illustration, I show both options in the example below.
+
+Member names augmented from voteview come with the `legislators` package, but users can also supply a customized version of these data to the `members` argument.
+
+### `extractMemberName()`
+
+```{r, message=TRUE}
+# extract legislator names and match to voteview ICPSR numbers
+cr <- extractMemberName(data = cr2007_03_01, 
+                        col_name = "speaker", # The text strings to search
+                        congress = 110,
+                        cl = 4 #Use 4 cores (on Mac)
+)
+
+cr
+```
+
+In this example, all observations are in the 110th Congress, so we only search for members who served in the 110th.
+
+Because `extractMemberName()` links each detected name to ICPSR IDs from voteview.com, we already have some information, like state and district for each legislator detected in the text (scroll to the right). 
+
+
+
+## TODO 
+
+### Dynamic data 
+
+- [ ] make some kind of version-controlled spreadsheet where users can submit additional nicknames, maiden names, etc. to augment the voteview data. This is currently done in data/make_members/nameCongress.R, but it would not be easy for users to edit and then re-make the regex table.
+- [ ] make some sort of version-controlled spreadsheet where users can submit common typos they find. Currently, typos.R generates typos.rda, which is loaded with the package.
+ 
+### Vignettes
+
+- [ ] Add a vignette using messy OCRed legislator letters to FERC from replication data for ["Legislator Advocacy on Behalf of Constituents and Corporate Donors"](https://judgelord.github.io/research/ferc/)
+- [ ] Add a vignette using [public comment data](https://github.com/judgelord/rulemaking) (sparse legislator names)
+
+### Functions 
+
+- [X] `extractMemberName()` needs options to supply custom typos and additions to the main regex table
+- [X] correcting OCR errors and typos should be optional in `extractMemberName()`
+- [ ] integrate with the [`congress`](https://github.com/ippsr/congress) and/or [`congressData`](https://github.com/IPPSR/congress) packages. For example, we may want a function (`augmentCongress` or `augment_legislators`?) to join in identifiers for other datasets on ICPSR numbers. Perhaps this is best left to users using the `congress` package. 
+- [ ] Additionally, `committees.R` provides a crosswalk for Stewart ICPSR numbers
+- [ ] Support dates for congress
+
+### Documentation 
+
+- [ ] Document helper functions for `extractMemberName()`
+- [X] Document additional functions that help prep text for best matching
+- [ ] Document example data (including FERC and public comment data for new vignettes)
