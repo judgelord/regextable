@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/> [![CRAN status](https://www.r-pkg.org/badges/version/legislators)](https://CRAN.R-project.org/package=legislators)
+## regextable: Apply pattern-based text extraction and cleaning
 
 ### Installation
 
