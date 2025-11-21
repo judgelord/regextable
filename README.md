@@ -18,6 +18,7 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 ```r
 data("cr2007_03_01")
 data("members")
+head(members)
 ```
 
 ### Required Parameters
@@ -54,7 +55,7 @@ This makes `extract()` flexible for extracting specific patterns while keeping t
 ```r
 # Extract using default pattern column
 result <- extract(
-  data = cr2007_03_01.rda,
+  data = cr2007_03_01,
   col_name = "header",
   regex_table = members
 )
