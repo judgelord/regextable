@@ -736,130 +736,14 @@ each row</p>
 #&gt; 2      82 2007-03-01 PENCE EXCHANGE WITH AMBASSADOR RICHARD C. HOLBROOK; Congressional Record Vol. 153, No. 35 &quot;gregory pence|\\bg pence|greg pence|(^|senator |representative )pence\\b|pence, greg|pe…
 #&gt; 3      94 2007-03-01 WHITE HOUSE NEEDS TO CHANGE RHETORIC; Congressional Record Vol. 153, No. 35               &quot;richard white|richard alan white|\\br white|richard a white|rick white|rick alan white|…
 #&gt; 4     127 2007-03-01 PEACE CORPS VOLUNTEERS; Congressional Record Vol. 153, No. 35                             &quot;roger peace|roger craft peace|\\br peace|roger c peace|\\bna peace|(^|senator |represen…</code></pre>
-<blockquote>
-<p>in the future, <code>extractMemberName()</code> may default to
-returning a list of dataframes the same length as the supplied data</p>
-</blockquote>
-<p>For example, we can use <code>extractMemberName()</code> to detect
-the names of members of Congress in the text of the Congressional
-Record. Let’s start with text from the Congressional Record from
-3/1/2007, scraped and parsed using methods described <a href="https://judgelord.github.io/congressionalrecord/">here</a>.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">head</span>(cr2007_03_01)</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 6 × 5
-#&gt;   date       speaker                             header                                                                                                                                    url   url_txt
-#&gt;   &lt;date&gt;     &lt;chr&gt;                               &lt;chr&gt;                                                                                                                                     &lt;chr&gt; &lt;chr&gt;  
-#&gt; 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35                                     http… https:…
-#&gt; 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol.… http… https:…
-#&gt; 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35                                                            http… https:…
-#&gt; 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35                                                           http… https:…
-#&gt; 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT                                                                            http… https:…
-#&gt; 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AMERICA; Congressional Record Vol. 153, No. 35                               http… https:…</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">head</span>(cr2007_03_01<span class="sc">$</span>url)</span></code></pre></div>
-<pre><code>#&gt; [1] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2&quot;
-#&gt; [2] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3&quot;
-#&gt; [3] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4&quot;
-#&gt; [4] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5&quot;
-#&gt; [5] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1&quot;
-#&gt; [6] &quot;https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E432-2&quot;</code></pre>
-<p>This is an extremely simple example because the text strings
-containing the names of the members of Congress in the
-<code>speaker</code> column are short, consistently formatted, and do
-not contain much other text. However, <code>extractMemberName()</code>
-can also search much longer and messier texts, including text where
-names are not consistently formatted or where they contain common typos
-introduced by humans or common OCR errors. Indeed, these functions were
-developed to identify members of Congress in ugly text data like <a href="https://judgelord.github.io/corr/corr_pres.html#22">this</a>.</p>
-<p>To better match member names, this function currently requires
-either:</p>
+<h3 id="future-development">Future Development</h3>
 <ul>
-<li>a column “congress” (this can be created from a date) or</li>
-<li>a vector of congresses to limit the search to supplied to the
-<code>congresses</code> argument</li>
-</ul>
-<p>For illustration, I show both options in the example below.</p>
-<p>Member names augmented from voteview come with the
-<code>legislators</code> package, but users can also supply a customized
-version of these data to the <code>members</code> argument.</p>
-<h3 id="extractmembername"><code>extractMemberName()</code></h3>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># extract legislator names and match to voteview ICPSR numbers</span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>cr <span class="ot">&lt;-</span> <span class="fu">extractMemberName</span>(<span class="at">data =</span> cr2007_03_01, </span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>                        <span class="at">col_name =</span> <span class="st">&quot;speaker&quot;</span>, <span class="co"># The text strings to search</span></span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>                        <span class="at">congress =</span> <span class="dv">110</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>                        <span class="at">cl =</span> <span class="dv">4</span> <span class="co">#Use 4 cores (on Mac)</span></span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>#&gt; Fixing typos...
-#&gt; Searching data for members of the 110th congress, n = 154 (123 distinct strings).</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>cr</span></code></pre></div>
-<pre><code>#&gt; # A tibble: 193 × 14
-#&gt;    data_id icpsr bioname                    last_name first_name congress chamber state_abbrev district_code date       speaker                          header                            url   url_txt
-#&gt;      &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;                      &lt;chr&gt;     &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                &lt;dbl&gt; &lt;date&gt;     &lt;chr&gt;                            &lt;chr&gt;                             &lt;chr&gt; &lt;chr&gt;  
-#&gt;  1       1 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING JARRETT MUCK FOR ACH… http… https:…
-#&gt;  2       2 29906 UDALL, Mark                UDALL     Mark            110 House   CO                       2 2007-03-01 hon mark udall;mr udall          INTRODUCING A CONCURRENT RESOLUT… http… https:…
-#&gt;  3       3 20136 LANGEVIN, James            LANGEVIN  James           110 House   RI                       2 2007-03-01 hon james r langevin;mr langevin BIOSURVEILLANCE ENHANCEMENT ACT … http… https:…
-#&gt;  4       4 20501 COSTA, Jim                 COSTA     Jim             110 House   CA                      20 2007-03-01 hon jim costa;mr costa           A TRIBUTE TO THE LIFE OF MRS. VE… http… https:…
-#&gt;  5       5 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING JARRETT MUCK FOR ACH… http… https:…
-#&gt;  6       6 29339 BISHOP, Sanford Dixon, Jr. BISHOP    Sanford         110 House   GA                       2 2007-03-01 hon sanford d bishop;mr bishop   IN HONOR OF SYNOVUS BEING NAMED … http… https:…
-#&gt;  7       7 15072 TOWNS, Edolphus            TOWNS     Edolphus        110 House   NY                      10 2007-03-01 hon edolphus towns;mr towns      NEW PUNJAB CHIEF MINISTER URGED … http… https:…
-#&gt;  8       8 29576 DAVIS, Thomas M., III      DAVIS     Thomas          110 House   VA                      11 2007-03-01 hon tom davis;mr tom davis       HONORING THE 30TH ANNIVERSARY OF… http… https:…
-#&gt;  9       9 20124 GRAVES, Samuel             GRAVES    Samuel          110 House   MO                       6 2007-03-01 hon sam graves;mr graves         RECOGNIZING BRIAN PATRICK WESSLI… http… https:…
-#&gt; 10      10 29906 UDALL, Mark                UDALL     Mark            110 House   CO                       2 2007-03-01 hon mark udall;mr udall          INTRODUCTION OF ROYALTY-IN-KIND … http… https:…
-#&gt; # ℹ 183 more rows</code></pre>
-<p>In this example, all observations are in the 110th Congress, so we
-only search for members who served in the 110th.</p>
-<p>Because <code>extractMemberName()</code> links each detected name to
-ICPSR IDs from voteview.com, we already have some information, like
-state and district for each legislator detected in the text (scroll to
-the right).</p>
-<h2 id="todo">TODO</h2>
-<h3 id="dynamic-data">Dynamic data</h3>
-<ul class="task-list">
-<li><label><input type="checkbox"></input>make some kind of version-controlled
-spreadsheet where users can submit additional nicknames, maiden names,
-etc. to augment the voteview data. This is currently done in
-data/make_members/nameCongress.R, but it would not be easy for users to
-edit and then re-make the regex table.</label></li>
-<li><label><input type="checkbox"></input>make some sort of version-controlled
-spreadsheet where users can submit common typos they find. Currently,
-typos.R generates typos.rda, which is loaded with the
-package.</label></li>
-</ul>
-<h3 id="vignettes">Vignettes</h3>
-<ul class="task-list">
-<li><label><input type="checkbox"></input>Add a vignette using messy OCRed
-legislator letters to FERC from replication data for <a href="https://judgelord.github.io/research/ferc/">“Legislator Advocacy
-on Behalf of Constituents and Corporate Donors”</a></label></li>
-<li><label><input type="checkbox"></input>Add a vignette using <a href="https://github.com/judgelord/rulemaking">public comment data</a>
-(sparse legislator names)</label></li>
-</ul>
-<h3 id="functions">Functions</h3>
-<ul class="task-list">
-<li><label><input type="checkbox" checked></input><code>extractMemberName()</code> needs options to supply
-custom typos and additions to the main regex table</label></li>
-<li><label><input type="checkbox" checked></input>correcting OCR errors and
-typos should be optional in
-<code>extractMemberName()</code></label></li>
-<li><label><input type="checkbox"></input>integrate with the <a href="https://github.com/ippsr/congress"><code>congress</code></a>
-and/or <a href="https://github.com/IPPSR/congress"><code>congressData</code></a>
-packages. For example, we may want a function
-(<code>augmentCongress</code> or <code>augment_legislators</code>?) to
-join in identifiers for other datasets on ICPSR numbers. Perhaps this is
-best left to users using the <code>congress</code> package.</label></li>
-<li><label><input type="checkbox"></input>Additionally,
-<code>committees.R</code> provides a crosswalk for Stewart ICPSR
-numbers</label></li>
-<li><label><input type="checkbox"></input>Support dates for
-congress</label></li>
-</ul>
-<h3 id="documentation">Documentation</h3>
-<ul class="task-list">
-<li><label><input type="checkbox"></input>Document helper functions for
-<code>extractMemberName()</code></label></li>
-<li><label><input type="checkbox" checked></input>Document additional
-functions that help prep text for best matching</label></li>
-<li><label><input type="checkbox"></input>Document example data (including
-FERC and public comment data for new vignettes)</label></li>
+<li>Add support for <code>typo_table</code> to correct known text errors
+before matching.</li>
+<li>Improve strict matching rules for patterns that may need more
+inclusive or more restrictive word boundaries.</li>
+<li>Enable user-defined ID systems (e.g., corporations, campaigns) and
+control whether text is returned with matches.</li>
 </ul>
 
 </body>
