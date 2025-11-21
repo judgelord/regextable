@@ -34,13 +34,15 @@ library(regextable)
 ```
 
 ## Data
+This package operates on a data frame containing text to search and a corresponding regex lookup table containing patterns to match. Users must supply both the text data and the regex table, allowing extract() to work with any dataset or domain.
 
-This package relies on a dataframe (`members`) and a dataframe ('cr2007_03_01')
+For example, you can provide a table of names, companies, or acronyms as the regex table, and any data frame of text as input. The included example datasets (`members` and `cr2007_03_01`) demonstrate usage, but these are not defaults, you can use any data you like.
 
 ```{r}
 data("members")
-data("cr2007_03_01")
 head(members)
+data("cr2007_03_01")
+head(cr2007_03_01)
 ```
 
 #  Find U.S. legislator names in messy text with typos and inconsistent name formats
