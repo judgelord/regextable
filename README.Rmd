@@ -43,7 +43,7 @@ This package is generic: it works with any text data and any regex table. For ex
 ## Data
 This package operates on a data frame containing text to search and a corresponding regex lookup table containing patterns to match. Users must supply both the text data and the regex table, allowing extract() to work with any dataset or domain.
 
-For example, you can provide a table of names, companies, or acronyms as the regex table, and any data frame of text as input. The included example datasets (`members` and `cr2007_03_01`) demonstrate usage, but these are not defaults, you can use any data you like.
+For example, you can provide a table of names, companies, or acronyms as the regex table, and any data frame of text as input. Example datasets `members` and `cr2007_03_01` from the legislators package are used here only for illustration. Users can supply any data frame and any regex table.
 
 ```{r}
 data("members")
@@ -91,25 +91,22 @@ head(result)
 
 ### Advanced Usage
 ```{r}
-# Extract with optional parameters
-#result_advanced <- extract(
-#  data = cr2007_03_01,
-#  col_name = "text",
-#  regex_table = members,
-#  id_col = "id",
-#  id_filter = c(101, 102),
-#  date_col = "date",
-#  date_start = "2023-01-01",
-#  date_end = "2023-06-30",
-#  remove_acronyms = TRUE,
-#  return_cols = c("id", "text")
-#)
+# Advanced usage with optional filters
+result_advanced <- extract(
+  data = cr2007_03_01,
+  col_name = "header",
+  regex_table = members,
+  id_filter = 80:130,         
+  date_col = "date",               
+  date_start = "2007-01-01",
+  date_end = "2007-12-31",
+  remove_acronyms = TRUE,
+  return_cols = c("date", "header", "pattern")
+)
 
-#head(result_advanced)
+head(result_advanced)
 ```
 
-
-The main function, `extractMemberName()`, returns a dataframe of the names and ICPSR ID numbers of members of Congress in a supplied vector of text. 
 
 > in the future, `extractMemberName()` may default to returning a list of dataframes the same length as the supplied data
 
@@ -153,7 +150,10 @@ Because `extractMemberName()` links each detected name to ICPSR IDs from votevie
 
 
 
-## TODO 
+### Future Development
+- Add support for `typo_table` to correct known text errors before matching.
+- Improve strict matching rules for patterns that may need more inclusive or more restrictive word boundaries.  
+- Enable user-defined ID systems (e.g., corporations, campaigns) and control whether text is returned with matches. 
 
 ### Dynamic data 
 

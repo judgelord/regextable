@@ -163,6 +163,7 @@ extract <- function(data,
     }
   }
   
+  if (verbose) message("Number of matches found: ", nrow(result))
   return(result)
 }
 

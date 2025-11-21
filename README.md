@@ -34,9 +34,10 @@ must supply both the text data and the regex table, allowing extract()
 to work with any dataset or domain.
 
 For example, you can provide a table of names, companies, or acronyms as
-the regex table, and any data frame of text as input. The included
-example datasets (`members` and `cr2007_03_01`) demonstrate usage, but
-these are not defaults, you can use any data you like.
+the regex table, and any data frame of text as input. Example datasets
+`members` and `cr2007_03_01` from the legislators package are used here
+only for illustration. Users can supply any data frame and any regex
+table.
 
 ``` r
 data("members")
@@ -119,6 +120,8 @@ result <- extract(
 
     #> Matching 14752 patterns against 154 text entries
 
+    #> Number of matches found: 8
+
 ``` r
 head(result)
 ```
@@ -136,26 +139,35 @@ head(result)
 ### Advanced Usage
 
 ``` r
-# Extract with optional parameters
-#result_advanced <- extract(
-#  data = cr2007_03_01,
-#  col_name = "text",
-#  regex_table = members,
-#  id_col = "id",
-#  id_filter = c(101, 102),
-#  date_col = "date",
-#  date_start = "2023-01-01",
-#  date_end = "2023-06-30",
-#  remove_acronyms = TRUE,
-#  return_cols = c("id", "text")
-#)
-
-#head(result_advanced)
+# Advanced usage with optional filters
+result_advanced <- extract(
+  data = cr2007_03_01,
+  col_name = "header",
+  regex_table = members,
+  id_filter = 80:130,         
+  date_col = "date",               
+  date_start = "2007-01-01",
+  date_end = "2007-12-31",
+  remove_acronyms = TRUE,
+  return_cols = c("date", "header", "pattern")
+)
 ```
 
-The main function, `extractMemberName()`, returns a dataframe of the
-names and ICPSR ID numbers of members of Congress in a supplied vector
-of text.
+    #> Matching 14752 patterns against 51 text entries
+
+    #> Number of matches found: 4
+
+``` r
+head(result_advanced)
+```
+
+    #> # A tibble: 4 × 4
+    #>   data_id date       header                                                                                    pattern                                                                                  
+    #>     <int> <date>     <chr>                                                                                     <chr>                                                                                    
+    #> 1      80 2007-03-01 KUCINICH OPPOSED TO ATTACK ON IRAN; Congressional Record Vol. 153, No. 35                 "dennis kucinich|\\bd kucinich|dennis j kucinich|denny kucinich|denny j kucinich|(^|sena…
+    #> 2      82 2007-03-01 PENCE EXCHANGE WITH AMBASSADOR RICHARD C. HOLBROOK; Congressional Record Vol. 153, No. 35 "gregory pence|\\bg pence|greg pence|(^|senator |representative )pence\\b|pence, greg|pe…
+    #> 3      94 2007-03-01 WHITE HOUSE NEEDS TO CHANGE RHETORIC; Congressional Record Vol. 153, No. 35               "richard white|richard alan white|\\br white|richard a white|rick white|rick alan white|…
+    #> 4     127 2007-03-01 PEACE CORPS VOLUNTEERS; Congressional Record Vol. 153, No. 35                             "roger peace|roger craft peace|\\br peace|roger c peace|\\bna peace|(^|senator |represen…
 
 > in the future, `extractMemberName()` may default to returning a list
 > of dataframes the same length as the supplied data
