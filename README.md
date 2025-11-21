@@ -3,9 +3,8 @@
 ## regextable: Apply pattern-based text extraction and cleaning <img src="man/figures/logo.png" align="right" width="150"/>
 
 ### Installation
-
-```r
-devtools::install_github("judgelord/regextable")
+```{r}
+devtools::install_github("judgelord/regextable") 
 library(regextable)
 ```
 
@@ -13,6 +12,13 @@ library(regextable)
 
 ### Description
 Uses a regex lookup to extract pattern matches from a data frame or character vector. Returns a data frame containing the original columns plus a matched_pattern column for each detected pattern.
+
+### Data
+```{r}
+data("cr2007_03_01")
+data("members")
+head(members)
+```
 
 ### Required Parameters
 - **data**: A data frame or character vector containing the text to search.
@@ -30,7 +36,7 @@ Uses a regex lookup to extract pattern matches from a data frame or character ve
 - **typo_table**: (default NULL) Table of typos to correct in data. (planned for future versions)
 - **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
 - **clean_text**: (default TRUE) If TRUE, applies basic text cleaning before matching.
-- **batch_size**: (default 1000) Number of patterns to process per batch.
+- **do_clean_text**: (default TRUE) Clean text before matching.
 - **verbose**: (default TRUE) If TRUE, displays progress messages.
 
 ### Returns
@@ -46,15 +52,11 @@ This makes `extract()` flexible for extracting specific patterns while keeping t
 
 ### Basic Example
 ```r
-# Example data
-data(cr)  # Example dataset in the package
-head(cr$text)
-
 # Extract using default pattern column
 result <- extract(
-  data = cr,
-  col_name = "text",
-  regex_table = my_patterns
+  data = cr2007_03_01,
+  col_name = "header",
+  regex_table = members
 )
 
 head(result)
