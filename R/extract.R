@@ -131,6 +131,7 @@ extract <- function(data,
   # Process the data
   result <- extract_matches_per_group(
     data = data_for_matching,
+    original_data = data,
     col_name = col_name,
     regex_table = regex_table,
     pattern_col = pattern_col,
@@ -180,6 +181,7 @@ extract <- function(data,
 #' @description Internal function to extract matches for each text entry
 #' @keywords internal
 extract_matches_per_group <- function(data,
+                                      original_data,
                                       col_name,
                                       regex_table,
                                       pattern_col,
@@ -232,9 +234,7 @@ extract_matches_per_group <- function(data,
     dplyr::ungroup()
   
   # Join with original data to get all columns
-  result <- dplyr::left_join(best_matches, 
-                             data, 
-                             by = id_col)
+  result <- dplyr::left_join(best_matches, original_data, by = id_col)
   
   return(result)
 }
