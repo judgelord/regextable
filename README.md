@@ -15,16 +15,10 @@ library(regextable)
 
 ### Description
 
-`extract()` is the core function of the regextable package. It uses a
-user-supplied regex lookup table to extract pattern matches from a data
-frame or character vector. The function returns a data frame containing
-the original columns plus a `pattern` column for each detected pattern
-or only user specified columns.
-
-This package is generic: it works with any text data and any regex
-table. For example, you can extract names, companies, acronyms, or other
-entities from text. Users can supply their own data frames and pattern
-tables to adapt `extract()` to their needs.
+regextable provides tools for extracting regex-based pattern matches
+from text using a user-supplied lookup table. It is designed to work
+with any text dataset and any regex table, making it adaptable across
+domains (names, companies, acronyms, legislative text, etc.).
 
 ## Data
 
