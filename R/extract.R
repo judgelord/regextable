@@ -217,7 +217,7 @@ extract_matches_per_group <- function(data,
     return(data.frame())
   }
   
-  # Take the first match for each data_id (original behavior)
+  # Take the first match for each data_id
   best_matches <- all_matches %>%
     dplyr::group_by(.data[[id_col]]) %>%
     dplyr::slice(1) %>%
