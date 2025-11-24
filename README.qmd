@@ -4,27 +4,27 @@ format: gfm
 editor-options: 
   chunk-output-type: console
 execute:
-  eval: true   # do not run R code, just show it
-  echo: true    # show the code in the output
+  eval: true
+  echo: true
 ---
-
-<!-- README.md is generated from README.qmd. Please edit that file -->
 
 ```{r}
 #| include: false
 devtools::load_all(".")
 knitr::opts_chunk$set(
-cache = FALSE,
-collapse = FALSE,
-warning = FALSE,
-message = TRUE,
-tidy = FALSE,
-fig.align = "center",
-comment = "#>",
-fig.path = "man/figures/README-",
-R.options = list(width = 200)
+  cache = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  tidy = FALSE,
+  fig.align = "center",
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  R.options = list(width = 120)
 )
 ```
+
+## regextable: Apply pattern-based text extraction and cleaning
 
 ### Installation
 
@@ -38,9 +38,14 @@ library(regextable)
 
 ## Data
 
-This package operates on a data frame containing text to search and a corresponding regex lookup table containing patterns to match. Users must supply both the text data and the regex table, allowing extract() to work with any dataset or domain.
+This package operates on two inputs:
 
-For example, you can provide a table of names, companies, or acronyms as the regex table, and any data frame of text as input. Example datasets `members` and `cr2007_03_01` from the legislators package are used here only for illustration. Users can supply any data frame and any regex table.
+1.  A data frame containing the text to search.
+2.  A regex lookup table containing patterns to match.
+
+Because users supply both the data and the patterns, `extract()` works across any domain (legislators, corporations, biology, etc.).
+
+The examples below use the `members` and `cr2007_03_01` datasets included in this package for illustration.
 
 ```{r}
 data("members")
@@ -82,7 +87,6 @@ print(cleaned_text)
 -   **date_end**: (default NULL) End date for filtering rows.
 -   **typo_table**: (default NULL) Table of typos to correct in data. (planned for future versions)
 -   **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
--   **clean_text**: (default TRUE) If TRUE, applies basic text cleaning before matching.
 -   **do_clean_text**: (default TRUE) Clean text before matching.
 -   **verbose**: (default TRUE) If TRUE, displays progress messages.
 

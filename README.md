@@ -1,7 +1,7 @@
 # regextable: Apply pattern-based text extraction and cleaning
 
 
-<!-- README.md is generated from README.qmd. Please edit that file -->
+## regextable: Apply pattern-based text extraction and cleaning
 
 ### Installation
 
@@ -13,46 +13,41 @@ library(regextable)
 
 ## Data
 
-This package operates on a data frame containing text to search and a
-corresponding regex lookup table containing patterns to match. Users
-must supply both the text data and the regex table, allowing extract()
-to work with any dataset or domain.
+This package operates on two inputs:
 
-For example, you can provide a table of names, companies, or acronyms as
-the regex table, and any data frame of text as input. Example datasets
-`members` and `cr2007_03_01` from the legislators package are used here
-only for illustration. Users can supply any data frame and any regex
-table.
+1.  A data frame containing the text to search.
+2.  A regex lookup table containing patterns to match.
+
+Because users supply both the data and the patterns, `extract()` works
+across any domain (legislators, corporations, biology, etc.).
+
+The examples below use the `members` and `cr2007_03_01` datasets
+included in this package for illustration.
 
 ``` r
 data("members")
 head(members)
-```
-
-    #> # A tibble: 6 × 9
-    #>   congress chamber   bioname                      pattern                                                                                          icpsr state_abbrev district_code first_name last_name
-    #>      <dbl> <chr>     <chr>                        <chr>                                                                                            <dbl> <chr>                <dbl> <chr>      <chr>    
-    #> 1      117 President TRUMP, Donald John           "donald trump|donald john trump|\\bd trump|donald j trump|don trump|don john trump|don j trump|… 99912 USA                      0 Donald     TRUMP    
-    #> 2      117 President BIDEN, Joseph Robinette, Jr. "joseph biden|joseph robinette biden|\\bj biden|joseph r biden|joe biden|joe robinette biden|jo… 99913 USA                      0 Joseph     BIDEN    
-    #> 3      117 House     ROGERS, Mike Dennis          "mike rogers|mike dennis rogers|\\bm rogers|mike d rogers|michael rogers|michael dennis rogers|… 20301 AL                       3 Mike       ROGERS   
-    #> 4      117 House     SEWELL, Terri                "terri sewell|\\bt sewell|terri a sewell|\\bna sewell|(^|senator |representative )sewell\\b|sew… 21102 AL                       7 Terri      SEWELL   
-    #> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm brooks|\\bna brooks|(^|senator |representative )brooks\\b|brooks, mo|brooks mo|… 21193 AL                       5 Mo         BROOKS   
-    #> 6      117 House     PALMER, Gary James           "gary palmer|gary james palmer|\\bg palmer|gary j palmer|\\bna palmer|(^|senator |representativ… 21500 AL                       6 Gary       PALMER
-
-``` r
+#> # A tibble: 6 × 9
+#>   congress chamber   bioname                      pattern          icpsr state_abbrev district_code first_name last_name
+#>      <dbl> <chr>     <chr>                        <chr>            <dbl> <chr>                <dbl> <chr>      <chr>    
+#> 1      117 President TRUMP, Donald John           "donald trump|d… 99912 USA                      0 Donald     TRUMP    
+#> 2      117 President BIDEN, Joseph Robinette, Jr. "joseph biden|j… 99913 USA                      0 Joseph     BIDEN    
+#> 3      117 House     ROGERS, Mike Dennis          "mike rogers|mi… 20301 AL                       3 Mike       ROGERS   
+#> 4      117 House     SEWELL, Terri                "terri sewell|\… 21102 AL                       7 Terri      SEWELL   
+#> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm… 21193 AL                       5 Mo         BROOKS   
+#> 6      117 House     PALMER, Gary James           "gary palmer|ga… 21500 AL                       6 Gary       PALMER
 data("cr2007_03_01")
 head(cr2007_03_01)
+#> # A tibble: 6 × 5
+#>   date       speaker                             header                                                    url   url_txt
+#>   <date>     <chr>                               <chr>                                                     <chr> <chr>  
+#> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE… http… https:…
+#> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH AN… http… https:…
+#> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional R… http… https:…
+#> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional … http… https:…
+#> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE… http… https:…
+#> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIE… http… https:…
 ```
-
-    #> # A tibble: 6 × 5
-    #>   date       speaker                             header                                                                                                                                    url   url_txt
-    #>   <date>     <chr>                               <chr>                                                                                                                                     <chr> <chr>  
-    #> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35                                     http… https:…
-    #> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol.… http… https:…
-    #> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35                                                            http… https:…
-    #> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35                                                           http… https:…
-    #> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT                                                                            http… https:…
-    #> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AMERICA; Congressional Record Vol. 153, No. 35                               http… https:…
 
 ## Text cleaning
 
@@ -64,9 +59,8 @@ and normalizes formatting.
 text <- "  HELLO---WORLD  "
 cleaned_text <- clean_text(text)
 print(cleaned_text)
+#> [1] "hello---world"
 ```
-
-    #> [1] "hello---world"
 
 ## Extract regex-based matches from text
 
@@ -104,8 +98,6 @@ specified).
   (planned for future versions)
 - **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase
   patterns from regex_table.
-- **clean_text**: (default TRUE) If TRUE, applies basic text cleaning
-  before matching.
 - **do_clean_text**: (default TRUE) Clean text before matching.
 - **verbose**: (default TRUE) If TRUE, displays progress messages.
 
@@ -127,25 +119,18 @@ result <- extract(
   col_name = "header",
   regex_table = members
 )
-```
 
-    #> Matching 14752 patterns against 154 text entries
-
-    #> Number of matches found: 8
-
-``` r
 head(result)
+#> # A tibble: 6 × 7
+#>   date       speaker                              header                                   url   url_txt data_id pattern
+#>   <date>     <chr>                                <chr>                                    <chr> <chr>     <int> <chr>  
+#> 1 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        NEW PUNJAB CHIEF MINISTER URGED TO WORK… http… https:…       7 "harry…
+#> 2 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        SIKH EDITOR WRITES TO PRESIDENT BUSH, U… http… https:…      23 "georg…
+#> 3 2007-03-01 HON. GABRIELLE GIFFORDS;Ms. GIFFORDS CROSS PARTY LINES TO PASS COMPREHENSIVE… http… https:…      31 "olive…
+#> 4 2007-03-01 HON. GREGORY W. MEEKS;Mr. MEEKS      BLACK HISTORY MONTH; Congressional Reco… http… https:…      43 "diane…
+#> 5 2007-03-01 Mr. KUCINICH                         KUCINICH OPPOSED TO ATTACK ON IRAN; Con… http… https:…      80 "denni…
+#> 6 2007-03-01 Mr. PENCE                            PENCE EXCHANGE WITH AMBASSADOR RICHARD … http… https:…      82 "grego…
 ```
-
-    #> # A tibble: 6 × 7
-    #>   date       speaker                              header                                                                                                      url                url_txt data_id pattern
-    #>   <date>     <chr>                                <chr>                                                                                                       <chr>              <chr>     <int> <chr>  
-    #> 1 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        NEW PUNJAB CHIEF MINISTER URGED TO WORK FOR SIKH SOVEREIGNTY; Congressional Record Vol. 153, No. 35         https://www.congr… https:…       7 "harry…
-    #> 2 2007-03-01 HON. EDOLPHUS TOWNS;Mr. TOWNS        SIKH EDITOR WRITES TO PRESIDENT BUSH, URGES SUPPORT FOR SIKH FREEDOM; Congressional Record Vol. 153, No. 35 https://www.congr… https:…      23 "georg…
-    #> 3 2007-03-01 HON. GABRIELLE GIFFORDS;Ms. GIFFORDS CROSS PARTY LINES TO PASS COMPREHENSIVE IMMIGRATION REFORM; Congressional Record Vol. 153, No. 35           https://www.congr… https:…      31 "olive…
-    #> 4 2007-03-01 HON. GREGORY W. MEEKS;Mr. MEEKS      BLACK HISTORY MONTH; Congressional Record Vol. 153, No. 35                                                  https://www.congr… https:…      43 "diane…
-    #> 5 2007-03-01 Mr. KUCINICH                         KUCINICH OPPOSED TO ATTACK ON IRAN; Congressional Record Vol. 153, No. 35                                   https://www.congr… https:…      80 "denni…
-    #> 6 2007-03-01 Mr. PENCE                            PENCE EXCHANGE WITH AMBASSADOR RICHARD C. HOLBROOK; Congressional Record Vol. 153, No. 35                   https://www.congr… https:…      82 "grego…
 
 ### Advanced Usage
 
@@ -166,23 +151,16 @@ result_advanced <- extract(
   remove_acronyms = TRUE,
   return_cols = c("date", "header", "pattern")
 )
-```
 
-    #> Matching 14752 patterns against 51 text entries
-
-    #> Number of matches found: 4
-
-``` r
 head(result_advanced)
+#> # A tibble: 4 × 4
+#>   data_id pattern                                                                                      date       header
+#>     <int> <chr>                                                                                        <date>     <chr> 
+#> 1      80 "dennis kucinich|\\bd kucinich|dennis j kucinich|denny kucinich|denny j kucinich|(^|senator… 2007-03-01 KUCIN…
+#> 2      82 "gregory pence|\\bg pence|greg pence|(^|senator |representative )pence\\b|pence, greg|pence… 2007-03-01 PENCE…
+#> 3      94 "richard white|richard alan white|\\br white|richard a white|rick white|rick alan white|ric… 2007-03-01 WHITE…
+#> 4     127 "roger peace|roger craft peace|\\br peace|roger c peace|\\bna peace|(^|senator |representat… 2007-03-01 PEACE…
 ```
-
-    #> # A tibble: 4 × 4
-    #>   data_id pattern                                                                                                                                                                      date       header
-    #>     <int> <chr>                                                                                                                                                                        <date>     <chr> 
-    #> 1      80 "dennis kucinich|\\bd kucinich|dennis j kucinich|denny kucinich|denny j kucinich|(^|senator |representative )kucinich\\b|kucinich, denny|kucinich, dennis|kucinich dennis|k… 2007-03-01 KUCIN…
-    #> 2      82 "gregory pence|\\bg pence|greg pence|(^|senator |representative )pence\\b|pence, greg|pence, gregory|pence gregory|pence, g\\b|representative pence\\b"                      2007-03-01 PENCE…
-    #> 3      94 "richard white|richard alan white|\\br white|richard a white|rick white|rick alan white|rick a white|(^|senator |representative )white\\b|white, rick|white, richard|white … 2007-03-01 WHITE…
-    #> 4     127 "roger peace|roger craft peace|\\br peace|roger c peace|\\bna peace|(^|senator |representative )peace\\b|peace, roger|peace roger|peace, r\\b|senator peace\\b|r c peace"    2007-03-01 PEACE…
 
 ### Future Development
 
