@@ -1,9 +1,7 @@
-# regextable README
+# regextable: Apply pattern-based text extraction and cleaning
 
 
 <!-- README.md is generated from README.qmd. Please edit that file -->
-
-## regextable: Apply pattern-based text extraction and cleaning
 
 ### Installation
 
@@ -43,14 +41,14 @@ and normalizes formatting.
 clean_text("  HELLO---WORLD  ")
 ```
 
-## extract()
+## Extract regex-based matches from text
 
 ### Description
 
-regextable provides tools for extracting regex-based pattern matches
-from text using a user-supplied lookup table. It is designed to work
-with any text dataset and any regex table, making it adaptable across
-domains (names, companies, acronyms, legislative text, etc.).
+`extract()` performs regex-based matching on a text column using a
+lookup table. It returns a data frame with one row per detected pattern
+match and includes all original columns (or a subset if `return_cols` is
+specified).
 
 ### Required Parameters
 
@@ -92,6 +90,9 @@ regex pattern matched in each row
 
 ### Basic Usage
 
+The simplest use of `extract()` with only the required arguments. This
+finds all matches in the text column using the provided regex table.
+
 ``` r
 #Extract patterns using only required arguments
 result <- extract(
@@ -104,6 +105,10 @@ head(result)
 ```
 
 ### Advanced Usage
+
+Shows how to use optional arguments for more control, such as filtering
+by IDs, date ranges, and removing acronyms. Useful when you want to
+narrow the matches, not clean the text, or choose to display messages.
 
 ``` r
 # Advanced usage with optional filters
@@ -121,8 +126,6 @@ result_advanced <- extract(
 
 head(result_advanced)
 ```
-
-## clean_text()
 
 ### Future Development
 

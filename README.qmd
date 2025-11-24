@@ -62,13 +62,11 @@ clean_text("  HELLO---WORLD  ")
 It returns a data frame with one row per detected pattern match and includes all original columns (or a subset if `return_cols` is specified).
 
 ### Required Parameters
-
 -   **data**: A data frame or character vector containing the text to search.
 -   **col_name**: Column name in the data frame containing text to search through.
 -   **regex_table**: A regex lookup table with at least one pattern column.
 
 ### Optional Parameters
-
 -   **pattern_col**: (default "pattern") Name of the regex pattern column in regex_table.
 -   **return_cols**: (default NULL) Vector of columns to include in the output.
 -   **id_col**: (default NULL) Column in data used for filtering rows before matching.
@@ -83,11 +81,10 @@ It returns a data frame with one row per detected pattern match and includes all
 -   **verbose**: (default TRUE) If TRUE, displays progress messages.
 
 ### Returns
-
 A data frame with one row per match, including: - All original columns from `data` (or `return_cols` if specified) - `pattern` — the first regex pattern matched in each row
 
 ### Basic Usage
-
+The simplest use of `extract()` with only the required arguments. This finds all matches in the text column using the provided regex table.
 ```{r}
 #Extract patterns using only required arguments
 result <- extract(
@@ -100,7 +97,7 @@ head(result)
 ```
 
 ### Advanced Usage
-
+Shows how to use optional arguments for more control, such as filtering by IDs, date ranges, and removing acronyms. Useful when you want to narrow the matches, not clean the text, or choose to display messages.
 ```{r}
 # Advanced usage with optional filters
 result_advanced <- extract(
