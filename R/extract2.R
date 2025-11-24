@@ -34,43 +34,49 @@ extract2 <- function(data,
                     do_clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Validate input and ensure character column
-  
-  if (is.data.frame(data)) {
-    if (missing(col_name) || !col_name %in% names(data)) {
-      stop("Please provide a valid column name for `col_name`.")
-    }
-    if (!is.character(data[[col_name]])) {
-      stop("the variable named in `col_name` must be a character vector")
-    }
-    original_col_order <- names(data)
-  } else if (is.character(data) && is.null(dim(data))) {
+  # Normalize input to data frame
+  if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
-    original_col_order <- names(data)
-  } else {
+  } else if (!is.data.frame(data)) {
     stop("`data` must be a data frame or a character vector")
   }
   
+  # Validate columns
+  if (missing(col_name) || !col_name %in% names(data)) {
+    stop(sprintf("Column `%s` not found in data.", col_name))
+  }
+  if (!is.character(data[[col_name]])) {
+    stop(sprintf("Column `%s` must be a character vector.", col_name))
+  }
+  
+  # Fast exit for empty data
   if (nrow(data) == 0) {
     if (verbose) message("Input data is empty")
     return(dplyr::as_tibble(data.frame()))
   }
   
+  # Validate regex table
   if (!pattern_col %in% names(regex_table)) {
-    stop("`pattern_col` must be a column in `regex_table`")
+    stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
   }
   
-  # Apply row-level filters (ID and date)
+  original_col_order <- names(data)
   
+  # Create a default ID if not provided
   if (is.null(id_col)) {
-    data$data_id <- seq_len(nrow(data))
-    id_col <- "data_id"
-    original_col_order <- c(original_col_order, "data_id")
+    if (!"data_id" %in% names(data)) {
+      data$data_id <- seq_len(nrow(data))
+      id_col <- "data_id"
+      original_col_order <- c(original_col_order, "data_id")
+    } else {
+      id_col <- "data_id"
+    }
   } else if (!id_col %in% names(data)) {
-    stop("`id_col` must be a column in `data`")
+    stop(sprintf("ID Column `%s` not found in data.", id_col))
   }
   
+  # Filter by ID
   if (!is.null(id_filter)) {
     data <- data[data[[id_col]] %in% id_filter, ]
     if (nrow(data) == 0) {
@@ -79,104 +85,93 @@ extract2 <- function(data,
     }
   }
   
+  # Filter by Date
   if (!is.null(date_col)) {
-    if (!date_col %in% names(data)) {
-      stop("`date_col` must be a column in `data`")
-    }
+    if (!date_col %in% names(data)) stop(sprintf("Date column `%s` not found.", date_col))
+    
     if (!inherits(data[[date_col]], "Date")) {
       data[[date_col]] <- as.Date(data[[date_col]])
     }
-    if (!is.null(date_start)) {
-      data <- data[data[[date_col]] >= as.Date(date_start), ]
-    }
-    if (!is.null(date_end)) {
-      data <- data[data[[date_col]] <= as.Date(date_end), ]
-    }
+    
+    if (!is.null(date_start)) data <- data[data[[date_col]] >= as.Date(date_start), ]
+    if (!is.null(date_end))   data <- data[data[[date_col]] <= as.Date(date_end), ]
+    
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after date filter")
       return(dplyr::as_tibble(data.frame()))
     }
   }
   
-  # Prepare regex patterns (remove acronyms if requested)
+  # Prepare unique patterns
+  patterns <- unique(stats::na.omit(regex_table[[pattern_col]]))
   
   if (remove_acronyms) {
-    is_acronym <- grepl("^[A-Z]{2,}$", regex_table[[pattern_col]])
-    regex_table <- regex_table[!is_acronym, ]
-    if (nrow(regex_table) == 0) {
-      if (verbose) message("No patterns remaining after removing acronyms")
-      return(dplyr::as_tibble(data.frame()))
+    patterns <- patterns[!grepl("^[A-Z]{2,}$", patterns)]
+  }
+  
+  if (length(patterns) == 0) {
+    if (verbose) message("No patterns provided (or all removed via filters).")
+    return(dplyr::as_tibble(data.frame()))
+  }
+  
+  # Clean text if requested
+  text_to_match <- data[[col_name]]
+  if (do_clean_text) {
+    if (exists("clean_text", mode = "function")) {
+      text_to_match <- clean_text(text_to_match)
+    } else {
+      warning("`do_clean_text` is TRUE but `clean_text` function not found. Using original text.")
     }
   }
   
-  # Run pattern matching on cleaned or original text
-  
-  original_text <- data[[col_name]]
-  
-  data_for_matching <- data
-  if (do_clean_text) {
-    # Expects clean_text to be available
-    data_for_matching[[col_name]] <- clean_text(data[[col_name]])
-  }
-  
+  # Setup progress bar
   opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
   on.exit(pbapply::pboptions(opb))
   
-  result <- extract_matches_shrinking_pool(
-    data = data_for_matching,
-    original_data = data,
-    col_name = col_name,
-    regex_table = regex_table,
-    pattern_col = pattern_col,
-    id_col = id_col,
+  # Run the optimized matching strategy (Shrinking Pool)
+  matches_found <- extract_matches_shrinking_pool(
+    text_vector = text_to_match,
+    row_ids = data[[id_col]],
+    patterns = patterns,
+    id_col_name = id_col,
     verbose = verbose
   )
   
-  # Assemble and reorder output columns
-  
-  if (!is.null(result) && nrow(result) > 0) {
-    row_indices <- match(result[[id_col]], data[[id_col]])
-    result[[col_name]] <- original_text[row_indices]
+  # Join results back to original data
+  if (nrow(matches_found) > 0) {
+    result <- dplyr::left_join(matches_found, data, by = id_col)
     
+    # Handle column selection
     if (!is.null(return_cols)) {
-      available_cols <- return_cols[return_cols %in% names(result)]
-      if (length(available_cols) > 0) {
-        cols_to_keep <- unique(c(id_col, "pattern", available_cols))
-        result <- result[cols_to_keep]
-      }
+      valid_cols <- return_cols[return_cols %in% names(result)]
+      cols_to_keep <- unique(c(id_col, "pattern", valid_cols))
+      result <- result[, cols_to_keep, drop = FALSE]
     } else {
-      existing_cols <- names(result)
-      final_cols <- original_col_order[original_col_order %in% existing_cols]
-      final_cols <- c(final_cols, setdiff(existing_cols, final_cols))
-      result <- result[final_cols]
+      final_cols <- c(original_col_order, "pattern")
+      final_cols <- final_cols[final_cols %in% names(result)]
+      result <- result[, final_cols, drop = FALSE]
     }
   } else {
-    # If NULL result, return empty tibble
-    return(dplyr::as_tibble(data.frame()))
+    result <- data.frame()
   }
   
   if (verbose) message("Number of matches found: ", nrow(result))
   
-  # THE FIX: Convert to tibble for cleaner printing
   return(dplyr::as_tibble(result))
 }
 
 #' @title Extract matches for a specific group (Optimized)
 #' @description Internal function to extract matches using a shrinking pool strategy.
 #' @keywords internal
-extract_matches_shrinking_pool <- function(data,
-                                           original_data,
-                                           col_name,
-                                           regex_table,
-                                           pattern_col,
-                                           id_col,
+extract_matches_shrinking_pool <- function(text_vector,
+                                           row_ids,
+                                           patterns,
+                                           id_col_name,
                                            verbose = FALSE) {
   
-  text_vector <- data[[col_name]]
-  row_ids <- data[[id_col]]
-  patterns <- unique(na.omit(regex_table[[pattern_col]]))
   n_rows <- length(text_vector)
   
+  # Track matches and unmatched rows
   matched_patterns <- rep(NA_character_, n_rows)
   is_unmatched <- rep(TRUE, n_rows)
   
@@ -184,9 +179,13 @@ extract_matches_shrinking_pool <- function(data,
     message(sprintf("Matching %d patterns against %d text entries", length(patterns), n_rows))
   }
   
-  dummy_output <- pbapply::pblapply(patterns, function(pat) {
+  # Iterate over patterns using side-effects to update matches
+  dummy <- pbapply::pblapply(patterns, function(pat) {
+    
+    # Stop if everyone matches
     if (!any(is_unmatched)) return(NULL)
     
+    # Check only unmatched rows
     indices_to_check <- which(is_unmatched)
     subset_text <- text_vector[indices_to_check]
     
@@ -200,21 +199,21 @@ extract_matches_shrinking_pool <- function(data,
     return(NULL)
   })
   
+  # Build result data frame
   final_match_indices <- which(!is.na(matched_patterns))
   
   if (length(final_match_indices) == 0) {
     return(data.frame())
   }
   
-  matches_df <- data.frame(
-    id_temp = row_ids[final_match_indices],
+  df <- data.frame(
+    id = row_ids[final_match_indices],
     pattern = matched_patterns[final_match_indices],
     stringsAsFactors = FALSE
   )
   
-  names(matches_df)[1] <- id_col
+  # Ensure ID column name matches input
+  names(df)[1] <- id_col_name
   
-  result <- dplyr::left_join(matches_df, original_data, by = id_col)
-  
-  return(result)
+  return(df)
 }
