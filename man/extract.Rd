@@ -51,7 +51,7 @@ extract(
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 }
 \value{
-A data frame with one row per match. Returns original text column plus \code{pattern}.
+A tibble (data frame) with one row per match. Returns original text column plus \code{pattern}.
 }
 \description{
 Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.

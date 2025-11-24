@@ -1,15 +1,22 @@
 Package: regextable
-Title: Apply Regular Expression Tables to Clean Text
+Title: Pattern-Based Text Extraction and Standardization
 Version: 0.1.0
 Authors@R: 
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre"))
-Description: Provides functions to clean and standardize text using lookup tables of regex patterns and replacements. Useful for normalizing names, companies, or other text data.
+Description: Extract structured data from text using lookup tables of regular 
+    expressions. Features an optimized "shrinking pool" algorithm to efficiently 
+    match thousands of patterns against large text datasets. Useful for normalizing 
+    entities (like names, companies, or organizations) and standardizing 
+    unstructured text.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
-Imports:
+RoxygenNote: 7.3.2
+Imports: 
     dplyr,
+    stringi,
     stringr,
     pbapply
 LazyData: true
+URL: https://github.com/judgelord/regextable
+BugReports: https://github.com/judgelord/regextable/issues
