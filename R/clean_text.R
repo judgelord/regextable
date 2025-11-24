@@ -8,14 +8,9 @@
 clean_text <- function(FROM){
 
   FROM %>%
-    trimws() %>% #removes leading and trailing white space
     stringr::str_to_lower() %>% #makes str lowercase for consistency
-    stringr::str_remove('\\+') %>%
-    stringr::str_remove("\u2014") %>% #em dash
-    stringr::str_replace_all("\n", " ") %>% # remove paragraph breaks
-    stringr::str_replace_all("\\.", " ") %>% #remove periods
-    stringr::str_replace_all("\\s*,\\s*", ",") %>% #remove multiple spaces before and after commas
-    stringr::str_replace_all(",{2,}", ",") %>% #removing commas that repeat
-    stringr::str_replace_all(",",", ") %>% #sets space after each comma
+    stringr::str_remove_all("[+\u2014]") %>% #removes '+' and em-dash
+    stringr::str_replace_all("[\n.]", " ") %>% #replaces new lines and periods to one space
+    stringr::str_replace("\\s*(?:,\\s*)+", ", ") %>% #replaces sequences and white space with a single ", "
     stringr::str_squish() # replace spaces with a single space
 }

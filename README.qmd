@@ -12,6 +12,7 @@ execute:
 
 ```{r}
 #| include: false
+devtools::load_all(".")
 knitr::opts_chunk$set(
 cache = FALSE,
 collapse = FALSE,
