@@ -4,9 +4,17 @@
 \name{regextable-package}
 \alias{regextable}
 \alias{regextable-package}
-\title{regextable: Apply Regular Expression Tables to Clean Text}
+\title{regextable: Pattern-Based Text Extraction and Standardization}
 \description{
-Provides functions to clean and standardize text using lookup tables of regex patterns and replacements. Useful for normalizing names, companies, or other text data.
+Extract structured data from text using lookup tables of regular expressions. Features an optimized "shrinking pool" algorithm to efficiently match thousands of patterns against large text datasets. Useful for normalizing entities (like names, companies, or organizations) and standardizing unstructured text.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/judgelord/regextable}
+  \item Report bugs at \url{https://github.com/judgelord/regextable/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Shirlyn Dong \email{shirlynd@umich.edu}

@@ -11,7 +11,7 @@ Description: Extract structured data from text using lookup tables of regular
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
     dplyr,
     stringi,
@@ -20,3 +20,4 @@ Imports:
 LazyData: true
 URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
+
