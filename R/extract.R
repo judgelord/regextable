@@ -77,14 +77,6 @@ extract <- function(data,
     stop(sprintf("ID Column `%s` not found in data.", id_col))
   }
   
-  # Filter by ID
-  if (!is.null(id_filter)) {
-    data <- data[data[[id_col]] %in% id_filter, ]
-    if (nrow(data) == 0) {
-      if (verbose) message("No data remaining after ID filter")
-      return(dplyr::as_tibble(data.frame()))
-    }
-  }
   
   # Filter by Date
   if (!is.null(date_col)) {
