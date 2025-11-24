@@ -17,22 +17,23 @@
 #' @return A tibble (data frame) with one row per match. Returns original text column plus `pattern`.
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex
-#' @importFrom dplyr left_join as_tibble
+#' @importFrom dplyr as_tibble
+#' @importFrom stats na.omit
 #' @export
 extract2 <- function(data,
-                    col_name,
-                    regex_table,
-                    pattern_col = "pattern",
-                    return_cols = NULL,
-                    id_col = NULL,
-                    id_filter = NULL,
-                    date_col = NULL,
-                    date_start = NULL,
-                    date_end = NULL,
-                    typo_table = NULL,
-                    remove_acronyms = FALSE,
-                    do_clean_text = TRUE,
-                    verbose = TRUE) {
+                     col_name,
+                     regex_table,
+                     pattern_col = "pattern",
+                     return_cols = NULL,
+                     id_col = NULL,
+                     id_filter = NULL,
+                     date_col = NULL,
+                     date_start = NULL,
+                     date_end = NULL,
+                     typo_table = NULL,
+                     remove_acronyms = FALSE,
+                     do_clean_text = TRUE,
+                     verbose = TRUE) {
   
   # Normalize input to data frame
   if (is.character(data) && is.null(dim(data))) {
@@ -117,11 +118,13 @@ extract2 <- function(data,
   # Clean text if requested
   text_to_match <- data[[col_name]]
   if (do_clean_text) {
-    if (exists("clean_text", mode = "function")) {
-      text_to_match <- clean_text(text_to_match)
-    } else {
-      warning("`do_clean_text` is TRUE but `clean_text` function not found. Using original text.")
-    }
+    # Robust check for internal package function
+    text_to_match <- tryCatch({
+      clean_text(text_to_match)
+    }, error = function(e) {
+      warning("`clean_text` failed or not found. Using original text.")
+      return(text_to_match)
+    })
   }
   
   # Setup progress bar
@@ -137,11 +140,15 @@ extract2 <- function(data,
     verbose = verbose
   )
   
-  # Join results back to original data
+  # Finalize output using fast matching
   if (nrow(matches_found) > 0) {
-    result <- dplyr::left_join(matches_found, data, by = id_col)
     
-    # Handle column selection
+    # Use match() for speed instead of join
+    row_indices <- match(matches_found[[id_col]], data[[id_col]])
+    result <- data[row_indices, , drop = FALSE]
+    result$pattern <- matches_found$pattern
+    
+    # Select and order columns
     if (!is.null(return_cols)) {
       valid_cols <- return_cols[return_cols %in% names(result)]
       cols_to_keep <- unique(c(id_col, "pattern", valid_cols))
@@ -179,7 +186,7 @@ extract_matches_shrinking_pool <- function(text_vector,
     message(sprintf("Matching %d patterns against %d text entries", length(patterns), n_rows))
   }
   
-  # Iterate over patterns using side-effects to update matches
+  # Loop patterns and update matches via side-effects
   dummy <- pbapply::pblapply(patterns, function(pat) {
     
     # Stop if everyone matches
@@ -212,7 +219,6 @@ extract_matches_shrinking_pool <- function(text_vector,
     stringsAsFactors = FALSE
   )
   
-  # Ensure ID column name matches input
   names(df)[1] <- id_col_name
   
   return(df)

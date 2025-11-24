@@ -14,217 +14,212 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A data frame with one row per match. Returns original text column plus `pattern`.
+#' @return A tibble (data frame) with one row per match. Returns original text column plus `pattern`.
+#' @importFrom pbapply pblapply pboptions
+#' @importFrom stringi stri_detect_regex
+#' @importFrom dplyr as_tibble
+#' @importFrom stats na.omit
 #' @export
 extract <- function(data,
-                    col_name,
-                    regex_table,
-                    pattern_col = "pattern",
-                    return_cols = NULL,
-                    id_col = NULL,
-                    id_filter = NULL,
-                    date_col = NULL,
-                    date_start = NULL,
-                    date_end = NULL,
-                    typo_table = NULL,
-                    remove_acronyms = FALSE,
-                    do_clean_text = TRUE,
-                    verbose = TRUE) {
+                     col_name,
+                     regex_table,
+                     pattern_col = "pattern",
+                     return_cols = NULL,
+                     id_col = NULL,
+                     id_filter = NULL,
+                     date_col = NULL,
+                     date_start = NULL,
+                     date_end = NULL,
+                     typo_table = NULL,
+                     remove_acronyms = FALSE,
+                     do_clean_text = TRUE,
+                     verbose = TRUE) {
   
-  # Process data and col_name
-  if (is.data.frame(data)) {
-    if (missing(col_name) || !col_name %in% names(data)) {
-      stop("Please provide a valid column name for `col_name`.")
-    }
-    if (!is.character(data[[col_name]])) {
-      stop("the variable named in `col_name` must be a character vector")
-    }
-    # Store original column order
-    original_col_order <- names(data)
-  } else if (is.character(data) && is.null(dim(data))) {
+  # Normalize input to data frame
+  if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
-    original_col_order <- names(data)
-  } else {
+  } else if (!is.data.frame(data)) {
     stop("`data` must be a data frame or a character vector")
   }
   
-  # Check for empty data
+  # Validate columns
+  if (missing(col_name) || !col_name %in% names(data)) {
+    stop(sprintf("Column `%s` not found in data.", col_name))
+  }
+  if (!is.character(data[[col_name]])) {
+    stop(sprintf("Column `%s` must be a character vector.", col_name))
+  }
+  
+  # Fast exit for empty data
   if (nrow(data) == 0) {
     if (verbose) message("Input data is empty")
-    return(data.frame())  # Return empty frame instead of NULL for consistency
+    return(dplyr::as_tibble(data.frame()))
   }
   
-  # Validate regex_table
+  # Validate regex table
   if (!pattern_col %in% names(regex_table)) {
-    stop("`pattern_col` must be a column in `regex_table`")
+    stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
   }
   
-  # Set up progress bar
-  opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
-  on.exit(pbapply::pboptions(opb))
+  original_col_order <- names(data)
   
-  # Add data_id if not provided
+  # Create a default ID if not provided
   if (is.null(id_col)) {
-    data$data_id <- seq_len(nrow(data))
-    id_col <- "data_id"
-    original_col_order <- c(original_col_order, "data_id")
+    if (!"data_id" %in% names(data)) {
+      data$data_id <- seq_len(nrow(data))
+      id_col <- "data_id"
+      original_col_order <- c(original_col_order, "data_id")
+    } else {
+      id_col <- "data_id"
+    }
   } else if (!id_col %in% names(data)) {
-    stop("`id_col` must be a column in `data`")
+    stop(sprintf("ID Column `%s` not found in data.", id_col))
   }
   
-  # Apply ID filter if specified
+  # Filter by ID
   if (!is.null(id_filter)) {
     data <- data[data[[id_col]] %in% id_filter, ]
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after ID filter")
-      return(data.frame())
+      return(dplyr::as_tibble(data.frame()))
     }
   }
   
-  # Apply date filter if specified
+  # Filter by Date
   if (!is.null(date_col)) {
-    if (!date_col %in% names(data)) {
-      stop("`date_col` must be a column in `data`")
-    }
+    if (!date_col %in% names(data)) stop(sprintf("Date column `%s` not found.", date_col))
     
-    # Convert date_col to Date if not already
     if (!inherits(data[[date_col]], "Date")) {
       data[[date_col]] <- as.Date(data[[date_col]])
     }
     
-    if (!is.null(date_start)) {
-      data <- data[data[[date_col]] >= as.Date(date_start), ]
-    }
-    if (!is.null(date_end)) {
-      data <- data[data[[date_col]] <= as.Date(date_end), ]
-    }
+    if (!is.null(date_start)) data <- data[data[[date_col]] >= as.Date(date_start), ]
+    if (!is.null(date_end))   data <- data[data[[date_col]] <= as.Date(date_end), ]
     
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after date filter")
-      return(data.frame())
+      return(dplyr::as_tibble(data.frame()))
     }
   }
   
-  # Remove acronyms if requested
+  # Prepare unique patterns
+  patterns <- unique(stats::na.omit(regex_table[[pattern_col]]))
+  
   if (remove_acronyms) {
-    # Remove patterns that are all uppercase (acronyms)
-    is_acronym <- grepl("^[A-Z]{2,}$", regex_table[[pattern_col]])
-    regex_table <- regex_table[!is_acronym, ]
-    if (nrow(regex_table) == 0) {
-      if (verbose) message("No patterns remaining after removing acronyms")
-      return(data.frame())
-    }
+    patterns <- patterns[!grepl("^[A-Z]{2,}$", patterns)]
   }
   
-  # Apply typo correction if specified
-  #if (!is.null(typo_table)) {
-  #if (verbose) message("Applying typo correction...")
-  #data[[col_name]] <- fix_typos(data[[col_name]], typo_table)
-  #}
+  if (length(patterns) == 0) {
+    if (verbose) message("No patterns provided (or all removed via filters).")
+    return(dplyr::as_tibble(data.frame()))
+  }
   
-  # Store original text separately - don't modify the original data structure
-  original_text <- data[[col_name]]
-  
-  # Clean text if requested (only for matching, keep original in output)
+  # Clean text if requested
+  text_to_match <- data[[col_name]]
   if (do_clean_text) {
-    data_for_matching <- data
-    data_for_matching[[col_name]] <- clean_text(data[[col_name]])
-  } else {
-    data_for_matching <- data
+    # Robust check for internal package function
+    text_to_match <- tryCatch({
+      clean_text(text_to_match)
+    }, error = function(e) {
+      warning("`clean_text` failed or not found. Using original text.")
+      return(text_to_match)
+    })
   }
   
-  # Process the data
-  result <- extract_matches_per_group(
-    data = data_for_matching,
-    original_data = data,
-    col_name = col_name,
-    regex_table = regex_table,
-    pattern_col = pattern_col,
-    id_col = id_col,
+  # Setup progress bar
+  opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
+  on.exit(pbapply::pboptions(opb))
+  
+  # Run the optimized matching strategy (Shrinking Pool)
+  matches_found <- extract_matches_shrinking_pool(
+    text_vector = text_to_match,
+    row_ids = data[[id_col]],
+    patterns = patterns,
+    id_col_name = id_col,
     verbose = verbose
   )
   
-  # Restore original text in the output
-  if (!is.null(result) && nrow(result) > 0) {
-    result[[col_name]] <- original_text[match(result[[id_col]], data[[id_col]])]
-    existing_cols <- names(result)
-    final_cols <- original_col_order[original_col_order %in% existing_cols]
-    final_cols <- c(final_cols, setdiff(existing_cols, final_cols))
-    result <- result[final_cols]
-  }
-  
-  # Select return columns if specified
-  if (!is.null(return_cols) && !is.null(result)) {
-    available_cols <- return_cols[return_cols %in% names(result)]
-    if (length(available_cols) > 0) {
-      # Keep ID column and specified return columns
-      result <- result[c(id_col, available_cols)]
+  # Finalize output using fast matching
+  if (nrow(matches_found) > 0) {
+    
+    # Use match() for speed instead of join
+    row_indices <- match(matches_found[[id_col]], data[[id_col]])
+    result <- data[row_indices, , drop = FALSE]
+    result$pattern <- matches_found$pattern
+    
+    # Select and order columns
+    if (!is.null(return_cols)) {
+      valid_cols <- return_cols[return_cols %in% names(result)]
+      cols_to_keep <- unique(c(id_col, "pattern", valid_cols))
+      result <- result[, cols_to_keep, drop = FALSE]
+    } else {
+      final_cols <- c(original_col_order, "pattern")
+      final_cols <- final_cols[final_cols %in% names(result)]
+      result <- result[, final_cols, drop = FALSE]
     }
+  } else {
+    result <- data.frame()
   }
   
   if (verbose) message("Number of matches found: ", nrow(result))
-  return(result)
+  
+  return(dplyr::as_tibble(result))
 }
 
-#' @title Extract matches for a specific group
-#' @description Internal function to extract matches for each text entry
+#' @title Extract matches for a specific group (Optimized)
+#' @description Internal function to extract matches using a shrinking pool strategy.
 #' @keywords internal
-extract_matches_per_group <- function(data,
-                                      original_data,
-                                      col_name,
-                                      regex_table,
-                                      pattern_col,
-                                      id_col,
-                                      verbose = FALSE) {
+extract_matches_shrinking_pool <- function(text_vector,
+                                           row_ids,
+                                           patterns,
+                                           id_col_name,
+                                           verbose = FALSE) {
   
-  if (nrow(data) == 0 || nrow(regex_table) == 0) {
-    return(data.frame())
-  }
+  n_rows <- length(text_vector)
   
-  text <- data[[col_name]]
-  patterns <- unique(na.omit(regex_table[[pattern_col]]))
+  # Track matches and unmatched rows
+  matched_patterns <- rep(NA_character_, n_rows)
+  is_unmatched <- rep(TRUE, n_rows)
   
   if (verbose) {
-    message(sprintf("Matching %d patterns against %d text entries", 
-                    length(patterns), length(text)))
+    message(sprintf("Matching %d patterns against %d text entries", length(patterns), n_rows))
   }
   
-  # Find ALL matches first
-  matches_list <- pbapply::pblapply(patterns, function(pattern) {
-    matched_rows <- which(stringi::stri_detect_regex(text, pattern, case_insensitive = TRUE))
-    if (length(matched_rows) > 0) {
-      
-      # Create a row for each combination of data row and regex row
-      expanded_matches <- data.frame(
-        temp_col = data[[id_col]][matched_rows],  # Temporary name
-        pattern = pattern,
-        stringsAsFactors = FALSE
-      )
-      # Set the correct column name
-      names(expanded_matches)[1] <- id_col
-      
-      return(expanded_matches)
-      
-    } else {
-      return(data.frame())
+  # Loop patterns and update matches via side-effects
+  dummy <- pbapply::pblapply(patterns, function(pat) {
+    
+    # Stop if everyone matches
+    if (!any(is_unmatched)) return(NULL)
+    
+    # Check only unmatched rows
+    indices_to_check <- which(is_unmatched)
+    subset_text <- text_vector[indices_to_check]
+    
+    has_match <- stringi::stri_detect_regex(subset_text, pat, case_insensitive = TRUE)
+    
+    if (any(has_match)) {
+      matched_indices <- indices_to_check[has_match]
+      matched_patterns[matched_indices] <<- pat
+      is_unmatched[matched_indices] <<- FALSE
     }
+    return(NULL)
   })
   
-  all_matches <- dplyr::bind_rows(matches_list)
+  # Build result data frame
+  final_match_indices <- which(!is.na(matched_patterns))
   
-  if (nrow(all_matches) == 0) {
+  if (length(final_match_indices) == 0) {
     return(data.frame())
   }
   
-  # Take the first match for each data_id
-  best_matches <- all_matches %>%
-    dplyr::group_by(.data[[id_col]]) %>%
-    dplyr::slice(1) %>%
-    dplyr::ungroup()
+  df <- data.frame(
+    id = row_ids[final_match_indices],
+    pattern = matched_patterns[final_match_indices],
+    stringsAsFactors = FALSE
+  )
   
-  # Join with original data to get all columns
-  result <- dplyr::left_join(best_matches, original_data, by = id_col)
+  names(df)[1] <- id_col_name
   
-  return(result)
+  return(df)
 }
