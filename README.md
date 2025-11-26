@@ -28,14 +28,14 @@ included in this package for illustration.
 data("members")
 head(members)
 #> # A tibble: 6 × 9
-#>   congress chamber   bioname                      pattern          icpsr state_abbrev district_code first_name last_name
-#>      <dbl> <chr>     <chr>                        <chr>            <dbl> <chr>                <dbl> <chr>      <chr>    
-#> 1      117 President TRUMP, Donald John           "donald trump|d… 99912 USA                      0 Donald     TRUMP    
-#> 2      117 President BIDEN, Joseph Robinette, Jr. "joseph biden|j… 99913 USA                      0 Joseph     BIDEN    
-#> 3      117 House     ROGERS, Mike Dennis          "mike rogers|mi… 20301 AL                       3 Mike       ROGERS   
-#> 4      117 House     SEWELL, Terri                "terri sewell|\… 21102 AL                       7 Terri      SEWELL   
-#> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm… 21193 AL                       5 Mo         BROOKS   
-#> 6      117 House     PALMER, Gary James           "gary palmer|ga… 21500 AL                       6 Gary       PALMER
+#>   congress chamber   bioname                         pattern       icpsr state_abbrev district_code first_name last_name
+#>      <dbl> <chr>     <chr>                           <chr>         <dbl> <chr>                <dbl> <chr>      <chr>    
+#> 1      110 President BUSH, George Walker             "george bush… 99910 USA                      0 George     BUSH     
+#> 2      110 House     BONNER, Jr., Josiah Robins (Jo) "josiah bonn… 20300 AL                       1 Josiah     BONNER   
+#> 3      110 House     ROGERS, Mike Dennis             "mike rogers… 20301 AL                       3 Mike       ROGERS   
+#> 4      110 House     DAVIS, Artur                    "artur davis… 20302 AL                       7 Artur      DAVIS    
+#> 5      110 House     CRAMER, Robert E. (Bud), Jr.    "robert cram… 29100 AL                       5 Robert     CRAMER   
+#> 6      110 House     EVERETT, Robert Terry           "robert ever… 29300 AL                       2 Robert     EVERETT
 
 data("cr2007_03_01")
 head(cr2007_03_01)
@@ -125,11 +125,11 @@ head(result)
 #> # A tibble: 6 × 3
 #>   speaker                    pattern                                                                               icpsr
 #>   <chr>                      <chr>                                                                                 <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
 #> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
 ```
 
@@ -158,11 +158,11 @@ head(result_advanced)
 #> # A tibble: 6 × 3
 #>   speaker                    pattern                                                                               icpsr
 #>   <chr>                      <chr>                                                                                 <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
-#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
+#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
 #> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
 ```
 
