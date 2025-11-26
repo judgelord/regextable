@@ -6,8 +6,6 @@
 #' @param pattern_col Name of the regex pattern column in regex_table.
 #' @param return_cols Optional vector of column names to include from 'data'.
 #' @param regex_return_cols Optional vector of column names to include from 'regex_table'.
-#' @param id_col Optional column in `data` used to filter rows before matching.
-#' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
@@ -27,8 +25,6 @@ extract <- function(data,
                     pattern_col = "pattern",
                     return_cols = NULL,
                     regex_return_cols = NULL,
-                    id_col = NULL,
-                    id_filter = NULL,
                     date_col = NULL,
                     date_start = NULL,
                     date_end = NULL,
@@ -74,19 +70,6 @@ extract <- function(data,
   
   original_col_order <- names(data)
   
-  # Create a default ID if not provided
-  if (is.null(id_col)) {
-    if (!"data_id" %in% names(data)) {
-      data$data_id <- seq_len(nrow(data))
-      id_col <- "data_id"
-      original_col_order <- c(original_col_order, "data_id")
-    } else {
-      id_col <- "data_id"
-    }
-  } else if (!id_col %in% names(data)) {
-    stop(sprintf("ID Column `%s` not found in data.", id_col))
-  }
-  
   # Filter by Date
   if (!is.null(date_col)) {
     if (!date_col %in% names(data)) stop(sprintf("Date column `%s` not found.", date_col))
@@ -127,6 +110,10 @@ extract <- function(data,
     })
   }
   
+  # Generate temporary row IDs for tracking
+  # We use simple integer sequence 1 to N
+  temp_row_ids <- seq_len(nrow(data))
+  
   # Setup progress bar
   opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
   on.exit(pbapply::pboptions(opb))
@@ -134,9 +121,9 @@ extract <- function(data,
   # Run the optimized matching strategy (Shrinking Pool)
   matches_found <- extract_matches_shrinking_pool(
     text_vector = text_to_match,
-    row_ids = data[[id_col]],
+    row_ids = temp_row_ids,
     patterns = patterns,
-    id_col_name = id_col,
+    id_col_name = "temp_row_id",
     verbose = verbose
   )
   
@@ -145,7 +132,6 @@ extract <- function(data,
     
     # Merge regex columns if requested
     if (!is.null(regex_return_cols)) {
-      # Unique ensures we don't duplicate rows if the regex table has duplicates
       meta_data <- unique(regex_table[, c(pattern_col, regex_return_cols), drop = FALSE])
       
       matches_found <- merge(matches_found, meta_data, 
@@ -153,19 +139,18 @@ extract <- function(data,
                              all.x = TRUE, sort = FALSE)
     }
     
-    # Use match() for speed to get original data rows
-    row_indices <- match(matches_found[[id_col]], data[[id_col]])
-    result <- data[row_indices, , drop = FALSE]
+    # Retrieve original rows using the temp row IDs
+    # Since temp_row_ids corresponds exactly to row indices, we can subset directly
+    result <- data[matches_found$temp_row_id, , drop = FALSE]
     
-    # Bind pattern and extra regex info
-    cols_to_add <- matches_found[, !names(matches_found) %in% id_col, drop = FALSE]
+    # Bind pattern and extra regex info (excluding the temp ID)
+    cols_to_add <- matches_found[, !names(matches_found) %in% "temp_row_id", drop = FALSE]
     result <- cbind(result, cols_to_add)
     
     # Select and order columns
     if (!is.null(return_cols)) {
-      # Combine requested data columns and requested regex columns
       valid_cols <- return_cols[return_cols %in% names(result)]
-      cols_to_keep <- unique(c(id_col, "pattern", valid_cols, regex_return_cols))
+      cols_to_keep <- unique(c(valid_cols, "pattern", regex_return_cols))
       result <- result[, cols_to_keep, drop = FALSE]
     } else {
       # Keep all original columns plus the new ones
