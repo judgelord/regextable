@@ -87,8 +87,8 @@ specified).
   in regex_table.
 - **return_cols**: (default NULL) Vector of columns from ‘data’ to
   include in the output.
-- **regex_return_cols** (default NULL) Vector of columns from ‘regex\_’
-  to include in the output.
+- **regex_return_cols** (default NULL) Vector of columns from
+  ‘regex_table’ to include in the output.
 - **date_col**: (default NULL) Column in data containing dates for
   filtering.
 - **date_start**: (default NULL) Start date for filtering rows.
@@ -171,6 +171,6 @@ head(result_advanced)
 - Add support for `typo_table` to correct known text errors before
   matching.
 - Improve strict matching rules for patterns that may need more
-  inclusive or more restrictive word boundaries.  
+  inclusive or more restrictive word boundaries.
 - Enable user-defined ID systems (e.g., corporations, campaigns) and
   control whether text is returned with matches.
