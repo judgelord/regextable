@@ -1,11 +1,11 @@
 #' @title Clean Text
 #' @description Cleans a character vector (trims spaces, fixes punctuation, etc.).
-#' @param FROM Character vector to clean.
+#' @param text Character vector to clean.
 #' @return Cleaned character vector.
 #' @import dplyr
 #' @import stringr
 #' @export
-clean_text <- function(FROM){
+clean_text <- function(text){
 
   FROM %>%
     stringr::str_to_lower() %>% #makes str lowercase for consistency
