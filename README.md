@@ -36,6 +36,7 @@ head(members)
 #> 4      117 House     SEWELL, Terri                "terri sewell|\… 21102 AL                       7 Terri      SEWELL   
 #> 5      117 House     BROOKS, Mo                   "mo brooks|\\bm… 21193 AL                       5 Mo         BROOKS   
 #> 6      117 House     PALMER, Gary James           "gary palmer|ga… 21500 AL                       6 Gary       PALMER
+
 data("cr2007_03_01")
 head(cr2007_03_01)
 #> # A tibble: 6 × 5
@@ -102,8 +103,8 @@ specified).
 ### Returns
 
 A data frame with one row per match, including: - All original columns
-from `data` (or `return_cols` if specified) - `pattern` — the first
-regex pattern matched in each row
+from `data` (or `return_cols` if specified) - `pattern`, the first regex
+pattern matched in each row
 
 ### Basic Usage
 
@@ -135,8 +136,9 @@ head(result)
 ### Advanced Usage
 
 Shows how to use optional arguments for more control, such as filtering
-by IDs, date ranges, and removing acronyms. Useful when you want to
-narrow the matches, not clean the text, or choose to display messages.
+by date ranges and removing acronyms. Useful when you want to narrow the
+matches, not clean the text, specifying returned columns, or choose to
+display messages.
 
 ``` r
 # Advanced usage with optional filters

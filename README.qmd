@@ -50,6 +50,7 @@ The examples below use the `members` and `cr2007_03_01` datasets included in thi
 ```{r}
 data("members")
 head(members)
+
 data("cr2007_03_01")
 head(cr2007_03_01)
 ```
@@ -91,7 +92,7 @@ print(cleaned_text)
 
 ### Returns
 
-A data frame with one row per match, including: - All original columns from `data` (or `return_cols` if specified) - `pattern` — the first regex pattern matched in each row
+A data frame with one row per match, including: - All original columns from `data` (or `return_cols` if specified) - `pattern`, the first regex pattern matched in each row
 
 ### Basic Usage
 
@@ -112,7 +113,7 @@ head(result)
 
 ### Advanced Usage
 
-Shows how to use optional arguments for more control, such as filtering by IDs, date ranges, and removing acronyms. Useful when you want to narrow the matches, not clean the text, or choose to display messages.
+Shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. Useful when you want to narrow the matches, not clean the text, specifying returned columns, or choose to display messages.
 
 ```{r}
 # Advanced usage with optional filters
