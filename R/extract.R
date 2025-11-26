@@ -9,14 +9,13 @@
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
-#' @param typo_table Optional table to fix typos in 'data'. 
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @return A tibble (data frame) with one row per match.
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex
-#' @importFrom dplyr as_tibble
+#' @importFrom dplyr %>% as_tibble
 #' @importFrom stats na.omit
 #' @export
 extract <- function(data,
@@ -28,7 +27,6 @@ extract <- function(data,
                     date_col = NULL,
                     date_start = NULL,
                     date_end = NULL,
-                    typo_table = NULL,
                     remove_acronyms = FALSE,
                     do_clean_text = TRUE,
                     verbose = TRUE) {
