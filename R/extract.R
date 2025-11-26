@@ -33,7 +33,7 @@ extract <- function(data,
                     do_clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Changes input to data frame
+  # Validate input and data
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
@@ -41,7 +41,6 @@ extract <- function(data,
     stop("`data` must be a data frame or a character vector")
   }
   
-  # Validate columns
   if (missing(col_name) || !col_name %in% names(data)) {
     stop(sprintf("Column `%s` not found in data.", col_name))
   }
@@ -49,18 +48,15 @@ extract <- function(data,
     stop(sprintf("Column `%s` must be a character vector.", col_name))
   }
   
-  # Fast exit for empty data
   if (nrow(data) == 0) {
     if (verbose) message("Input data is empty")
     return(dplyr::as_tibble(data.frame()))
   }
   
-  # Validate regex table
   if (!pattern_col %in% names(regex_table)) {
     stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
   }
   
-  # Validate regex return columns
   if (!is.null(regex_return_cols)) {
     missing_cols <- regex_return_cols[!regex_return_cols %in% names(regex_table)]
     if (length(missing_cols) > 0) {
@@ -87,7 +83,7 @@ extract <- function(data,
     }
   }
   
-  # Prepare unique patterns
+  # Prepare patterns
   patterns <- unique(stats::na.omit(regex_table[[pattern_col]]))
   
   if (remove_acronyms) {
@@ -99,7 +95,7 @@ extract <- function(data,
     return(dplyr::as_tibble(data.frame()))
   }
   
-  # Clean text if requested
+  # Clean text
   text_to_match <- data[[col_name]]
   if (do_clean_text) {
     text_to_match <- tryCatch({
@@ -110,14 +106,12 @@ extract <- function(data,
     })
   }
   
-  # Generate temporary row IDs for tracking
   temp_row_ids <- seq_len(nrow(data))
   
-  # Setup progress bar
   opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
   on.exit(pbapply::pboptions(opb))
   
-  # Run the optimized matching strategy (Shrinking Pool)
+  # Run matching (Shrinking Pool)
   matches_found <- extract_matches_shrinking_pool(
     text_vector = text_to_match,
     row_ids = temp_row_ids,
@@ -126,7 +120,6 @@ extract <- function(data,
     verbose = verbose
   )
   
-  # Finalize output
   if (nrow(matches_found) > 0) {
     
     # Merge regex columns if requested
@@ -138,11 +131,9 @@ extract <- function(data,
                              all.x = TRUE, sort = FALSE)
     }
     
-    # Retrieve original rows using the temp row IDs
-    # Since temp_row_ids corresponds exactly to row indices, we can subset directly
     result <- data[matches_found$temp_row_id, , drop = FALSE]
     
-    # Bind pattern and extra regex info (excluding the temp ID)
+    # Bind pattern and regex info
     cols_to_add <- matches_found[, !names(matches_found) %in% "temp_row_id", drop = FALSE]
     result <- cbind(result, cols_to_add)
     
@@ -152,7 +143,6 @@ extract <- function(data,
       cols_to_keep <- unique(c(valid_cols, "pattern", regex_return_cols))
       result <- result[, cols_to_keep, drop = FALSE]
     } else {
-      # Keep all original columns plus the new ones
       final_cols <- c(original_col_order, "pattern", regex_return_cols)
       final_cols <- final_cols[final_cols %in% names(result)]
       result <- result[, final_cols, drop = FALSE]
@@ -177,7 +167,6 @@ extract_matches_shrinking_pool <- function(text_vector,
   
   n_rows <- length(text_vector)
   
-  # Track matches and unmatched rows
   matched_patterns <- rep(NA_character_, n_rows)
   is_unmatched <- rep(TRUE, n_rows)
   
@@ -185,13 +174,10 @@ extract_matches_shrinking_pool <- function(text_vector,
     message(sprintf("Matching %d patterns against %d text entries", length(patterns), n_rows))
   }
   
-  # Loop patterns and update matches via side-effects
   dummy <- pbapply::pblapply(patterns, function(pat) {
     
-    # Stop if everyone matches
     if (!any(is_unmatched)) return(NULL)
     
-    # Check only unmatched rows
     indices_to_check <- which(is_unmatched)
     subset_text <- text_vector[indices_to_check]
     
@@ -205,7 +191,6 @@ extract_matches_shrinking_pool <- function(text_vector,
     return(NULL)
   })
   
-  # Build result data frame
   final_match_indices <- which(!is.na(matched_patterns))
   
   if (length(final_match_indices) == 0) {
