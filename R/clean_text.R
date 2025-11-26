@@ -2,8 +2,8 @@
 #' @description Cleans a character vector (trims spaces, fixes punctuation, etc.).
 #' @param text Character vector to clean.
 #' @return Cleaned character vector.
-#' @import dplyr
-#' @import stringr
+#' @importFrom dplyr %>% 
+#' @importFrom stringr str_to_lower str_remove_all str_replace_all str_replace str_squish
 #' @export
 clean_text <- function(text){
 
