@@ -33,7 +33,7 @@ extract <- function(data,
                     do_clean_text = TRUE,
                     verbose = TRUE) {
   
-  # Normalize input to data frame
+  # Changes input to data frame
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
