@@ -1,3 +1,7 @@
+#' regextable: Tools for Regex Extraction and Cleaning
+#'
+#' Provides functions for text extraction and cleaning.
+#'
 "_PACKAGE"
 
 ## usethis namespace: start
