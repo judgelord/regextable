@@ -111,7 +111,6 @@ extract <- function(data,
   }
   
   # Generate temporary row IDs for tracking
-  # We use simple integer sequence 1 to N
   temp_row_ids <- seq_len(nrow(data))
   
   # Setup progress bar
