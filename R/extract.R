@@ -4,36 +4,38 @@
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with a pattern column.
 #' @param pattern_col Name of the regex pattern column in regex_table.
-#' @param return_cols Optional vector of column names to include in the output.
+#' @param return_cols Optional vector of column names to include from 'data'.
+#' @param regex_return_cols Optional vector of column names to include from 'regex_table'.
 #' @param id_col Optional column in `data` used to filter rows before matching.
 #' @param id_filter Optional value or vector of IDs to restrict which rows of `data` are matched.
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
-#' @param typo_table Optional table to fix typos in 'data'. # planned for later versions
+#' @param typo_table Optional table to fix typos in 'data'. 
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A tibble (data frame) with one row per match. Returns original text column plus `pattern`.
+#' @return A tibble (data frame) with one row per match.
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex
 #' @importFrom dplyr as_tibble
 #' @importFrom stats na.omit
 #' @export
 extract <- function(data,
-                     col_name,
-                     regex_table,
-                     pattern_col = "pattern",
-                     return_cols = NULL,
-                     id_col = NULL,
-                     id_filter = NULL,
-                     date_col = NULL,
-                     date_start = NULL,
-                     date_end = NULL,
-                     typo_table = NULL,
-                     remove_acronyms = FALSE,
-                     do_clean_text = TRUE,
-                     verbose = TRUE) {
+                    col_name,
+                    regex_table,
+                    pattern_col = "pattern",
+                    return_cols = NULL,
+                    regex_return_cols = NULL,
+                    id_col = NULL,
+                    id_filter = NULL,
+                    date_col = NULL,
+                    date_start = NULL,
+                    date_end = NULL,
+                    typo_table = NULL,
+                    remove_acronyms = FALSE,
+                    do_clean_text = TRUE,
+                    verbose = TRUE) {
   
   # Normalize input to data frame
   if (is.character(data) && is.null(dim(data))) {
@@ -62,6 +64,14 @@ extract <- function(data,
     stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
   }
   
+  # Validate regex return columns
+  if (!is.null(regex_return_cols)) {
+    missing_cols <- regex_return_cols[!regex_return_cols %in% names(regex_table)]
+    if (length(missing_cols) > 0) {
+      stop(sprintf("Columns missing from regex_table: %s", paste(missing_cols, collapse = ", ")))
+    }
+  }
+  
   original_col_order <- names(data)
   
   # Create a default ID if not provided
@@ -76,7 +86,6 @@ extract <- function(data,
   } else if (!id_col %in% names(data)) {
     stop(sprintf("ID Column `%s` not found in data.", id_col))
   }
-  
   
   # Filter by Date
   if (!is.null(date_col)) {
@@ -110,7 +119,6 @@ extract <- function(data,
   # Clean text if requested
   text_to_match <- data[[col_name]]
   if (do_clean_text) {
-    # Robust check for internal package function
     text_to_match <- tryCatch({
       clean_text(text_to_match)
     }, error = function(e) {
@@ -132,21 +140,36 @@ extract <- function(data,
     verbose = verbose
   )
   
-  # Finalize output using fast matching
+  # Finalize output
   if (nrow(matches_found) > 0) {
     
-    # Use match() for speed instead of join
+    # Merge regex columns if requested
+    if (!is.null(regex_return_cols)) {
+      # Unique ensures we don't duplicate rows if the regex table has duplicates
+      meta_data <- unique(regex_table[, c(pattern_col, regex_return_cols), drop = FALSE])
+      
+      matches_found <- merge(matches_found, meta_data, 
+                             by.x = "pattern", by.y = pattern_col, 
+                             all.x = TRUE, sort = FALSE)
+    }
+    
+    # Use match() for speed to get original data rows
     row_indices <- match(matches_found[[id_col]], data[[id_col]])
     result <- data[row_indices, , drop = FALSE]
-    result$pattern <- matches_found$pattern
+    
+    # Bind pattern and extra regex info
+    cols_to_add <- matches_found[, !names(matches_found) %in% id_col, drop = FALSE]
+    result <- cbind(result, cols_to_add)
     
     # Select and order columns
     if (!is.null(return_cols)) {
+      # Combine requested data columns and requested regex columns
       valid_cols <- return_cols[return_cols %in% names(result)]
-      cols_to_keep <- unique(c(id_col, "pattern", valid_cols))
+      cols_to_keep <- unique(c(id_col, "pattern", valid_cols, regex_return_cols))
       result <- result[, cols_to_keep, drop = FALSE]
     } else {
-      final_cols <- c(original_col_order, "pattern")
+      # Keep all original columns plus the new ones
+      final_cols <- c(original_col_order, "pattern", regex_return_cols)
       final_cols <- final_cols[final_cols %in% names(result)]
       result <- result[, final_cols, drop = FALSE]
     }
