@@ -84,12 +84,10 @@ specified).
 
 - **pattern_col**: (default “pattern”) Name of the regex pattern column
   in regex_table.
-- **return_cols**: (default NULL) Vector of columns to include in the
-  output.
-- **id_col**: (default NULL) Column in data used for filtering rows
-  before matching.
-- **id_filter**: (default NULL) Value(s) of IDs to restrict which rows
-  are matched.
+- **return_cols**: (default NULL) Vector of columns from ‘data’ to
+  include in the output.
+- **regex_return_cols** (default NULL) Vector of columns from ‘regex\_’
+  to include in the output.
 - **date_col**: (default NULL) Column in data containing dates for
   filtering.
 - **date_start**: (default NULL) Start date for filtering rows.
@@ -118,19 +116,20 @@ result <- extract(
   data = cr2007_03_01,
   col_name = "speaker",
   regex_table = members,
-  return_cols = c("speaker", "pattern")
+  return_cols = c("speaker", "pattern"),
+  regex_return_cols = c("icpsr") 
 )
 
 head(result)
 #> # A tibble: 6 × 3
-#>   data_id pattern                                                                                                speaker
-#>     <int> <chr>                                                                                                  <chr>  
-#> 1       1 "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|graves, sam|grave… HON. S…
-#> 2       2 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b.{1,4}co|udall, m… HON. M…
-#> 3       3 "james langevin|\\bj langevin|james r langevin|jim langevin|jim r langevin|(^|senator |representative… HON. J…
-#> 4       4 "jim costa|\\bj costa|james costa|(^|senator |representative )costa\\b|costa, james|costa, jim|costa … HON. J…
-#> 5       5 "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|graves, sam|grave… HON. S…
-#> 6       6 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\bna bishop|(^|senator |representa… HON. S…
+#>   speaker                    pattern                                                                               icpsr
+#>   <chr>                      <chr>                                                                                 <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
 ```
 
 ### Advanced Usage
@@ -149,19 +148,20 @@ result_advanced <- extract(
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("speaker", "pattern")
+  return_cols = c("speaker", "pattern"),
+  regex_return_cols = c("icpsr")
 )
 
 head(result_advanced)
 #> # A tibble: 6 × 3
-#>   data_id pattern                                                                                                speaker
-#>     <int> <chr>                                                                                                  <chr>  
-#> 1       1 "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|graves, sam|grave… HON. S…
-#> 2       2 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b.{1,4}co|udall, m… HON. M…
-#> 3       3 "james langevin|\\bj langevin|james r langevin|jim langevin|jim r langevin|(^|senator |representative… HON. J…
-#> 4       4 "jim costa|\\bj costa|james costa|(^|senator |representative )costa\\b|costa, james|costa, jim|costa … HON. J…
-#> 5       5 "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|graves, sam|grave… HON. S…
-#> 6       6 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\bna bishop|(^|senator |representa… HON. S…
+#>   speaker                    pattern                                                                               icpsr
+#>   <chr>                      <chr>                                                                                 <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b.{1,4}mo|… 20124
+#> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
 ```
 
 ### Future Development
