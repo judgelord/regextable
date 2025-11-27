@@ -1,3 +1,5 @@
 ^regextable\.Rproj$
 ^\.Rproj\.user$
 ^README\.qmd$
+^doc$
+^Meta$

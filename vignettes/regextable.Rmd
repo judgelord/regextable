@@ -1,5 +1,5 @@
 ---
-title: "regextable: Pattern-Based Text Extraction and Cleaning"
+title: "regextable"
 author: "Shirlyn Dong"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -37,8 +37,7 @@ kable <- function(...){
     head(..., 50) |>
       dplyr::mutate(dplyr::across(everything(), str_fix)) |>
       knitr::kable(escape = TRUE) |>
-      kableExtra::kable_styling() |>
-      kableExtra::scroll_box(height = "400px")
+      kableExtra::kable_styling()
   }
 }
 ```
