@@ -19,8 +19,6 @@ Imports:
     pbapply
 Suggests:
     kableExtra,
-    dplyr,
-    stringr,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
