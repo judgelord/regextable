@@ -1,5 +1,6 @@
 ^regextable\.Rproj$
 ^\.Rproj\.user$
 ^README\.qmd$
+^dev_scripts$
 ^doc$
 ^Meta$
