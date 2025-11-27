@@ -93,8 +93,6 @@ specified).
   filtering.
 - **date_start**: (default NULL) Start date for filtering rows.
 - **date_end**: (default NULL) End date for filtering rows.
-- **typo_table**: (default NULL) Table of typos to correct in data.
-  (planned for future versions)
 - **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase
   patterns from regex_table.
 - **do_clean_text**: (default TRUE) Clean text before matching.

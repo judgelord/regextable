@@ -7,7 +7,7 @@
 #' @export
 clean_text <- function(text){
 
-  FROM %>%
+  text %>%
     stringr::str_to_lower() %>% #makes str lowercase for consistency
     stringr::str_remove_all("[+\u2014]") %>% #removes '+' and em-dash
     stringr::str_replace_all("[\n.]", " ") %>% #replaces new lines and periods to one space

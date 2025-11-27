@@ -10,12 +10,10 @@ extract(
   regex_table,
   pattern_col = "pattern",
   return_cols = NULL,
-  id_col = NULL,
-  id_filter = NULL,
+  regex_return_cols = NULL,
   date_col = NULL,
   date_start = NULL,
   date_end = NULL,
-  typo_table = NULL,
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
   verbose = TRUE
@@ -30,19 +28,15 @@ extract(
 
 \item{pattern_col}{Name of the regex pattern column in regex_table.}
 
-\item{return_cols}{Optional vector of column names to include in the output.}
+\item{return_cols}{Optional vector of column names to include from 'data'.}
 
-\item{id_col}{Optional column in \code{data} used to filter rows before matching.}
-
-\item{id_filter}{Optional value or vector of IDs to restrict which rows of \code{data} are matched.}
+\item{regex_return_cols}{Optional vector of column names to include from 'regex_table'.}
 
 \item{date_col}{Optional column in 'data' for date filtering.}
 
 \item{date_start}{Optional start date for filtering 'data'.}
 
 \item{date_end}{Optional end date for filtering 'data'.}
-
-\item{typo_table}{Optional table to fix typos in 'data'. # planned for later versions}
 
 \item{remove_acronyms}{Logical; if TRUE, removes all-uppercase patterns from regex_table.}
 
@@ -51,7 +45,7 @@ extract(
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 }
 \value{
-A tibble (data frame) with one row per match. Returns original text column plus \code{pattern}.
+A tibble (data frame) with one row per match.
 }
 \description{
 Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.

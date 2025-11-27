@@ -4,9 +4,9 @@
 \name{regextable-package}
 \alias{regextable}
 \alias{regextable-package}
-\title{regextable: Pattern-Based Text Extraction and Standardization}
+\title{regextable: Tools for Regex Extraction and Cleaning}
 \description{
-Extract structured data from text using lookup tables of regular expressions. Features an optimized "shrinking pool" algorithm to efficiently match thousands of patterns against large text datasets. Useful for normalizing entities (like names, companies, or organizations) and standardizing unstructured text.
+Provides functions for text extraction and cleaning.
 }
 \seealso{
 Useful links:
@@ -20,4 +20,3 @@ Useful links:
 \strong{Maintainer}: Shirlyn Dong \email{shirlynd@umich.edu}
 
 }
-\keyword{internal}

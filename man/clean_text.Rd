@@ -4,10 +4,10 @@
 \alias{clean_text}
 \title{Clean Text}
 \usage{
-clean_text(FROM)
+clean_text(text)
 }
 \arguments{
-\item{FROM}{Character vector to clean.}
+\item{text}{Character vector to clean.}
 }
 \value{
 Cleaned character vector.
