@@ -17,6 +17,10 @@ Imports:
     stringi,
     stringr,
     pbapply
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 LazyData: true
 URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
