@@ -9,8 +9,8 @@ clean_text <- function(text){
 
   text %>%
     stringr::str_to_lower() %>% #makes str lowercase for consistency
-    stringr::str_remove_all("[+–—\u2014!?:;\t]") %>% #removes special characters
-    stringr::str_replace_all("[\n.]", " ") %>% #replaces new lines and periods to one space
+    stringr::str_remove_all("[+\u2014!?:;]") %>% #removes punctuation
+    stringr::str_replace_all("[\n\t.-]", " ") %>% #replaces new lines, tabs, periods, hyphen, and dash with space
     stringr::str_replace("\\s*(?:,\\s*)+", ", ") %>% #replaces sequences and white space with a single ", "
     stringr::str_squish() # replace spaces with a single space
 }
