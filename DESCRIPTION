@@ -20,9 +20,10 @@ Imports:
 Suggests:
     kableExtra,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 LazyData: true
 URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
-
+Config/testthat/edition: 3
