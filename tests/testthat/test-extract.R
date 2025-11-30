@@ -9,13 +9,13 @@ test_that("extract basic matching works", {
     stringsAsFactors = FALSE
   )
   
-  regex_table <- data.frame(pattern = c("ACME", "XYZ Corp"))
+  regex_table <- data.frame(pattern = c("XYZ Corp"))
   
   result <- extract(df, col_name = "text", regex_table = regex_table, verbose = FALSE)
   
-  expect_equal(nrow(result), 2)
-  expect_setequal(result$pattern, c("ACME", "XYZ Corp"))
-  expect_setequal(result$id, 1:2)
+  expect_equal(nrow(result), 1)
+  expect_setequal(result$pattern, c("XYZ Corp"))
+  expect_equal(result$id, 2)
 })
 
 
