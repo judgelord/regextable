@@ -107,7 +107,7 @@ Each row in the output corresponds to a detected match, and includes both the or
 
 ## Advanced Usage
 
-`extract()` can also filter data by date, remove all-uppercase patterns (like acronyms), and select specific output columns. This is useful for more controlled extraction.
+`extract()` can also filter data by date, remove acronyms (all-uppercase patterns with 2+ characters), and select specific output columns. This is useful for more controlled extraction.
 
 ```{r, eval = FALSE, include= FALSE}
 result_advanced <- extract(
@@ -140,10 +140,10 @@ Internally, `extract()` uses a shrinking pool algorithm:
 3. When a match is found, remove that row from further checks.
 4. Continue until all patterns have been applied.
 
-This approach greatly improves performance on large datasets because rows stop being checked once a match is found.
+This approach improves performance on large datasets because rows stop being checked once a match is found.
 
 ### Summary
-- `regextable` is a tool for extracting structured data from unstructured text.
+- `regextable` is a tool for extracting data from text.
 - Use the included datasets to get started or supply your own lookup tables.
-- `extract()` automatically handles text cleaning and efficient matching.
+- `extract()` by default handles text cleaning and efficient matching.
 - Optional parameters allow advanced control over filtering and output.
