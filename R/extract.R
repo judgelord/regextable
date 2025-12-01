@@ -187,31 +187,34 @@ extract_matches_shrinking_pool <- function(text_vector,
   
   n_rows <- length(text_vector)
   
-  matched_patterns <- rep(NA_character_, n_rows)
-  is_unmatched <- rep(TRUE, n_rows)
+  # Use environments to avoid global assignment issues
+  match_env <- new.env()
+  match_env$matched_patterns <- rep(NA_character_, n_rows)
+  match_env$is_unmatched <- rep(TRUE, n_rows)
   
   if (verbose) {
     message(sprintf("Matching %d patterns against %d text entries", length(patterns), n_rows))
   }
   
+  # Use pblapply with environment assignment
   dummy <- pbapply::pblapply(patterns, function(pat) {
     
-    if (!any(is_unmatched)) return(NULL)
+    if (!any(match_env$is_unmatched)) return(NULL)
     
-    indices_to_check <- which(is_unmatched)
+    indices_to_check <- which(match_env$is_unmatched)
     subset_text <- text_vector[indices_to_check]
     
     has_match <- stringi::stri_detect_regex(subset_text, pat, case_insensitive = TRUE)
     
     if (any(has_match)) {
       matched_indices <- indices_to_check[has_match]
-      matched_patterns[matched_indices] <<- pat
-      is_unmatched[matched_indices] <<- FALSE
+      match_env$matched_patterns[matched_indices] <- pat
+      match_env$is_unmatched[matched_indices] <- FALSE
     }
     return(NULL)
   })
   
-  final_match_indices <- which(!is.na(matched_patterns))
+  final_match_indices <- which(!is.na(match_env$matched_patterns))
   
   if (length(final_match_indices) == 0) {
     return(data.frame())
@@ -219,7 +222,7 @@ extract_matches_shrinking_pool <- function(text_vector,
   
   df <- data.frame(
     id = row_ids[final_match_indices],
-    pattern = matched_patterns[final_match_indices],
+    pattern = match_env$matched_patterns[final_match_indices],
     stringsAsFactors = FALSE
   )
   
