@@ -45,7 +45,7 @@ kable <- function(...){
 
 ### Introduction
 
-`regextable` provides a flexible and efficient framework for extracting structured information from text using pattern-based regular expressions. The package is optimized to handle large datasets with thousands of patterns using a "shrinking pool" algorithm, which stops searching rows once a match is found, improving speed.
+`regextable` provides a efficient framework for extracting structured information from text using pattern-based regular expressions. The package is optimized to handle large datasets with thousands of patterns using a "shrinking pool" algorithm, which stops searching rows once a match is found, improving speed.
 
 Install and load the package:
 ```{r, eval= FALSE}
