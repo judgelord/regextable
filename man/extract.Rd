@@ -45,8 +45,30 @@ extract(
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 }
 \value{
-A tibble (data frame) with one row per match.
+A tibble with the following columns:
+\itemize{
+\item All original columns from \code{data} (or subset specified by \code{return_cols})
+\item \code{pattern} - The matched regex pattern
+\item Additional columns from \code{regex_table} if \code{regex_return_cols} specified
+}
 }
 \description{
 Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.
+}
+\examples{
+# Create sample data
+data <- data.frame(
+  id = 1:3,
+  text = c("I love apples", "Bananas are great", "Oranges and apples"),
+  stringsAsFactors = FALSE
+)
+
+# Create regex patterns
+patterns <- data.frame(
+  pattern = c("apples", "bananas", "oranges"),
+  category = c("fruit", "fruit", "fruit")
+)
+
+# Extract matches
+extract(data, "text", patterns)
 }

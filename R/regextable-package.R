@@ -2,8 +2,7 @@
 #'
 #' The regextable package provides functions for extracting patterns from text
 #' using regex lookup tables and cleaning text data. It is particularly useful
-#' for text analysis tasks where you need to match multiple patterns efficiently
-#' using a shrinking pool approach.
+#' for text analysis tasks where you need to match multiple patterns.
 #'
 #' @section Main functions:
 #' \itemize{
