@@ -13,6 +13,23 @@
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @return A tibble (data frame) with one row per match.
+#' @examples
+#' # Create sample data
+#' data <- data.frame(
+#'   id = 1:3,
+#'   text = c("I love apples", "Bananas are great", "Oranges and apples"),
+#'   stringsAsFactors = FALSE
+#' )
+#' 
+#' # Create regex patterns
+#' patterns <- data.frame(
+#'   pattern = c("apples", "bananas", "oranges"),
+#'   category = c("fruit", "fruit", "fruit")
+#' )
+#' 
+#' # Extract matches
+#' extract(data, "text", patterns)
+#' @export
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex
 #' @importFrom dplyr %>% as_tibble
