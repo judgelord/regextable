@@ -191,7 +191,6 @@ extract_matches_shrinking_pool <- function(text_vector,
   
   n_rows <- length(text_vector)
   
-  # Use environments to avoid global assignment issues
   match_env <- new.env()
   match_env$matched_patterns <- rep(NA_character_, n_rows)
   match_env$is_unmatched <- rep(TRUE, n_rows)
