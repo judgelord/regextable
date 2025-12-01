@@ -57,7 +57,7 @@ head(cr2007_03_01)
 
 ## Text cleaning
 
-Before searching text, `clean_text()` standardizes formatting to improve matching. It removes excess punctuation and spacing, lowercases text, and normalizes formatting.
+Before searching text, by default, `clean_text()` standardizes formatting to improve matching. It removes excess punctuation and spacing, lowercases text, and normalizes formatting.
 
 ```{r}
 text <- "  HELLO---WORLD  "
