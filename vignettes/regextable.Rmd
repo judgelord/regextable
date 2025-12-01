@@ -72,7 +72,7 @@ kable(head(cr2007_03_01))
 
 ### Text Cleaning
 
-`extract()` automatically cleans text by default, so the user does not need to call manually. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex patterns match more reliably.
+`extract()` cleans text by default, so the user does not need to call it manually. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.
 
 Example of `clean_text()`:
 ```{r}
