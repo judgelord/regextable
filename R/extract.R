@@ -12,7 +12,12 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A tibble (data frame) with one row per match.
+#' @return A tibble with the following columns:
+#' \itemize{
+#'   \item All original columns from `data` (or subset specified by `return_cols`)
+#'   \item `pattern` - The matched regex pattern
+#'   \item Additional columns from `regex_table` if `regex_return_cols` specified
+#' }
 #' @examples
 #' # Create sample data
 #' data <- data.frame(
@@ -29,7 +34,6 @@
 #' 
 #' # Extract matches
 #' extract(data, "text", patterns)
-#' @export
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex
 #' @importFrom dplyr %>% as_tibble
