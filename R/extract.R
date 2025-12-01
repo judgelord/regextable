@@ -68,6 +68,11 @@ extract <- function(data,
     return(dplyr::as_tibble(data.frame()))
   }
   
+  if (nrow(regex_table) == 0) {
+    if (verbose) message("regex_table is empty")
+    return(dplyr::as_tibble(data.frame()))
+  }
+  
   if (!pattern_col %in% names(regex_table)) {
     stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
   }
