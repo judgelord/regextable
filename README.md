@@ -52,15 +52,15 @@ head(cr2007_03_01)
 
 ## Text cleaning
 
-Before searching text, `clean_text()` standardizes formatting to improve
-matching. It removes excess punctuation and spacing, lowercases text,
-and normalizes formatting.
+Before searching text, by default, `clean_text()` standardizes
+formatting to improve matching. It removes excess punctuation and
+spacing, lowercases text, and normalizes formatting.
 
 ``` r
 text <- "  HELLO---WORLD  "
 cleaned_text <- clean_text(text)
 print(cleaned_text)
-#> [1] "hello---world"
+#> [1] "hello world"
 ```
 
 ## Extract regex-based matches from text
@@ -70,7 +70,8 @@ print(cleaned_text)
 `extract()` performs regex-based matching on a text column using a
 lookup table. It returns a data frame with one row per detected pattern
 match and includes all original columns (or a subset if `return_cols` is
-specified).
+specified) and additional columns, if specified, from
+`regex_return_cols`.
 
 ### Required Parameters
 
@@ -101,8 +102,9 @@ specified).
 ### Returns
 
 A data frame with one row per match, including: - All original columns
-from `data` (or `return_cols` if specified) - `pattern`, the first regex
-pattern matched in each row
+from `data` (or `return_cols` if specified), additional columns from
+regex_table, if specified in `regex_return_cols`, - `pattern`, the first
+regex pattern matched in each row
 
 ### Basic Usage
 
