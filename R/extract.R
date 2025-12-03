@@ -16,6 +16,7 @@
 #' \itemize{
 #'   \item All original columns from `data` (or subset specified by `return_cols`)
 #'   \item `pattern` - The matched regex pattern
+#'   \item `match` - The specific text extracted from the data
 #'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
@@ -35,7 +36,7 @@
 #' # Extract matches
 #' extract(data, "text", patterns)
 #' @importFrom pbapply pblapply pboptions
-#' @importFrom stringi stri_detect_regex
+#' @importFrom stringi stri_detect_regex stri_extract_first_regex
 #' @importFrom dplyr %>% as_tibble
 #' @importFrom stats na.omit
 #' @export
@@ -160,17 +161,17 @@ extract <- function(data,
     
     result <- data[match(matches_found$row_id, data$row_id), , drop = FALSE]
     
-    # Bind pattern and regex info
+    # Bind pattern, match, and regex info
     cols_to_add <- matches_found[, !names(matches_found) %in% "row_id", drop = FALSE]
     result <- cbind(result, cols_to_add)
     
     # Select and order columns
     if (!is.null(return_cols)) {
       valid_cols <- return_cols[return_cols %in% names(result)]
-      cols_to_keep <- unique(c(valid_cols, "pattern", "row_id", regex_return_cols))
+      cols_to_keep <- unique(c(valid_cols, "pattern", "match", "row_id", regex_return_cols))
       result <- result[, cols_to_keep, drop = FALSE]
     } else {
-      final_cols <- c(original_col_order, "pattern", "row_id", regex_return_cols)
+      final_cols <- c(original_col_order, "pattern", "match", "row_id", regex_return_cols)
       final_cols <- final_cols[final_cols %in% names(result)]
       result <- result[, final_cols, drop = FALSE]
     }
@@ -196,6 +197,7 @@ extract_matches_shrinking_pool <- function(text_vector,
   
   match_env <- new.env()
   match_env$matched_patterns <- rep(NA_character_, n_rows)
+  match_env$exact_matches <- rep(NA_character_, n_rows) # New vector for exact matches
   match_env$is_unmatched <- rep(TRUE, n_rows)
   
   if (verbose) {
@@ -216,6 +218,10 @@ extract_matches_shrinking_pool <- function(text_vector,
       matched_indices <- indices_to_check[has_match]
       match_env$matched_patterns[matched_indices] <- pat
       match_env$is_unmatched[matched_indices] <- FALSE
+      
+      # Extract the specific text match
+      actual_text <- stringi::stri_extract_first_regex(subset_text[has_match], pat, case_insensitive = TRUE)
+      match_env$exact_matches[matched_indices] <- actual_text
     }
     return(NULL)
   })
@@ -229,6 +235,7 @@ extract_matches_shrinking_pool <- function(text_vector,
   df <- data.frame(
     id = row_ids[final_match_indices],
     pattern = match_env$matched_patterns[final_match_indices],
+    match = match_env$exact_matches[final_match_indices], # Include new column
     stringsAsFactors = FALSE
   )
   

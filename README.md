@@ -122,15 +122,15 @@ result <- extract(
 )
 
 head(result)
-#> # A tibble: 6 × 4
-#>   speaker                             pattern                                                               row_id icpsr
-#>   <chr>                               <chr>                                                                  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )gr…      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |represen…      2 29906
-#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|jim r la…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )costa\…      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )gr…      5 20124
-#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\…      6 29339
+#> # A tibble: 6 × 5
+#>   speaker                             pattern                                                         match row_id icpsr
+#>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906
+#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… jim …      4 20501
+#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      5 20124
+#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
 ```
 
 ### Advanced Usage
@@ -155,15 +155,15 @@ result_advanced <- extract(
 )
 
 head(result_advanced)
-#> # A tibble: 6 × 4
-#>   speaker                             pattern                                                               row_id icpsr
-#>   <chr>                               <chr>                                                                  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )gr…      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |represen…      2 29906
-#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|jim r la…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )costa\…      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )gr…      5 20124
-#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\…      6 29339
+#> # A tibble: 6 × 5
+#>   speaker                             pattern                                                         match row_id icpsr
+#>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906
+#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… jim …      4 20501
+#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      5 20124
+#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
 ```
 
 ### Future Development
