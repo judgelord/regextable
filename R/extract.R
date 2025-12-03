@@ -89,6 +89,7 @@ extract <- function(data,
   }
   
   original_col_order <- names(data)
+  data$row_id <- seq_len(nrow(data))
   
   # Filter by Date
   if (!is.null(date_col)) {
@@ -130,21 +131,17 @@ extract <- function(data,
     })
   }
   
-  temp_row_ids <- seq_len(nrow(data))
-  
   opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
   on.exit(pbapply::pboptions(opb))
   
   # Run matching (Shrinking Pool)
   matches_found <- extract_matches_shrinking_pool(
     text_vector = text_to_match,
-    row_ids = temp_row_ids,
+    row_ids = data$row_id,
     patterns = patterns,
-    id_col_name = "temp_row_id",
+    id_col_name = "row_id",
     verbose = verbose
   )
-  matches_found <- matches_found[!duplicated(matches_found$temp_row_id), ]
-  
   
   if (nrow(matches_found) > 0) {
     
@@ -158,19 +155,22 @@ extract <- function(data,
                              all.x = TRUE, sort = FALSE)
     }
     
-    result <- data[matches_found$temp_row_id, , drop = FALSE]
+    matches_found <- matches_found[!duplicated(matches_found$row_id), ]
+    matches_found <- matches_found[order(matches_found$row_id), ]
+    
+    result <- data[match(matches_found$row_id, data$row_id), , drop = FALSE]
     
     # Bind pattern and regex info
-    cols_to_add <- matches_found[, !names(matches_found) %in% "temp_row_id", drop = FALSE]
+    cols_to_add <- matches_found[, !names(matches_found) %in% "row_id", drop = FALSE]
     result <- cbind(result, cols_to_add)
     
     # Select and order columns
     if (!is.null(return_cols)) {
       valid_cols <- return_cols[return_cols %in% names(result)]
-      cols_to_keep <- unique(c(valid_cols, "pattern", regex_return_cols))
+      cols_to_keep <- unique(c(valid_cols, "pattern", "row_id", regex_return_cols))
       result <- result[, cols_to_keep, drop = FALSE]
     } else {
-      final_cols <- c(original_col_order, "pattern", regex_return_cols)
+      final_cols <- c(original_col_order, "pattern", "row_id", regex_return_cols)
       final_cols <- final_cols[final_cols %in% names(result)]
       result <- result[, final_cols, drop = FALSE]
     }
