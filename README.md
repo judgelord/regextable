@@ -123,14 +123,14 @@ result <- extract(
 
 head(result)
 #> # A tibble: 6 × 3
-#>   speaker                    pattern                                                                               icpsr
-#>   <chr>                      <chr>                                                                                 <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
+#>   speaker                             pattern                                                                      icpsr
+#>   <chr>                               <chr>                                                                        <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b… 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative … 29906
+#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|jim r langevin|… 20136
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )costa\\b|cost… 20501
+#> 5 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\bna bis… 29339
+#> 6 HON. EDOLPHUS TOWNS;Mr. TOWNS       "edolphus towns|\\be towns|ed towns|(^|senator |representative )towns\\b|to… 15072
 ```
 
 ### Advanced Usage
@@ -156,14 +156,14 @@ result_advanced <- extract(
 
 head(result_advanced)
 #> # A tibble: 6 × 3
-#>   speaker                    pattern                                                                               icpsr
-#>   <chr>                      <chr>                                                                                 <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 2 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 3 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 4 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 5 HON. SAM GRAVES;Mr. GRAVES "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b|graves, … 20124
-#> 6 HON. MARK UDALL;Mr. UDALL  "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative )udall\\b… 29906
+#>   speaker                             pattern                                                                      icpsr
+#>   <chr>                               <chr>                                                                        <dbl>
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representative )graves\\b… 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |representative … 29906
+#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|jim r langevin|… 20136
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )costa\\b|cost… 20501
+#> 5 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bishop|\\bna bis… 29339
+#> 6 HON. EDOLPHUS TOWNS;Mr. TOWNS       "edolphus towns|\\be towns|ed towns|(^|senator |representative )towns\\b|to… 15072
 ```
 
 ### Future Development
