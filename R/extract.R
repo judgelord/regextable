@@ -143,12 +143,15 @@ extract <- function(data,
     id_col_name = "temp_row_id",
     verbose = verbose
   )
+  matches_found <- matches_found[!duplicated(matches_found$temp_row_id), ]
+  
   
   if (nrow(matches_found) > 0) {
     
     # Merge regex columns if requested
     if (!is.null(regex_return_cols)) {
-      meta_data <- unique(regex_table[, c(pattern_col, regex_return_cols), drop = FALSE])
+      meta_data <- regex_table[, c(pattern_col, regex_return_cols), drop = FALSE]
+      meta_data <- meta_data[!duplicated(meta_data[[pattern_col]]), ]
       
       matches_found <- merge(matches_found, meta_data, 
                              by.x = "pattern", by.y = pattern_col, 
@@ -177,7 +180,7 @@ extract <- function(data,
   
   if (verbose) message("Number of matches found: ", nrow(result))
   
-  return(dplyr::as_tibble(result))
+  return(dplyr::as_tibble(result) %>% dplyr::distinct())
 }
 
 #' @title Extract matches for a specific group (Optimized)
