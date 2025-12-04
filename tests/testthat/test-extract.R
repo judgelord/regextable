@@ -14,7 +14,6 @@ test_that("extract basic matching works", {
   expect_equal(nrow(result), 1)
   expect_setequal(result$pattern, c("XYZ Corp"))
   expect_equal(result$id, 2)
-  # Expect lowercase because clean_text runs by default
   expect_equal(result$match, "xyz corp")
 })
 
