@@ -213,6 +213,7 @@ extract_matches_shrinking_pool <- function(text_vector,
     subset_text <- text_vector[indices_to_check]
     
     has_match <- stringi::stri_detect_regex(subset_text, pat, case_insensitive = TRUE)
+    has_match[is.na(has_match)] <- FALSE
     
     if (any(has_match)) {
       matched_indices <- indices_to_check[has_match]

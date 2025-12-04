@@ -1,7 +1,6 @@
 library(testthat)
 library(regextable)
 
-
 test_that("extract basic matching works", {
   df <- data.frame(
     id   = 1:2,
@@ -9,17 +8,23 @@ test_that("extract basic matching works", {
     stringsAsFactors = FALSE
   )
   regex_table <- data.frame(pattern = c("XYZ Corp"))
+  
   result <- extract(df, col_name = "text", regex_table = regex_table, verbose = FALSE)
+  
   expect_equal(nrow(result), 1)
   expect_setequal(result$pattern, c("XYZ Corp"))
   expect_equal(result$id, 2)
+  # Expect lowercase because clean_text runs by default
+  expect_equal(result$match, "xyz corp")
 })
 
 test_that("case-insensitive matching works", {
   df <- data.frame(id = 1, text = "alice works at acme", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = "ACME")
   result <- extract(df, col_name = "text", regex_table = regex_table, verbose = FALSE)
+  
   expect_equal(result$pattern, "ACME")
+  expect_equal(result$match, "acme")
 })
 
 test_that("date filtering works", {
@@ -31,12 +36,8 @@ test_that("date filtering works", {
   )
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
   result <- extract(
-    df,
-    col_name  = "text",
-    regex_table = regex_table,
-    date_col  = "date",
-    date_start = "2020-06-01",
-    date_end   = "2021-12-31",
+    df, col_name  = "text", regex_table = regex_table,
+    date_col  = "date", date_start = "2020-06-01", date_end   = "2021-12-31",
     verbose = FALSE
   )
   expect_equal(result$id, 2)
@@ -53,7 +54,9 @@ test_that("return_cols correctly restricts output", {
   df <- data.frame(id = 1, text = "ACME", other = "foo", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = "ACME")
   result <- extract(df, col_name = "text", regex_table = regex_table, return_cols = c("other"), verbose = FALSE)
-  expect_equal(names(result), c("other", "pattern"))
+  
+  expect_true(all(c("other", "pattern", "match", "row_id") %in% names(result)))
+  expect_false("text" %in% names(result))
 })
 
 test_that("no matches returns empty tibble", {
@@ -104,27 +107,32 @@ test_that("extract errors when date_col does not exist", {
 test_that("extract handles NA text safely", {
   df <- data.frame(id = 1:3, text = c("ACME", NA, "XYZ"))
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
+  
+  # This previously crashed because NA inputs propagated to array indices
   result <- extract(df, "text", regex_table, verbose = FALSE)
+  
   expect_equal(nrow(result), 2)
+  expect_setequal(result$pattern, c("ACME", "XYZ"))
 })
 
-# -------------------------
-# Additional recommended tests
-# -------------------------
-
-test_that("multiple matches per row only returns first match", {
+test_that("multiple matches per row only returns first match (Shrinking Pool)", {
   df <- data.frame(id = 1, text = "ACME and XYZ Corp", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = c("ACME", "XYZ Corp"))
+  
   result <- extract(df, "text", regex_table, verbose = FALSE)
   expect_equal(nrow(result), 1)
-  expect_true(result$pattern %in% c("ACME", "XYZ Corp"))
+  expect_equal(result$pattern, "ACME") 
 })
 
 test_that("special regex characters in text are matched correctly", {
   df <- data.frame(id = 1, text = "Check (ACME).", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = "\\(ACME\\)")
+  
   result <- extract(df, "text", regex_table, verbose = FALSE)
+  
   expect_equal(nrow(result), 1)
+  # Expect lowercase match due to default cleaning
+  expect_equal(result$match, "(acme)")
 })
 
 test_that("multiple regex_return_cols are merged correctly", {
@@ -140,6 +148,7 @@ test_that("empty regex_table or all patterns removed returns empty tibble", {
   regex_table <- data.frame(pattern = character(0))
   result <- extract(df, "text", regex_table, verbose = FALSE)
   expect_equal(nrow(result), 0)
+  
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
   result <- extract(df, "text", regex_table, remove_acronyms = TRUE, verbose = FALSE)
   expect_equal(nrow(result), 0)
@@ -163,6 +172,7 @@ test_that("non-character col_name errors on factor/list columns", {
   df <- data.frame(text = factor(c("ACME","XYZ")))
   regex_table <- data.frame(pattern = "ACME")
   expect_error(extract(df, "text", regex_table))
+  
   df <- data.frame(text = I(list("ACME","XYZ")))
   expect_error(extract(df, "text", regex_table))
 })
