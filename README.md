@@ -116,7 +116,7 @@ finds all matches in the text column using the provided regex table.
 result <- extract(
   data = cr2007_03_01,
   regex_table = members,
-  return_cols = c("text", "pattern"),
+  return_cols = c("text"),
   regex_return_cols = c("icpsr") 
 )
 
@@ -148,7 +148,7 @@ result_advanced <- extract(
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("text", "pattern"),
+  return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
