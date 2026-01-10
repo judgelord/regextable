@@ -24,8 +24,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-## regextable: Apply pattern-based text extraction and cleaning
-
 ### Installation
 
 ```         

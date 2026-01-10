@@ -1,8 +1,6 @@
 # regextable: Apply pattern-based text extraction and cleaning
 
 
-## regextable: Apply pattern-based text extraction and cleaning
-
 ### Installation
 
     devtools::install_github("judgelord/regextable")
