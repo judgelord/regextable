@@ -71,6 +71,10 @@ extract <- function(data,
   
   chk::chk_character(data[[col_name]], x_name = paste0("column '", col_name, "'"))
   
+  chk::chk_flag(verbose)
+  opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
+  on.exit(pbapply::pboptions(opb), add = TRUE)
+  
   if (nrow(data) == 0 || nrow(regex_table) == 0) {
     if (verbose) message("Input data or regex_table is empty")
     return(dplyr::as_tibble(data.frame()))
