@@ -36,6 +36,7 @@
 #' 
 #' # Extract matches
 #' extract(data, "text", patterns)
+#' @importFrom chk err chk_data chk_string chk_subset chk_character chk_flag
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex stri_extract_first_regex
 #' @importFrom dplyr %>% as_tibble

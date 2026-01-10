@@ -45,10 +45,11 @@ extract(
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 }
 \value{
-A tibble with the following columns:
+A tibble (data frame) with the following columns:
 \itemize{
 \item All original columns from \code{data} (or subset specified by \code{return_cols})
-\item \code{pattern} - The matched regex pattern
+\item \code{pattern} The matched regex pattern
+\item \code{match} The specific text extracted from the data
 \item Additional columns from \code{regex_table} if \code{regex_return_cols} specified
 }
 }
