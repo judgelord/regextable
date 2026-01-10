@@ -12,11 +12,12 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
-#' @return A tibble with the following columns:
+#' 
+#' @return A tibble (data frame) with the following columns:
 #' \itemize{
 #'   \item All original columns from `data` (or subset specified by `return_cols`)
-#'   \item `pattern` - The matched regex pattern
-#'   \item `match` - The specific text extracted from the data
+#'   \item `pattern` The matched regex pattern
+#'   \item `match` The specific text extracted from the data
 #'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
