@@ -58,36 +58,22 @@ extract <- function(data,
   if (is.character(data) && is.null(dim(data))) {
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
-  } else if (!is.data.frame(data)) {
-    stop("`data` must be a data frame or a character vector")
   }
   
-  if (missing(col_name) || !col_name %in% names(data)) {
-    stop(sprintf("Column `%s` not found in data.", col_name))
-  }
-  if (!is.character(data[[col_name]])) {
-    stop(sprintf("Column `%s` must be a character vector.", col_name))
-  }
-  
-  if (nrow(data) == 0) {
-    if (verbose) message("Input data is empty")
-    return(dplyr::as_tibble(data.frame()))
-  }
-  
-  if (nrow(regex_table) == 0) {
-    if (verbose) message("regex_table is empty")
-    return(dplyr::as_tibble(data.frame()))
-  }
-  
-  if (!pattern_col %in% names(regex_table)) {
-    stop(sprintf("Column `%s` not found in regex_table.", pattern_col))
-  }
+  chk::chk_data(data)
+  chk::chk_data(regex_table)
+  chk::chk_subset(col_name, names(data))
+  chk::chk_subset(pattern_col, names(regex_table))
   
   if (!is.null(regex_return_cols)) {
-    missing_cols <- regex_return_cols[!regex_return_cols %in% names(regex_table)]
-    if (length(missing_cols) > 0) {
-      stop(sprintf("Columns missing from regex_table: %s", paste(missing_cols, collapse = ", ")))
-    }
+    chk::chk_subset(regex_return_cols, names(regex_table))
+  }
+  
+  chk::chk_character(data[[col_name]], x_name = paste0("column '", col_name, "'"))
+  
+  if (nrow(data) == 0 || nrow(regex_table) == 0) {
+    if (verbose) message("Input data or regex_table is empty")
+    return(dplyr::as_tibble(data.frame()))
   }
   
   original_col_order <- names(data)
@@ -95,8 +81,7 @@ extract <- function(data,
   
   # Filter by Date
   if (!is.null(date_col)) {
-    if (!date_col %in% names(data)) stop(sprintf("Date column `%s` not found.", date_col))
-    
+    chk::chk_subset(date_col, names(data))
     if (!inherits(data[[date_col]], "Date")) {
       data[[date_col]] <- as.Date(data[[date_col]])
     }
