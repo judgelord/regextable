@@ -40,7 +40,7 @@ head(members)
 data("cr2007_03_01")
 head(cr2007_03_01)
 #> # A tibble: 6 × 5
-#>   date       speaker                             header                                                    url   url_txt
+#>   date       text                                header                                                    url   url_txt
 #>   <date>     <chr>                               <chr>                                                     <chr> <chr>  
 #> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE… http… https:…
 #> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH AN… http… https:…
@@ -115,15 +115,14 @@ finds all matches in the text column using the provided regex table.
 #Extract patterns using only required arguments
 result <- extract(
   data = cr2007_03_01,
-  col_name = "speaker",
   regex_table = members,
-  return_cols = c("speaker", "pattern"),
+  return_cols = c("text", "pattern"),
   regex_return_cols = c("icpsr") 
 )
 
 head(result)
 #> # A tibble: 6 × 5
-#>   speaker                             pattern                                                         match row_id icpsr
+#>   text                                pattern                                                         match row_id icpsr
 #>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
 #> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
 #> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906
@@ -144,19 +143,18 @@ display messages.
 # Advanced usage with optional filters
 result_advanced <- extract(
   data = cr2007_03_01,
-  col_name = "speaker",
   regex_table = members,
   date_col = "date",               
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("speaker", "pattern"),
+  return_cols = c("text", "pattern"),
   regex_return_cols = c("icpsr")
 )
 
 head(result_advanced)
 #> # A tibble: 6 × 5
-#>   speaker                             pattern                                                         match row_id icpsr
+#>   text                                pattern                                                         match row_id icpsr
 #>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
 #> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
 #> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906

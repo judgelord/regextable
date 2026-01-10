@@ -43,7 +43,7 @@
 #' @importFrom stats na.omit
 #' @export
 extract <- function(data,
-                    col_name,
+                    col_name = "text",
                     regex_table,
                     pattern_col = "pattern",
                     return_cols = NULL,

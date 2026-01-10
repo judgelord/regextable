@@ -28,3 +28,5 @@ LazyData: true
 URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3
+Depends: 
+    R (>= 3.5)
