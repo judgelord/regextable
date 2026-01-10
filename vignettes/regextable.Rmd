@@ -87,9 +87,8 @@ The simplest use of `extract()`:
 ```{r}
 result <- extract(
   data = cr2007_03_01,
-  col_name = "speaker",
   regex_table = members,
-  return_cols = c("speaker", "pattern"),
+  return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
@@ -112,13 +111,12 @@ Each row in the output corresponds to a detected match, and includes both the or
 ```{r, eval = FALSE, include= FALSE}
 result_advanced <- extract(
   data = cr2007_03_01,
-  col_name = "speaker",
   regex_table = members,
   date_col = "date",
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("speaker", "pattern"),
+  return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
