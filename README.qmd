@@ -36,12 +36,12 @@ library(regextable)
 
 ## Data
 
-This package operates on two inputs:
+This package works with two inputs:
 
 1.  A data frame containing the text to search.
 2.  A regex lookup table containing patterns to match.
 
-Because users supply both the data and the patterns, `extract()` works across any domain (legislators, corporations, biology, etc.).
+Because users provide both the data and the patterns, `extract()` works with any domain (legislators, corporations, biology, etc.).
 
 The examples below use the `members` and `cr2007_03_01` datasets included in this package for illustration.
 
@@ -55,7 +55,7 @@ head(cr2007_03_01)
 
 ## Text cleaning
 
-Before searching text, by default, `clean_text()` standardizes formatting to improve matching. It removes excess punctuation and spacing, lowercases text, and normalizes formatting.
+Before matching, by default, `clean_text()` is applied to standardize text. It lowercases text, removes excess punctuation, replaces line breaks and dashes with spaces, and collapses multiple spaces into a single space. Text cleaning is only applied for matching and does not modify the original input data. Users can disable this behavior by setting `do_clean_text = FALSE`.
 
 ```{r}
 text <- "  HELLO---WORLD  "
