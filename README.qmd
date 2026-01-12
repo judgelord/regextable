@@ -71,21 +71,21 @@ print(cleaned_text)
 
 ### Required Parameters
 
--   **data**: A data frame or character vector containing the text to search.
--   **col_name**: Column name in the data frame containing text to search through.
--   **regex_table**: A regex lookup table with at least one pattern column.
+-   **`data`**: A data frame or character vector containing the text to search.
+-   **`regex_table`**: A regex lookup table with at least one pattern column.
 
 ### Optional Parameters
 
--   **pattern_col**: (default "pattern") Name of the regex pattern column in regex_table.
--   **return_cols**: (default NULL) Vector of columns from 'data' to include in the output.
--   **regex_return_cols** (default NULL) Vector of columns from 'regex_table' to include in the output.
--   **date_col**: (default NULL) Column in data containing dates for filtering.
--   **date_start**: (default NULL) Start date for filtering rows.
--   **date_end**: (default NULL) End date for filtering rows.
--   **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase patterns from regex_table.
--   **do_clean_text**: (default TRUE) Clean text before matching.
--   **verbose**: (default TRUE) If TRUE, displays progress messages.
+-   **`col_name`**: (default `"text"`) Column name in the data frame containing text to search through.
+-   **`pattern_col`**: (default `"pattern"`) Name of the regex pattern column in `regex_table`.
+-   **`return_cols`**: (default `NULL`) Vector of columns from `data` to include in the output. If `NULL`, all columns from `data` are included.
+-   **`regex_return_cols`**: (default `NULL`) Vector of additional columns from `regex_table` to include in the output.
+-   **`date_col`**: (default `NULL`) Column in `data` containing dates for filtering.
+-   **`date_start`**: (default `NULL`) Start date for filtering rows.
+-   **`date_end`**: (default `NULL`) End date for filtering rows.
+-   **`remove_acronyms`**: (default `FALSE`) If `TRUE`, removes all-uppercase patterns from `regex_table`.
+-   **`do_clean_text`**: (default `TRUE`) If `TRUE`, cleans text before matching.
+-   **`verbose`**: (default `TRUE`) If `TRUE`, displays progress messages.
 
 ### Returns
 
