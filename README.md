@@ -69,36 +69,37 @@ print(cleaned_text)
 ### Description
 
 `extract()` performs regex-based matching on a text column using a
-lookup table. It returns a data frame with one row per detected pattern
-match and includes all original columns (or a subset if `return_cols` is
-specified) and additional columns, if specified, from
-`regex_return_cols`.
+pattern lookup table. For each input row, it returns at most one match
+along with the corresponding pattern and optionally additional columns
+from the pattern table.
 
 ### Required Parameters
 
-- **data**: A data frame or character vector containing the text to
+- **`data`**: A data frame or character vector containing the text to
   search.
-- **col_name**: Column name in the data frame containing text to search
-  through.
-- **regex_table**: A regex lookup table with at least one pattern
+- **`regex_table`**: A regex lookup table with at least one pattern
   column.
 
 ### Optional Parameters
 
-- **pattern_col**: (default “pattern”) Name of the regex pattern column
-  in regex_table.
-- **return_cols**: (default NULL) Vector of columns from ‘data’ to
-  include in the output.
-- **regex_return_cols** (default NULL) Vector of columns from
-  ‘regex_table’ to include in the output.
-- **date_col**: (default NULL) Column in data containing dates for
+- **`col_name`**: (default `"text"`) Column name in the data frame
+  containing text to search through.
+- **`pattern_col`**: (default `"pattern"`) Name of the regex pattern
+  column in `regex_table`.
+- **`return_cols`**: (default `NULL`) Vector of columns from `data` to
+  include in the output. If `NULL`, all columns from `data` are
+  included.
+- **`regex_return_cols`**: (default `NULL`) Vector of additional columns
+  from `regex_table` to include in the output.
+- **`date_col`**: (default `NULL`) Column in `data` containing dates for
   filtering.
-- **date_start**: (default NULL) Start date for filtering rows.
-- **date_end**: (default NULL) End date for filtering rows.
-- **remove_acronyms**: (default FALSE) If TRUE, removes all-uppercase
-  patterns from regex_table.
-- **do_clean_text**: (default TRUE) Clean text before matching.
-- **verbose**: (default TRUE) If TRUE, displays progress messages.
+- **`date_start`**: (default `NULL`) Start date for filtering rows.
+- **`date_end`**: (default `NULL`) End date for filtering rows.
+- **`remove_acronyms`**: (default `FALSE`) If `TRUE`, removes
+  all-uppercase patterns from `regex_table`.
+- **`do_clean_text`**: (default `TRUE`) If `TRUE`, cleans text before
+  matching.
+- **`verbose`**: (default `TRUE`) If `TRUE`, displays progress messages.
 
 ### Returns
 
