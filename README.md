@@ -101,8 +101,8 @@ specified) and additional columns, if specified, from
 
 A data frame with one row per match, including: - All original columns
 from `data` (or `return_cols` if specified), additional columns from
-regex_table, if specified in `regex_return_cols`, - `pattern`, the first
-regex pattern matched in each row
+regex_table, if specified in `regex_return_cols`, `pattern`, the first
+regex pattern matched in each row, and the row id.
 
 ### Basic Usage
 
