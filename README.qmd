@@ -67,7 +67,7 @@ print(cleaned_text)
 
 ### Description
 
-`extract()` performs regex-based matching on a text column using a lookup table. It returns a data frame with one row per detected pattern match and includes all original columns (or a subset if `return_cols` is specified) and additional columns, if specified, from `regex_return_cols`.
+`extract()` performs regex-based matching on a text column using a pattern lookup table. For each input row, it returns at most one match along with the corresponding pattern and optionally additional columns from the pattern table.
 
 ### Required Parameters
 
