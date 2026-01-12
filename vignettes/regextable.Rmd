@@ -45,7 +45,7 @@ kable <- function(...){
 
 ### Introduction
 
-`regextable` provides a efficient framework for extracting structured information from text using pattern-based regular expressions. The package is optimized to handle large datasets with thousands of patterns using a "shrinking pool" algorithm, which stops searching rows once a match is found, improving speed.
+`regextable` extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table, returning the matched pattern, the exact text match, an internal row identifier, and all original columns from the input data unless specified, with optional additional columns from the pattern table. Performance on large datasets is improved by stopping the search for a row once a match is found.
 
 Install and load the package:
 ```{r, eval= FALSE}
