@@ -23,6 +23,9 @@ knitr::opts_chunk$set(
   R.options = list(width = 120)
 )
 ```
+## Description 
+
+`regextable` helps extract structured information from unstructured text using user-defined regular expression lookup tables. It is designed for reproducible, domain-agnostic text matching, where users supply both the input text and the patterns to be matched.
 
 ## Installation
 
