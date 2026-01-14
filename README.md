@@ -1,7 +1,14 @@
 # regextable: Apply pattern-based text extraction and cleaning
 
 
-### Installation
+## Description
+
+`regextable` helps extract structured information from unstructured text
+using user-defined regular expression lookup tables. It is designed for
+reproducible, domain-agnostic text matching, where users supply both the
+input text and the patterns to be matched.
+
+## Installation
 
     devtools::install_github("judgelord/regextable")
 
@@ -11,13 +18,13 @@ library(regextable)
 
 ## Data
 
-This package works with two inputs:
+This package operates on two inputs:
 
 1.  A data frame containing the text to search.
 2.  A regex lookup table containing patterns to match.
 
-Because users provide both the data and the patterns, `extract()` works
-with any domain (legislators, corporations, biology, etc.).
+Because users provide both the data and the patterns, `extract()` is
+domain-agnostic and can be applied to a wide range of text sources.
 
 The examples below use the `members` and `cr2007_03_01` datasets
 included in this package for illustration.
@@ -53,7 +60,7 @@ head(cr2007_03_01)
 Before matching, by default, `clean_text()` is applied to standardize
 text. It lowercases text, removes excess punctuation, replaces line
 breaks and dashes with spaces, and collapses multiple spaces into a
-single space. Text cleaning is only applied for matching and does not
+single space. Text cleaning is applied only during matching and does not
 modify the original input data. Users can disable this behavior by
 setting `do_clean_text = FALSE`.
 
@@ -70,8 +77,8 @@ print(cleaned_text)
 
 `extract()` performs regex-based matching on a text column using a
 pattern lookup table. For each input row, it returns at most one match
-along with the corresponding pattern and optionally additional columns
-from the pattern table.
+(the first matched pattern), along with the corresponding pattern and
+optional metadata from the pattern table.
 
 ### Required Parameters
 
@@ -103,15 +110,18 @@ from the pattern table.
 
 ### Returns
 
-A data frame with one row per match, including: - All original columns
-from `data` (or `return_cols` if specified), additional columns from
-regex_table, if specified in `regex_return_cols`, `pattern`, the first
-regex pattern matched in each row, and the row id.
+A data frame with one row per match, including:
+
+- Original columns from data (or only `return_cols`, if specified)
+- Additional columns from `regex_table` specified in `regex_return_cols`
+- `pattern`, the first regex pattern matched in each row
+- `row_id`, the row number of the text
 
 ### Basic Usage
 
-The simplest use of `extract()` with only the required arguments. This
-finds all matches in the text column using the provided regex table.
+The simplest use of `extract()` with only the required arguments and
+returned columns specified. This finds all matches in the text column
+using the provided regex table.
 
 ``` r
 #Extract patterns using only required arguments
@@ -137,9 +147,9 @@ head(result)
 ### Advanced Usage
 
 Shows how to use optional arguments for more control, such as filtering
-by date ranges and removing acronyms. Useful when you want to narrow the
-matches, not clean the text, specifying returned columns, or choose to
-display messages.
+by date ranges and removing acronyms. This is useful when you want to
+narrow matches, disable text cleaning, control returned columns, or
+suppress messages.
 
 ``` r
 # Advanced usage with optional filters
