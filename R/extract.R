@@ -1,5 +1,11 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.
+#' @description Uses a regex lookup table to extract at most one pattern match.
+#' 
+#' @details
+#' Pattern matching is performed using R's regular expression engine and is
+#' case-insensitive by default.
+#' When multiple patterns match the same text, the first match is determined
+#' by the order of rows in `regex_table`.
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with a pattern column.
@@ -18,6 +24,7 @@
 #'   \item All original columns from `data` (or subset specified by `return_cols`)
 #'   \item `pattern` The matched regex pattern
 #'   \item `match` The specific text extracted from the data
+#'   \item `row_id` Integer row identifier corresponding to the input data
 #'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
@@ -36,7 +43,7 @@
 #' 
 #' # Extract matches
 #' extract(data, "text", patterns)
-#' @importFrom chk err chk_data chk_string chk_subset chk_character chk_flag
+#' @importFrom chk chk_data chk_subset chk_character chk_flag
 #' @importFrom pbapply pblapply pboptions
 #' @importFrom stringi stri_detect_regex stri_extract_first_regex
 #' @importFrom dplyr %>% as_tibble
@@ -115,16 +122,8 @@ extract <- function(data,
   # Clean text
   text_to_match <- data[[col_name]]
   if (do_clean_text) {
-    text_to_match <- tryCatch({
-      clean_text(text_to_match)
-    }, error = function(e) {
-      warning("`clean_text` failed or not found. Using original text.")
-      return(text_to_match)
-    })
+    text_to_match <- clean_text(text_to_match)
   }
-  
-  opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
-  on.exit(pbapply::pboptions(opb))
   
   # Run matching (Shrinking Pool)
   matches_found <- extract_matches_shrinking_pool(

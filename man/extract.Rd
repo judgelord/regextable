@@ -50,11 +50,18 @@ A tibble (data frame) with the following columns:
 \item All original columns from \code{data} (or subset specified by \code{return_cols})
 \item \code{pattern} The matched regex pattern
 \item \code{match} The specific text extracted from the data
+\item \code{row_id} Integer row identifier corresponding to the input data
 \item Additional columns from \code{regex_table} if \code{regex_return_cols} specified
 }
 }
 \description{
-Uses a regex lookup to extract pattern matches from a data frame, returns matching rows.
+Uses a regex lookup table to extract at most one pattern match.
+}
+\details{
+Pattern matching is performed using R's regular expression engine and is
+case-insensitive by default.
+When multiple patterns match the same text, the first match is determined
+by the order of rows in \code{regex_table}.
 }
 \examples{
 # Create sample data

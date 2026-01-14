@@ -6,7 +6,10 @@
 `regextable` helps extract structured information from unstructured text
 using user-defined regular expression lookup tables. It is designed for
 reproducible, domain-agnostic text matching, where users supply both the
-input text and the patterns to be matched.
+input text and the patterns to be matched. Pattern matching is
+case-insensitive and uses R’s regular expression engine. When multiple
+patterns match the same row, the first match is determined by the order
+of `regex_table`.
 
 ## Installation
 
