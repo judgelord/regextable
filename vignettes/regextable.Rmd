@@ -22,20 +22,14 @@ knitr::opts_chunk$set(
   R.options = list(width = 120)
 )
 
-str_fix <- function(x){
-  stringr::str_replace_all(x, "\\$", "\\\\$") |> 
-    stringr::str_remove_all("`|\\\\bf|\\\\br")
-}
-
 # Format kable tables
-kable <- function(...){
-  if (knitr::is_latex_output()){
-    head(..., 25) |>
+kable <- function(x){
+  if (knitr::is_latex_output()) {
+    head(x, 25) |>
       knitr::kable(booktabs = TRUE, format = 'latex') |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
-    head(..., 50) |>
-      dplyr::mutate(dplyr::across(everything(), str_fix)) |>
+    head(x, 50) |>
       knitr::kable(escape = TRUE) |>
       kableExtra::kable_styling()
   }
