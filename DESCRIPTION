@@ -22,6 +22,7 @@ Suggests:
     kableExtra,
     knitr,
     rmarkdown,
+    spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 LazyData: true
@@ -30,3 +31,4 @@ BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3
 Depends: 
     R (>= 3.5)
+Language: en-US
