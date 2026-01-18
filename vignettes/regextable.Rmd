@@ -25,11 +25,11 @@ knitr::opts_chunk$set(
 # Format kable tables
 kable <- function(x){
   if (knitr::is_latex_output()) {
-    head(x, 25) |>
+    head(x, 5) |>
       knitr::kable(booktabs = TRUE, format = 'latex') |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
-    head(x, 50) |>
+    head(x, 5) |>
       knitr::kable(escape = TRUE) |>
       kableExtra::kable_styling()
   }
@@ -47,6 +47,7 @@ devtools::install_github("judgelord/regextable")
 ```
 ```{r, message=FALSE}
 library(regextable)
+library(kableExtra)
 ```
 
 ## Data
@@ -58,10 +59,10 @@ For demonstration, we use two included datasets:
 
 ```{r}
 data("members")
-kable(head(members))
+kable(members)
 
 data("cr2007_03_01")
-kable(head(cr2007_03_01))
+kable(cr2007_03_01)
 ```
 
 ### Text Cleaning
