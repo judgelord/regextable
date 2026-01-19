@@ -1,8 +1,10 @@
 Package: regextable
 Title: Pattern-Based Text Extraction and Standardization Using Lookup Tables
 Version: 0.1.0
-Authors@R: 
-    person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre"))
+Authors@R: c(
+    person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre")),
+    person("Devin", "Judge-Lord", role = "ctb")
+    )
 Description: Extracts structured information from text using lookup tables of
     regular expressions. Each text entry is matched against patterns in a
     specified order, and the first matching pattern is returned. Matching avoids
@@ -25,7 +27,6 @@ Suggests:
     spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-LazyData: true
 URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3
