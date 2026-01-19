@@ -1,5 +1,5 @@
 Package: regextable
-Title: Pattern-Based Text Extraction and Standardization
+Title: Pattern-Based Text Extraction and Standardization Using Lookup Tables
 Version: 0.1.0
 Authors@R: 
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre"))
