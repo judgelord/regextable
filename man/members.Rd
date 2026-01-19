@@ -21,10 +21,6 @@ A tibble with 9 columns:
 \source{
 Generated for the \code{regextable} package.
 }
-\usage{
-members
-}
 \description{
 Lookup table of member names and metadata for regex matching.
 }
-\keyword{datasets}

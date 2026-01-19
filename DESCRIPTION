@@ -19,7 +19,8 @@ Imports:
     dplyr,
     stringi,
     stringr,
-    pbapply
+    pbapply,
+    stats
 Suggests:
     kableExtra,
     knitr,

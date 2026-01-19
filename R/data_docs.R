@@ -15,7 +15,9 @@
 #'   \item{last_name}{Last name of the member}
 #' }
 #' @source Generated for the `regextable` package.
-"members"
+#' @docType data
+#' @name members
+NULL
 
 #' cr2007_03_01 dataset
 #'
@@ -30,4 +32,6 @@
 #'   \item{url_txt}{Full text content from the source}
 #' }
 #' @source Generated for the `regextable` package.
-"cr2007_03_01"
+#' @docType data
+#' @name cr2007_03_01
+NULL

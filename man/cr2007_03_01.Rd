@@ -17,10 +17,6 @@ A tibble with 5 columns:
 \source{
 Generated for the \code{regextable} package.
 }
-\usage{
-cr2007_03_01
-}
 \description{
 Sample text dataset used for demonstration of \code{regextable}.
 }
-\keyword{datasets}
