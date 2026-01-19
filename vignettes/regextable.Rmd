@@ -126,7 +126,7 @@ You can combine these filters with any subset of columns for flexible outputs.
 
 ### How the Matching Works
 
-Internally, `extract()` uses a shrinking pool algorithm:
+Internally, `extract()` processes each row of text against the regex patterns in order:
 
 1. Start with all text rows.
 2. Check each regex pattern against unmatched rows.
