@@ -2,15 +2,16 @@
 #' @description Cleans a character vector (trims spaces, fixes punctuation, etc.).
 #' @param text Character vector to clean.
 #' @return Cleaned character vector.
-#' @importFrom dplyr %>% 
+#' @examples
+#' clean_text(c("Hello  World!", "This is\tR"))
+#' @importFrom dplyr %>%
 #' @importFrom stringr str_to_lower str_remove_all str_replace_all str_replace str_squish
 #' @export
 clean_text <- function(text){
-
   text %>%
-    stringr::str_to_lower() %>% #makes str lowercase for consistency
-    stringr::str_remove_all("[+\u2014!?:;]") %>% #removes punctuation
-    stringr::str_replace_all("[\n\t.-]", " ") %>% #replaces new lines, tabs, periods, hyphen, and dash with space
-    stringr::str_replace("\\s*(?:,\\s*)+", ", ") %>% #replaces sequences and white space with a single ", "
-    stringr::str_squish() # replace spaces with a single space
+    stringr::str_to_lower() %>%
+    stringr::str_remove_all("[+\u2014!?:;]") %>%
+    stringr::str_replace_all("[\n\t.-]", " ") %>%
+    stringr::str_replace("\\s*(?:,\\s*)+", ", ") %>%
+    stringr::str_squish()
 }

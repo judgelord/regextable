@@ -15,3 +15,6 @@ Cleaned character vector.
 \description{
 Cleans a character vector (trims spaces, fixes punctuation, etc.).
 }
+\examples{
+clean_text(c("Hello  World!", "This is\tR"))
+}
