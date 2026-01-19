@@ -3,11 +3,11 @@ Title: Pattern-Based Text Extraction and Standardization Using Lookup Tables
 Version: 0.1.0
 Authors@R: 
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre"))
-Description: Extract structured data from text using lookup tables of regular 
-    expressions. Features an optimized "shrinking pool" algorithm to efficiently 
-    match thousands of patterns against large text datasets. Useful for normalizing 
-    entities (like names, companies, or organizations) and standardizing 
-    unstructured text.
+Description: Extracts structured information from text using lookup tables of
+    regular expressions. Each text entry is matched against patterns in a
+    specified order, and the first matching pattern is returned. Matching avoids
+    re-checking patterns for entries that have already been matched, which
+    improves performance when large pattern sets are used.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -30,5 +30,5 @@ URL: https://github.com/judgelord/regextable
 BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1)
 Language: en-US
