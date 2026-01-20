@@ -125,7 +125,7 @@ extract <- function(data,
     text_to_match <- clean_text(text_to_match)
   }
   
-  # Run matching (Shrinking Pool)
+  # Run text matching
   matches_found <- extract_matches_shrinking_pool(
     text_vector = text_to_match,
     row_ids = data$row_id,

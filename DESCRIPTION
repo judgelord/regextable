@@ -1,15 +1,16 @@
 Package: regextable
-Title: Pattern-Based Text Extraction and Standardization Using Lookup Tables
+Title: Pattern-Based Text Extraction and Standardization with Lookup Tables
 Version: 0.1.0
 Authors@R: c(
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre")),
     person("Devin", "Judge-Lord", role = "ctb")
     )
-Description: Extracts structured information from text using lookup tables of
-    regular expressions. Each text entry is matched against patterns in a
-    specified order, and the first matching pattern is returned. Matching avoids
-    re-checking patterns for entries that have already been matched, which
-    improves performance when large pattern sets are used.
+Description: Extracts information from text using lookup tables of regular
+    expressions. Each text entry is matched against patterns in a
+    specified order, and the first matching pattern and substring are
+    returned. Matching avoids re-checking patterns for entries that have
+    already been matched, improving performance when large pattern sets
+    are used.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
