@@ -126,7 +126,7 @@ extract <- function(data,
   }
   
   # Run text matching
-  matches_found <- extract_matches_shrinking_pool(
+  matches_found <- extract_matches(
     text_vector = text_to_match,
     row_ids = data$row_id,
     patterns = patterns,
@@ -175,9 +175,9 @@ extract <- function(data,
 }
 
 #' @title Extract matches for a specific group (Optimized)
-#' @description Internal function to extract matches using a shrinking pool strategy.
+#' @description Internal function to extract matches
 #' @keywords internal
-extract_matches_shrinking_pool <- function(text_vector,
+extract_matches <- function(text_vector,
                                            row_ids,
                                            patterns,
                                            id_col_name,
