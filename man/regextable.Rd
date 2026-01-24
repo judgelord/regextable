@@ -37,7 +37,7 @@ Useful links:
 \author{
 \strong{Maintainer}: Shirlyn Dong \email{shirlynd@umich.edu}
 
-Other contributors:
+Authors:
 \itemize{
   \item Devin Judge-Lord [contributor]
 }
