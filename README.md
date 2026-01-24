@@ -26,8 +26,8 @@ This package operates on two inputs:
 1.  A data frame containing the text to search.
 2.  A regex lookup table containing patterns to match.
 
-Because users provide both the data and the patterns, `extract()` is
-domain-agnostic and can be applied to a wide range of text sources.
+User-supplied patterns allow `extract()` to match text in any dataset or
+context.
 
 The examples below use the `members` and `cr2007_03_01` datasets
 included in this package for illustration.
