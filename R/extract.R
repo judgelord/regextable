@@ -195,27 +195,29 @@ extract_matches <- function(text_vector,
   }
   
   # Use pblapply with environment assignment
-  res <- pbapply::pblapply(patterns, function(pat) {
-    
-    if (!any(match_env$is_unmatched)) return(NULL)
-    
-    indices_to_check <- which(match_env$is_unmatched)
-    subset_text <- text_vector[indices_to_check]
-    
-    has_match <- stringi::stri_detect_regex(subset_text, pat, case_insensitive = TRUE)
-    has_match[is.na(has_match)] <- FALSE
-    
-    if (any(has_match)) {
-      matched_indices <- indices_to_check[has_match]
-      match_env$matched_patterns[matched_indices] <- pat
-      match_env$is_unmatched[matched_indices] <- FALSE
+  invisible(
+    pbapply::pblapply(patterns, function(pat) {
       
-      # Extract the specific text match
-      actual_text <- stringi::stri_extract_first_regex(subset_text[has_match], pat, case_insensitive = TRUE)
-      match_env$exact_matches[matched_indices] <- actual_text
-    }
-    return(NULL)
-  })
+      if (!any(match_env$is_unmatched)) return(NULL)
+      
+      indices_to_check <- which(match_env$is_unmatched)
+      subset_text <- text_vector[indices_to_check]
+      
+      has_match <- stringi::stri_detect_regex(subset_text, pat, case_insensitive = TRUE)
+      has_match[is.na(has_match)] <- FALSE
+      
+      if (any(has_match)) {
+        matched_indices <- indices_to_check[has_match]
+        match_env$matched_patterns[matched_indices] <- pat
+        match_env$is_unmatched[matched_indices] <- FALSE
+        
+        # Extract the specific text match
+        actual_text <- stringi::stri_extract_first_regex(subset_text[has_match], pat, case_insensitive = TRUE)
+        match_env$exact_matches[matched_indices] <- actual_text
+      }
+      return(NULL)
+    })
+  )
   
   final_match_indices <- which(!is.na(match_env$matched_patterns))
   
