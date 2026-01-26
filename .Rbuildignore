@@ -5,3 +5,6 @@
 ^dev_scripts$
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

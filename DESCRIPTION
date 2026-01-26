@@ -3,7 +3,7 @@ Title: Pattern-Based Text Extraction and Standardization with Lookup Tables
 Version: 0.1.0
 Authors@R: c(
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre")),
-    person("Devin", "Judge-Lord", role = c("aut", "ctb"))
+    person("Devin", "Judge-Lord", role = c("aut"))
     )
 Description: Extracts information from text using lookup tables of regular
     expressions. Each text entry is matched against patterns in a
@@ -30,7 +30,7 @@ Suggests:
     spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-URL: https://github.com/judgelord/regextable
+URL: https://github.com/judgelord/regextable, https://judgelord.github.io/regextable/
 BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3
 Depends: 
