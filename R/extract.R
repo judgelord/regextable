@@ -85,7 +85,7 @@ extract <- function(data,
   
   if (nrow(data) == 0 || nrow(regex_table) == 0) {
     if (verbose) message("Input data or regex_table is empty")
-    return(dplyr::as_tibble(data.frame()))
+    return(dplyr::tibble())
   }
   
   original_col_order <- names(data)
@@ -103,7 +103,7 @@ extract <- function(data,
     
     if (nrow(data) == 0) {
       if (verbose) message("No data remaining after date filter")
-      return(dplyr::as_tibble(data.frame()))
+      return(dplyr::tibble())
     }
   }
   
@@ -116,7 +116,7 @@ extract <- function(data,
   
   if (length(patterns) == 0) {
     if (verbose) message("No patterns provided (or all removed via filters).")
-    return(dplyr::as_tibble(data.frame()))
+    return(dplyr::tibble())
   }
   
   # Clean text
