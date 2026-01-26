@@ -13,7 +13,9 @@ clean_text(text)
 Cleaned character vector.
 }
 \description{
-Cleans a character vector (trims spaces, fixes punctuation, etc.).
+Cleans a character vector by converting text to lowercase,
+removing selected punctuation (plus signs, em dashes, exclamation
+points), normalizing commas, and removing whitespace.
 }
 \examples{
 clean_text(c("Hello  World!", "This is\tR"))

@@ -1,5 +1,7 @@
 #' @title Clean Text
-#' @description Cleans a character vector (trims spaces, fixes punctuation, etc.).
+#' @description Cleans a character vector by converting text to lowercase,
+#' removing selected punctuation (plus signs, em dashes, exclamation
+#' points), normalizing commas, and removing whitespace.
 #' @param text Character vector to clean.
 #' @return Cleaned character vector.
 #' @examples
