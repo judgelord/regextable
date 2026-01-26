@@ -234,5 +234,5 @@ extract_matches <- function(text_vector,
   
   names(df)[1] <- id_col_name
   
-  return(df)
+  df
 }
