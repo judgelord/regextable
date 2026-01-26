@@ -11,6 +11,7 @@ Description: Extracts information from text using lookup tables of regular
     returned. Matching avoids re-checking patterns for entries that have
     already been matched, improving performance when large pattern sets
     are used.
+LazyData: true
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
