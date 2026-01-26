@@ -195,7 +195,7 @@ extract_matches <- function(text_vector,
   }
   
   # Use pblapply with environment assignment
-  dummy <- pbapply::pblapply(patterns, function(pat) {
+  res <- pbapply::pblapply(patterns, function(pat) {
     
     if (!any(match_env$is_unmatched)) return(NULL)
     
