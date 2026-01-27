@@ -1,15 +1,24 @@
-# regextable: Apply pattern-based text extraction and cleaning
+# regextable: pattern-based text extraction and cleaning
 
+
+<!--DO NOT EDIT .md file, only README.qmd-->
+
+# regextable <img src="man/figures/logo.png" align="right" />
 
 ## Description
 
-`regextable` extracts regex-based pattern matches from a data frame or
-character vector using a lookup table of regular expressions. For each
-input row, the first matching pattern is returned along with the matched
-substring, an internal row identifier, and the original input columns
-(or a user-specified subset). Optional metadata from the pattern table
-can be included, and performance on large datasets is improved by
-stopping the search for a row once a match is found.
+`regextable` extracts regular-expression-based pattern matches from a
+vector of text using a lookup table of regular expressions. Two inputs:
+`data`: A vector of text to search (typically a data frame with a `text`
+column) `regex_table`: A lookup table (a data frame with a column of
+strings or regular expressions to search for, typically called
+`pattern`) For each matching substring, `regextable::extract` returns
+the row number of `data`  
+the `pattern` the matched substring Optionally, other columns in `data`
+or `regex_table` Optionally, performance on large datasets can be
+improved by stopping the search for a row once a match is found. This
+should be done when the user is sure that there is only one match per
+row of input text.
 
 ## Installation
 
@@ -29,8 +38,9 @@ This package operates on two inputs:
 User-supplied patterns allow `extract()` to match text in any dataset or
 context.
 
-The examples below use the `members` and `cr2007_03_01` datasets
-included in this package for illustration.
+The examples below use the example regex lookup table `members` and
+example data `cr2007_03_01` from the `legislators` package, which are
+also included in this package for illustration.
 
 ``` r
 data("members")
@@ -61,11 +71,12 @@ head(cr2007_03_01)
 ## Text cleaning
 
 Before matching, by default, `clean_text()` is applied to standardize
-text. It lowercases text, removes excess punctuation, replaces line
-breaks and dashes with spaces, and collapses multiple spaces into a
-single space. Text cleaning is applied only during matching and does not
-modify the original input data. Users can disable this behavior by
-setting `do_clean_text = FALSE`.
+text for better matching in messy text. It converts text to lowercase,
+removes excess punctuation, replaces line breaks and dashes with spaces,
+and collapses multiple spaces into a single space. Text cleaning is
+applied only during matching and does not modify the original input
+data. Users can disable this behavior by setting
+`do_clean_text = FALSE`.
 
 ``` r
 text <- "  HELLO---WORLD  "
@@ -115,10 +126,10 @@ optional metadata from the pattern table.
 
 A data frame with one row per match, including:
 
-- Original columns from data (or only `return_cols`, if specified)
-- Additional columns from `regex_table` specified in `regex_return_cols`
 - `pattern`, the first regex pattern matched in each row
 - `row_id`, the row number of the text
+- Additional columns from `data` specified in `data_return_cols`
+- Additional columns from `regex_table` specified in `regex_return_cols`
 
 ### Basic Usage
 
