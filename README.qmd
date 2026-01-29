@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 ```
 ## Description 
 
-`regextable` extracts regex-based pattern matches from a data frame or character vector using a lookup table of regular expressions. For each input row, all patterns that match are returned, along with the matched substring, an internal row identifier, and the original input columns (or a user-specified subset). If a text entry matches multiple patterns, multiple rows are generated to capture each match. Optional metadata from the pattern table can also be included, and text cleaning can be applied prior to matching.
+`regextable` extracts regex-based pattern matches from a data frame or character vector using a lookup table of regular expressions. For each input row, all patterns that match are returned, along with the matched substring, an internal row identifier (row_id), and optional columns from the input data or the regex table. If a text entry matches multiple patterns, multiple rows are generated to capture each match. Optional metadata from the pattern table can also be included, and text cleaning can be applied prior to matching.
 
 ## Installation
 
@@ -81,7 +81,7 @@ print(cleaned_text)
 
 -   **`col_name`**: (default `"text"`) Column name in the data frame containing text to search through.
 -   **`pattern_col`**: (default `"pattern"`) Name of the regex pattern column in `regex_table`.
--   **`return_cols`**: (default `NULL`) Vector of columns from `data` to include in the output. If `NULL`, all columns from `data` are included.
+-   **`data_return_cols`**: (default `NULL`) Vector of additional columns from `data` to include in the output.
 -   **`regex_return_cols`**: (default `NULL`) Vector of additional columns from `regex_table` to include in the output.
 -   **`date_col`**: (default `NULL`) Column in `data` containing dates for filtering.
 -   **`date_start`**: (default `NULL`) Start date for filtering rows.
@@ -95,11 +95,11 @@ print(cleaned_text)
 
 A data frame with one row per match, including:
 
-- Original columns from data (or only `return_cols`, if specified)
-- Additional columns from `regex_table` specified in `regex_return_cols`
-- `pattern`, the first regex pattern matched in each row
-- `match`, the substring matched in the text
-- `row_id`, the row number of the text
+- `row_id`: the internal row number of the text in the input data
+- Optional columns from the input data (if data_return_cols specified)
+- Optional columns from the regex table (if regex_return_cols specified)
+- `pattern`: the regex pattern matched
+- `match`: the substring matched in the text
 
 ### Basic Usage
 
@@ -110,7 +110,7 @@ The simplest use of `extract()` with only the required arguments and returned co
 result <- extract(
   data = cr2007_03_01,
   regex_table = members,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr") 
 )
 
@@ -130,7 +130,7 @@ result_advanced <- extract(
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 

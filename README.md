@@ -6,11 +6,11 @@
 `regextable` extracts regex-based pattern matches from a data frame or
 character vector using a lookup table of regular expressions. For each
 input row, all patterns that match are returned, along with the matched
-substring, an internal row identifier, and the original input columns
-(or a user-specified subset). If a text entry matches multiple patterns,
-multiple rows are generated to capture each match. Optional metadata
-from the pattern table can also be included, and text cleaning can be
-applied prior to matching.
+substring, an internal row identifier (row_id), and optional columns
+from the input data or the regex table. If a text entry matches multiple
+patterns, multiple rows are generated to capture each match. Optional
+metadata from the pattern table can also be included, and text cleaning
+can be applied prior to matching.
 
 ## Installation
 
@@ -98,9 +98,8 @@ are returned, one per match.
   containing text to search through.
 - **`pattern_col`**: (default `"pattern"`) Name of the regex pattern
   column in `regex_table`.
-- **`return_cols`**: (default `NULL`) Vector of columns from `data` to
-  include in the output. If `NULL`, all columns from `data` are
-  included.
+- **`data_return_cols`**: (default `NULL`) Vector of additional columns
+  from `data` to include in the output.
 - **`regex_return_cols`**: (default `NULL`) Vector of additional columns
   from `regex_table` to include in the output.
 - **`date_col`**: (default `NULL`) Column in `data` containing dates for
@@ -119,11 +118,11 @@ are returned, one per match.
 
 A data frame with one row per match, including:
 
-- Original columns from data (or only `return_cols`, if specified)
-- Additional columns from `regex_table` specified in `regex_return_cols`
-- `pattern`, the first regex pattern matched in each row
-- `match`, the substring matched in the text
-- `row_id`, the row number of the text
+- `row_id`: the internal row number of the text in the input data
+- Optional columns from the input data (if data_return_cols specified)
+- Optional columns from the regex table (if regex_return_cols specified)
+- `pattern`: the regex pattern matched
+- `match`: the substring matched in the text
 
 ### Basic Usage
 
@@ -136,20 +135,20 @@ using the provided regex table.
 result <- extract(
   data = cr2007_03_01,
   regex_table = members,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr") 
 )
 
 head(result)
 #> # A tibble: 6 × 5
-#>   text                                pattern                                                         match row_id icpsr
-#>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…      2 29906
-#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      5 20124
-#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
+#>   row_id text                                icpsr pattern                                                         match
+#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
+#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
+#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
+#> 4      4 HON. JIM COSTA;Mr. COSTA            20501 "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …
+#> 5      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 6      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
 ```
 
 ### Advanced Usage
@@ -168,20 +167,20 @@ result_advanced <- extract(
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
 head(result_advanced)
 #> # A tibble: 6 × 5
-#>   text                                pattern                                                         match row_id icpsr
-#>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…      2 29906
-#> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      5 20124
-#> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
+#>   row_id text                                icpsr pattern                                                         match
+#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
+#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
+#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
+#> 4      4 HON. JIM COSTA;Mr. COSTA            20501 "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …
+#> 5      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 6      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
 ```
 
 ### Future Development
