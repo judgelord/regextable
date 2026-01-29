@@ -9,7 +9,7 @@ extract(
   col_name = "text",
   regex_table,
   pattern_col = "pattern",
-  return_cols = NULL,
+  data_return_cols = NULL,
   regex_return_cols = NULL,
   date_col = NULL,
   date_start = NULL,
@@ -29,7 +29,7 @@ extract(
 
 \item{pattern_col}{Name of the regex pattern column in regex_table.}
 
-\item{return_cols}{Optional vector of column names to include from 'data'.}
+\item{data_return_cols}{Optional vector of column names to include from 'data'.}
 
 \item{regex_return_cols}{Optional vector of column names to include from 'regex_table'.}
 
@@ -48,13 +48,13 @@ extract(
 \item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 }
 \value{
-A tibble (data frame) with the following columns:
+A tibble (data frame) with columns:
 \itemize{
-\item All original columns from \code{data} (or subset specified by \code{return_cols})
+\item \code{row_id} Integer row identifier corresponding to the input data
+\item  Additional columns from \code{data} if \code{data_return_cols} specified
+\item  Additional columns from \code{regex_table} if \code{regex_return_cols} specified
 \item \code{pattern} The matched regex pattern(s)
 \item \code{match} The specific text extracted from the data (original casing preserved)
-\item \code{row_id} Integer row identifier corresponding to the input data
-\item Additional columns from \code{regex_table} if \code{regex_return_cols} specified
 }
 }
 \description{

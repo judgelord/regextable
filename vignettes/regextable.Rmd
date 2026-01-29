@@ -39,7 +39,7 @@ kable <- function(x){
 
 ### Introduction
 
-`regextable` extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and original columns from the input data unless specified. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.
+`regextable` extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in `data_return_cols` and `regex_return_cols`. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.
 
 Install and load the package:
 ```{r, eval= FALSE}
@@ -83,7 +83,7 @@ The simplest use of `extract()`:
 result <- extract(
   data = cr2007_03_01,
   regex_table = members,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
@@ -94,7 +94,7 @@ Explanation:
 - `data`: the text dataset to search.
 - `col_name`: which column contains the text.
 - `regex_table`: the lookup table of patterns.
-- `return_cols`: columns from data to include in the result.
+- `data_return_cols`: additional columns from `data` to include in the result.
 - `regex_return_cols`: additional columns from the pattern table to attach.
 Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.
 ---
@@ -111,7 +111,7 @@ result_advanced <- extract(
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 
@@ -135,7 +135,7 @@ result_parallel <- extract(
   data = cr2007_03_01,
   regex_table = members,
   cl = clust,
-  return_cols = c("text"),
+  data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
 )
 stopCluster(clust)
