@@ -13,7 +13,7 @@
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with a pattern column.
 #' @param pattern_col Name of the regex pattern column in regex_table.
-#' @param return_cols Optional vector of column names to include from 'data'.
+#' @param data_return_cols Optional vector of column names to include from 'data'.
 #' @param regex_return_cols Optional vector of column names to include from 'regex_table'.
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
@@ -23,13 +23,13 @@
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @param cl A cluster object created by `parallel::makeCluster()`, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to [pbapply::pblapply()].
 #' 
-#' @return A tibble (data frame) with the following columns:
+#' @return A tibble (data frame) with columns:
 #' \itemize{
-#'   \item All original columns from `data` (or subset specified by `return_cols`)
+#'   \item `row_id` Integer row identifier corresponding to the input data
+#'   \item  Additional columns from `data` if `data_return_cols` specified
+#'   \item  Additional columns from `regex_table` if `regex_return_cols` specified
 #'   \item `pattern` The matched regex pattern(s)
 #'   \item `match` The specific text extracted from the data (original casing preserved)
-#'   \item `row_id` Integer row identifier corresponding to the input data
-#'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
 #' # Create sample data
@@ -57,7 +57,7 @@ extract <- function(data,
                     col_name = "text",
                     regex_table,
                     pattern_col = "pattern",
-                    return_cols = NULL,
+                    data_return_cols = NULL,
                     regex_return_cols = NULL,
                     date_col = NULL,
                     date_start = NULL,
@@ -173,17 +173,18 @@ extract <- function(data,
   )
   
   # Column selection and ordering
-  if (!is.null(return_cols)) {
-    valid_cols <- return_cols[return_cols %in% names(result)]
-    cols_to_keep <- unique(c(valid_cols, "pattern", "match", "row_id", regex_return_cols))
-    result <- result[, cols_to_keep, drop = FALSE]
+  if (!is.null(data_return_cols)) {
+    valid_data_cols <- data_return_cols[data_return_cols %in% names(result)]
   } else {
-    final_cols <- c(original_col_order, "pattern", "match", "row_id", regex_return_cols)
-    final_cols <- final_cols[final_cols %in% names(result)]
-    result <- result[, final_cols, drop = FALSE]
+    valid_data_cols <- character(0)
   }
-  
-  result <- result[order(result$row_id), ]
+  if (!is.null(regex_return_cols)) {
+    valid_regex_cols <- regex_return_cols[regex_return_cols %in% names(result)]
+  } else {
+    valid_regex_cols <- character(0)
+  }
+  cols_to_keep <- c("row_id", valid_data_cols, valid_regex_cols, "pattern", "match")
+  result <- result[, cols_to_keep, drop = FALSE]
   
   if (verbose) message("Number of rows with matches: ", nrow(result))
   
@@ -257,5 +258,6 @@ extract_matches_all_internal <- function(text_search,
   }
   
   names(df)[names(df) == "row_id"] <- id_col_name
+  df <- df[order(df$row_id), ]
   df
 }

@@ -9,7 +9,8 @@ test_that("extract basic matching works", {
   )
   regex_table <- data.frame(pattern = c("XYZ Corp"))
   
-  result <- extract(df, col_name = "text", regex_table = regex_table, verbose = FALSE)
+  result <- extract(df, col_name = "text", regex_table = regex_table,
+                    data_return_cols = "id", verbose = FALSE)
   
   expect_equal(nrow(result), 1)
   expect_setequal(result$pattern, c("XYZ Corp"))
@@ -35,8 +36,9 @@ test_that("date filtering works", {
   )
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
   result <- extract(
-    df, col_name  = "text", regex_table = regex_table,
-    date_col  = "date", date_start = "2020-06-01", date_end   = "2021-12-31",
+    df, col_name  = "text", regex_table = regex_table, 
+    data_return_cols = "id", date_col  = "date", 
+    date_start = "2020-06-01", date_end   = "2021-12-31",
     verbose = FALSE
   )
   expect_equal(result$id, 2)
@@ -52,7 +54,7 @@ test_that("remove_acronyms works", {
 test_that("return_cols correctly restricts output", {
   df <- data.frame(id = 1, text = "ACME", other = "foo", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = "ACME")
-  result <- extract(df, col_name = "text", regex_table = regex_table, return_cols = c("other"), verbose = FALSE)
+  result <- extract(df, col_name = "text", regex_table = regex_table, data_return_cols = c("other"), verbose = FALSE)
   
   expect_true(all(c("other", "pattern", "match", "row_id") %in% names(result)))
   expect_false("text" %in% names(result))
@@ -157,7 +159,7 @@ test_that("empty regex_table or all patterns removed returns empty tibble", {
 test_that("row order is preserved", {
   df <- data.frame(id = 1:3, text = c("XYZ", "ACME", "Other"), stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
-  result <- extract(df, "text", regex_table, verbose = FALSE)
+  result <- extract(df, "text", regex_table, data_return_cols = "id", verbose = FALSE)
   expect_equal(result$id, c(1,2))
 })
 
