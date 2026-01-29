@@ -32,14 +32,14 @@
 #'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
-#' Create sample data
+#' # Create sample data
 #' data <- data.frame(
 #'   id = 1:3,
 #'   text = c("I love apples", "Bananas are great", "Oranges and apples"),
 #'   stringsAsFactors = FALSE
 #' )
 #' 
-#' Create regex patterns
+#' # Create regex patterns
 #' patterns <- data.frame(
 #'   pattern = c("apples", "bananas", "oranges"),
 #'   category = c("fruit", "fruit", "fruit")

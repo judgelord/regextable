@@ -6,11 +6,11 @@ Authors@R: c(
     person("Devin", "Judge-Lord", role = c("aut", "ctb"))
     )
 Description: Extracts information from text using lookup tables of regular
-    expressions. Each text entry is matched against patterns in a
-    specified order, and the first matching pattern and substring are
-    returned. Matching avoids re-checking patterns for entries that have
-    already been matched, improving performance when large pattern sets
-    are used.
+    expressions. Each text entry is compared against all patterns, and all
+    matching patterns and their corresponding substrings are returned. If a
+    text entry matches multiple patterns, multiple rows are generated to
+    capture each match. This approach enables comprehensive pattern coverage
+    when processing large or complex text datasets.
 LazyData: true
 License: MIT + file LICENSE
 Encoding: UTF-8

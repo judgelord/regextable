@@ -5,11 +5,12 @@
 
 `regextable` extracts regex-based pattern matches from a data frame or
 character vector using a lookup table of regular expressions. For each
-input row, the first matching pattern is returned along with the matched
+input row, all patterns that match are returned, along with the matched
 substring, an internal row identifier, and the original input columns
-(or a user-specified subset). Optional metadata from the pattern table
-can be included, and performance on large datasets is improved by
-stopping the search for a row once a match is found.
+(or a user-specified subset). If a text entry matches multiple patterns,
+multiple rows are generated to capture each match. Optional metadata
+from the pattern table can also be included, and text cleaning can be
+applied prior to matching.
 
 ## Installation
 
@@ -61,11 +62,11 @@ head(cr2007_03_01)
 ## Text cleaning
 
 Before matching, by default, `clean_text()` is applied to standardize
-text. It lowercases text, removes excess punctuation, replaces line
-breaks and dashes with spaces, and collapses multiple spaces into a
-single space. Text cleaning is applied only during matching and does not
-modify the original input data. Users can disable this behavior by
-setting `do_clean_text = FALSE`.
+text. It converts text to lowercase, removes excess punctuation,
+replaces line breaks and dashes with spaces, and collapses multiple
+spaces into a single space. Text cleaning is applied only during
+matching and does not modify the original input data. Users can disable
+this behavior by setting `do_clean_text = FALSE`.
 
 ``` r
 text <- "  HELLO---WORLD  "
@@ -79,9 +80,10 @@ print(cleaned_text)
 ### Description
 
 `extract()` performs regex-based matching on a text column using a
-pattern lookup table. For each input row, it returns at most one match
-(the first matched pattern), along with the corresponding pattern and
-optional metadata from the pattern table.
+pattern lookup table. All patterns that match each row are returned,
+along with the corresponding pattern and optional metadata from the
+pattern table. If multiple patterns match the same text, multiple rows
+are returned, one per match.
 
 ### Required Parameters
 
@@ -110,6 +112,8 @@ optional metadata from the pattern table.
 - **`do_clean_text`**: (default `TRUE`) If `TRUE`, cleans text before
   matching.
 - **`verbose`**: (default `TRUE`) If `TRUE`, displays progress messages.
+- **`cl`**: (default `NULL`) A cluster object or integer specifying
+  child processes for parallel evaluation (ignored on Windows).
 
 ### Returns
 
@@ -118,6 +122,7 @@ A data frame with one row per match, including:
 - Original columns from data (or only `return_cols`, if specified)
 - Additional columns from `regex_table` specified in `regex_return_cols`
 - `pattern`, the first regex pattern matched in each row
+- `match`, the substring matched in the text
 - `row_id`, the row number of the text
 
 ### Basic Usage
@@ -139,11 +144,11 @@ head(result)
 #> # A tibble: 6 × 5
 #>   text                                pattern                                                         match row_id icpsr
 #>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      1 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…      2 29906
 #> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… jim …      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      5 20124
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …      4 20501
+#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      5 20124
 #> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
 ```
 
@@ -171,11 +176,11 @@ head(result_advanced)
 #> # A tibble: 6 × 5
 #>   text                                pattern                                                         match row_id icpsr
 #>   <chr>                               <chr>                                                           <chr>  <int> <dbl>
-#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      1 20124
-#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… mark…      2 29906
+#> 1 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      1 20124
+#> 2 HON. MARK UDALL;Mr. UDALL           "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…      2 29906
 #> 3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…      3 20136
-#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… jim …      4 20501
-#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… sam …      5 20124
+#> 4 HON. JIM COSTA;Mr. COSTA            "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …      4 20501
+#> 5 HON. SAM GRAVES;Mr. GRAVES          "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …      5 20124
 #> 6 HON. SANFORD D. BISHOP;Mr. BISHOP   "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…      6 29339
 ```
 
