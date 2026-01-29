@@ -32,7 +32,6 @@
 #'   \item Additional columns from `regex_table` if `regex_return_cols` specified
 #' }
 #' @examples
-#' @examples
 #' Create sample data
 #' data <- data.frame(
 #'   id = 1:3,

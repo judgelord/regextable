@@ -16,7 +16,8 @@ extract(
   date_end = NULL,
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  cl = NULL
 )
 }
 \arguments{
@@ -43,35 +44,39 @@ extract(
 \item{do_clean_text}{Logical; if TRUE, applies basic text cleaning to the input before matching.}
 
 \item{verbose}{Logical; if TRUE, displays progress messages.}
+
+\item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 }
 \value{
 A tibble (data frame) with the following columns:
 \itemize{
 \item All original columns from \code{data} (or subset specified by \code{return_cols})
-\item \code{pattern} The matched regex pattern
-\item \code{match} The specific text extracted from the data
+\item \code{pattern} The matched regex pattern(s)
+\item \code{match} The specific text extracted from the data (original casing preserved)
 \item \code{row_id} Integer row identifier corresponding to the input data
 \item Additional columns from \code{regex_table} if \code{regex_return_cols} specified
 }
 }
 \description{
-Uses a regex lookup table to extract at most one pattern match.
+Uses a regex lookup table to extract \strong{all} pattern matches.
 }
 \details{
 Pattern matching is performed using R's regular expression engine and is
-case-insensitive by default.
-When multiple patterns match the same text, the first match is determined
-by the order of rows in \code{regex_table}.
+case-insensitive by default. For each input row, the function checks every
+pattern in \code{regex_table} and returns the first match of each pattern.
+
+The output contains one row per pattern match per input row. If multiple
+patterns match the same text, multiple rows will be returned for that text.
 }
 \examples{
-# Create sample data
+Create sample data
 data <- data.frame(
   id = 1:3,
   text = c("I love apples", "Bananas are great", "Oranges and apples"),
   stringsAsFactors = FALSE
 )
 
-# Create regex patterns
+Create regex patterns
 patterns <- data.frame(
   pattern = c("apples", "bananas", "oranges"),
   category = c("fruit", "fruit", "fruit")

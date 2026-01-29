@@ -14,7 +14,7 @@ test_that("extract basic matching works", {
   expect_equal(nrow(result), 1)
   expect_setequal(result$pattern, c("XYZ Corp"))
   expect_equal(result$id, 2)
-  expect_equal(result$match, "xyz corp")
+  expect_equal(result$match, "XYZ Corp")
 })
 
 test_that("case-insensitive matching works", {
@@ -114,13 +114,14 @@ test_that("extract handles NA text safely", {
   expect_setequal(result$pattern, c("ACME", "XYZ"))
 })
 
-test_that("multiple matches per row only returns first match (Shrinking Pool)", {
+test_that("multiple matches per row return one row per pattern", {
   df <- data.frame(id = 1, text = "ACME and XYZ Corp", stringsAsFactors = FALSE)
   regex_table <- data.frame(pattern = c("ACME", "XYZ Corp"))
   
   result <- extract(df, "text", regex_table, verbose = FALSE)
-  expect_equal(nrow(result), 1)
-  expect_equal(result$pattern, "ACME") 
+  
+  expect_equal(nrow(result), 2)
+  expect_setequal(result$pattern, c("ACME", "XYZ Corp"))
 })
 
 test_that("special regex characters in text are matched correctly", {
@@ -131,7 +132,7 @@ test_that("special regex characters in text are matched correctly", {
   
   expect_equal(nrow(result), 1)
   # Expect lowercase match due to default cleaning
-  expect_equal(result$match, "(acme)")
+  expect_equal(result$match, "(ACME)")
 })
 
 test_that("multiple regex_return_cols are merged correctly", {
