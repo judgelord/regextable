@@ -3,11 +3,9 @@
 
 <!--DO NOT EDIT .md file, only README.qmd-->
 
-# regextable <img src="man/figures/logo.png" align="right" />
+# regextable <img src="man/figures/logo.png" align="right" widht="150"/>
 
 ## Description
-
-# `regextable` extracts regex-based pattern matches from a data frame or character vector using a lookup table of regular expressions. For each input row, all patterns that match are returned, along with the matched substring, an internal row identifier (row_id), and optional columns from the input data or the regex table. If a text entry matches multiple patterns, multiple rows are generated to capture each match. Optional metadata from the pattern table can also be included, and optional text cleaning can be applied prior to matching.
 
 `regextable` extracts regular-expression-based pattern matches from a
 vector of text using a lookup table of regular expressions. It requires
