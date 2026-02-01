@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Shirlyn Dong" />
+
+<meta name="date" content="2026-01-28" />
+
+<title>regextable</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>$(document).ready(function(){
+    if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+    if ($('[data-toggle="popover"]').popover === 'function') {
+        $('[data-toggle="popover"]').popover();
+    }
+});
+</script>
+<style type="text/css">
+.lightable-minimal {
+border-collapse: separate;
+border-spacing: 16px 1px;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-minimal td {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal th {
+margin-left: 5px;
+margin-right: 5px;
+}
+.lightable-minimal thead tr:last-child th {
+border-bottom: 2px solid #00000050;
+empty-cells: hide;
+}
+.lightable-minimal tbody tr:first-child td {
+padding-top: 0.5em;
+}
+.lightable-minimal.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-minimal.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic {
+border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
+width: 100%;
+margin-bottom: 10px;
+margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
+}
+.lightable-classic caption {
+color: #222222;
+}
+.lightable-classic td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic thead tr:last-child th {
+border-bottom: 0.10em solid #111111;
+}
+.lightable-classic.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-classic-2 {
+border-top: 3px double #111111;
+border-bottom: 3px double #111111;
+width: 100%;
+margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
+}
+.lightable-classic-2 caption {
+color: #222222;
+}
+.lightable-classic-2 td {
+padding-left: 5px;
+padding-right: 5px;
+color: #222222;
+}
+.lightable-classic-2 th {
+padding-left: 5px;
+padding-right: 5px;
+font-weight: normal;
+color: #222222;
+}
+.lightable-classic-2 tbody tr:last-child td {
+border-bottom: 3px double #111111;
+}
+.lightable-classic-2 thead tr:last-child th {
+border-bottom: 1px solid #111111;
+}
+.lightable-classic-2.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-classic-2.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #EEE;
+border-collapse: collapse;
+margin-bottom: 10px;
+}
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
+.lightable-material th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+}
+.lightable-material td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+border-top: 1px solid #eeeeee;
+}
+.lightable-material.lightable-hover tbody tr:hover {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody tr:nth-child(even) {
+background-color: #f5f5f5;
+}
+.lightable-material.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #ddd;
+}
+.lightable-material-dark {
+min-width: 100%;
+white-space: nowrap;
+table-layout: fixed;
+font-family: Roboto, sans-serif;
+border: 1px solid #FFFFFF12;
+border-collapse: collapse;
+margin-bottom: 10px;
+background-color: #363640;
+}
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark th {
+height: 56px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF60;
+}
+.lightable-material-dark td {
+height: 52px;
+padding-left: 16px;
+padding-right: 16px;
+color: #FFFFFF;
+border-top: 1px solid #FFFFFF12;
+}
+.lightable-material-dark.lightable-hover tbody tr:hover {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody tr:nth-child(even) {
+background-color: #FFFFFF12;
+}
+.lightable-material-dark.lightable-striped tbody td {
+border: 0;
+}
+.lightable-material-dark.lightable-striped thead tr:last-child th {
+border-bottom: 1px solid #FFFFFF12;
+}
+.lightable-paper {
+width: 100%;
+margin-bottom: 10px;
+color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
+}
+.lightable-paper thead tr:last-child th {
+color: #666;
+vertical-align: bottom;
+border-bottom: 1px solid #00000020;
+line-height: 1.15em;
+padding: 10px 5px;
+}
+.lightable-paper td {
+vertical-align: middle;
+border-bottom: 1px solid #00000010;
+line-height: 1.15em;
+padding: 7px 5px;
+}
+.lightable-paper.lightable-hover tbody tr:hover {
+background-color: #F9EEC1;
+}
+.lightable-paper.lightable-striped tbody tr:nth-child(even) {
+background-color: #00000008;
+}
+.lightable-paper.lightable-striped tbody td {
+border: 0;
+}
+</style>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">regextable</h1>
+<h4 class="author">Shirlyn Dong</h4>
+<h4 class="date">2026-01-28</h4>
+
+
+
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p><code>regextable</code> extracts regex-based pattern matches from a
+data frame or character vector using a pattern lookup table. For each
+input row, all matching patterns are returned, along with the matched
+substring, an internal row identifier, and additional columns specified
+in <code>data_return_cols</code> and <code>regex_return_cols</code>.
+Optional metadata from the pattern table can also be included. Multiple
+rows may be returned for a single text if it matches multiple
+patterns.</p>
+<p>Install and load the package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;judgelord/regextable&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>For demonstration, we use two included datasets:</p>
+<ul>
+<li><code>members</code>: A lookup table of regex patterns for member
+names.</li>
+<li><code>cr2007_03_01</code>: A sample text dataset to search.</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+congress
+</th>
+<th style="text-align:left;">
+chamber
+</th>
+<th style="text-align:left;">
+bioname
+</th>
+<th style="text-align:left;">
+pattern
+</th>
+<th style="text-align:right;">
+icpsr
+</th>
+<th style="text-align:left;">
+state_abbrev
+</th>
+<th style="text-align:right;">
+district_code
+</th>
+<th style="text-align:left;">
+first_name
+</th>
+<th style="text-align:left;">
+last_name
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+President
+</td>
+<td style="text-align:left;">
+BUSH, George Walker
+</td>
+<td style="text-align:left;">
+george bush&amp;#124;george walker bush&amp;#124;bush&amp;#124;george w
+bush&amp;#124;bush&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)bush&amp;#124;bush, george&amp;#124;bush george&amp;#124;bush,
+g&amp;#124;president bush&amp;#124;g w bush
+</td>
+<td style="text-align:right;">
+99910
+</td>
+<td style="text-align:left;">
+USA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+George
+</td>
+<td style="text-align:left;">
+BUSH
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+House
+</td>
+<td style="text-align:left;">
+BONNER, Jr., Josiah Robins (Jo)
+</td>
+<td style="text-align:left;">
+josiah bonner&amp;#124;josiah josiah robins
+bonner&amp;#124;bonner&amp;#124;josiah j bonner&amp;#124;jo
+bonner&amp;#124;jo josiah robins bonner&amp;#124;jo j
+bonner&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)bonner&amp;#124;bonner, jo&amp;#124;bonner, josiah&amp;#124;bonner
+josiah&amp;#124;bonner, j&amp;#124;representative bonner&amp;#124;j j
+bonner
+</td>
+<td style="text-align:right;">
+20300
+</td>
+<td style="text-align:left;">
+AL
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+Josiah
+</td>
+<td style="text-align:left;">
+BONNER
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+House
+</td>
+<td style="text-align:left;">
+ROGERS, Mike Dennis
+</td>
+<td style="text-align:left;">
+mike rogers&amp;#124;mike dennis
+rogers&amp;#124;rogers.{1,4}al&amp;#124;mike d rogers&amp;#124;michael
+rogers&amp;#124;michael dennis rogers&amp;#124;michael d
+rogers&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)rogers{1,4}al&amp;#124;rogers, michael&amp;#124;rogers,
+mike&amp;#124;rogers mike&amp;#124;representative
+rogers{1,4}al&amp;#124;m d rogers
+</td>
+<td style="text-align:right;">
+20301
+</td>
+<td style="text-align:left;">
+AL
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+Mike
+</td>
+<td style="text-align:left;">
+ROGERS
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+House
+</td>
+<td style="text-align:left;">
+DAVIS, Artur
+</td>
+<td style="text-align:left;">
+artur davis&amp;#124;davis&amp;#124;(^&amp;#124;senator
+&amp;#124;representative )davis{1,4}al&amp;#124;davis,
+artur&amp;#124;davis artur&amp;#124;davis, a&amp;#124;representative
+davis{1,4}al
+</td>
+<td style="text-align:right;">
+20302
+</td>
+<td style="text-align:left;">
+AL
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+Artur
+</td>
+<td style="text-align:left;">
+DAVIS
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+House
+</td>
+<td style="text-align:left;">
+CRAMER, Robert E. (Bud), Jr. 
+</td>
+<td style="text-align:left;">
+robert cramer&amp;#124;robert e cramer&amp;#124;cramer&amp;#124;bud
+cramer&amp;#124;bud e
+cramer&amp;#124;cramer&amp;#124;(^&amp;#124;senator
+&amp;#124;representative )cramer&amp;#124;cramer, bud&amp;#124;cramer,
+robert&amp;#124;cramer robert&amp;#124;cramer, r&amp;#124;cramer,
+b&amp;#124;representative cramer&amp;#124;r e cramer
+</td>
+<td style="text-align:right;">
+29100
+</td>
+<td style="text-align:left;">
+AL
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+Robert
+</td>
+<td style="text-align:left;">
+CRAMER
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">kable</span>(cr2007_03_01)</span></code></pre></div>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+date
+</th>
+<th style="text-align:left;">
+text
+</th>
+<th style="text-align:left;">
+header
+</th>
+<th style="text-align:left;">
+url
+</th>
+<th style="text-align:left;">
+url_txt
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2007-03-01
+</td>
+<td style="text-align:left;">
+HON. SAM GRAVES;Mr. GRAVES
+</td>
+<td style="text-align:left;">
+RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT;
+Congressional Record Vol. 153, No. 35
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2</a>
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-2.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-2.htm</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2007-03-01
+</td>
+<td style="text-align:left;">
+HON. MARK UDALL;Mr. UDALL
+</td>
+<td style="text-align:left;">
+INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE
+INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol. 153,
+No. 35
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3</a>
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-3.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-3.htm</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2007-03-01
+</td>
+<td style="text-align:left;">
+HON. JAMES R. LANGEVIN;Mr. LANGEVIN
+</td>
+<td style="text-align:left;">
+BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153,
+No. 35
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4</a>
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-4.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-4.htm</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2007-03-01
+</td>
+<td style="text-align:left;">
+HON. JIM COSTA;Mr. COSTA
+</td>
+<td style="text-align:left;">
+A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153,
+No. 35
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5</a>
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-5.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-5.htm</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2007-03-01
+</td>
+<td style="text-align:left;">
+HON. SAM GRAVES;Mr. GRAVES
+</td>
+<td style="text-align:left;">
+RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1</a>
+</td>
+<td style="text-align:left;">
+<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431.htm</a>
+</td>
+</tr>
+</tbody>
+</table>
+<div id="text-cleaning" class="section level3">
+<h3>Text Cleaning</h3>
+<p><code>extract()</code> cleans text by default, so the user does not
+need to call it manually. Cleaning standardizes spacing, punctuation,
+and capitalization, which helps regex pattern matching.</p>
+<p>Example of <code>clean_text()</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
+</div>
+</div>
+<div id="basic-extraction" class="section level2">
+<h2>Basic Extraction</h2>
+<p>The simplest use of <code>extract()</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+row_id
+</th>
+<th style="text-align:left;">
+text
+</th>
+<th style="text-align:right;">
+icpsr
+</th>
+<th style="text-align:left;">
+pattern
+</th>
+<th style="text-align:left;">
+match
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+HON. SAM GRAVES;Mr. GRAVES
+</td>
+<td style="text-align:right;">
+20124
+</td>
+<td style="text-align:left;">
+samuel graves&amp;#124;graves&amp;#124;sam
+graves&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)graves&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves
+samuel&amp;#124;graves, s&amp;#124;representative graves/td&gt;
+<td style="text-align:left;">
+SAM GRAVES
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+HON. MARK UDALL;Mr. UDALL
+</td>
+<td style="text-align:right;">
+29906
+</td>
+<td style="text-align:left;">
+mark udall&amp;#124;udall&amp;#124;mark e
+udall&amp;#124;udall&amp;#124;(^&amp;#124;senator
+&amp;#124;representative )udall{1,4}co&amp;#124;udall,
+mark&amp;#124;udall mark&amp;#124;udall, m&amp;#124;representative
+udall{1,4}co&amp;#124;m e udall
+</td>
+<td style="text-align:left;">
+MARK UDALL
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+HON. JAMES R. LANGEVIN;Mr. LANGEVIN
+</td>
+<td style="text-align:right;">
+20136
+</td>
+<td style="text-align:left;">
+james langevin&amp;#124;langevin&amp;#124;james r langevin&amp;#124;jim
+langevin&amp;#124;jim r langevin&amp;#124;(^&amp;#124;senator
+&amp;#124;representative )langevin&amp;#124;langevin,
+jim&amp;#124;langevin, james&amp;#124;langevin james&amp;#124;langevin,
+j&amp;#124;representative langevin&amp;#124;j r langevin
+</td>
+<td style="text-align:left;">
+james r langevin
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+HON. JIM COSTA;Mr. COSTA
+</td>
+<td style="text-align:right;">
+20501
+</td>
+<td style="text-align:left;">
+jim costa&amp;#124;costa&amp;#124;james
+costa&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)costa&amp;#124;costa, james&amp;#124;costa, jim&amp;#124;costa
+jim&amp;#124;costa, j&amp;#124;representative costa/td&gt;
+<td style="text-align:left;">
+JIM COSTA
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+HON. SAM GRAVES;Mr. GRAVES
+</td>
+<td style="text-align:right;">
+20124
+</td>
+<td style="text-align:left;">
+samuel graves&amp;#124;graves&amp;#124;sam
+graves&amp;#124;(^&amp;#124;senator &amp;#124;representative
+)graves&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves
+samuel&amp;#124;graves, s&amp;#124;representative graves/td&gt;
+<td style="text-align:left;">
+SAM GRAVES
+</td>
+</tr>
+</tbody>
+</table>
+<p>Explanation: - <code>data</code>: the text dataset to search. -
+<code>col_name</code>: which column contains the text. -
+<code>regex_table</code>: the lookup table of patterns. -
+<code>data_return_cols</code>: additional columns from <code>data</code>
+to include in the result. - <code>regex_return_cols</code>: additional
+columns from the pattern table to attach. Each row in the output
+corresponds to a detected match, and includes both the original text and
+the matching pattern. —</p>
+</div>
+<div id="advanced-usage" class="section level2">
+<h2>Advanced Usage</h2>
+<p><code>extract()</code> can also filter data by date, remove acronyms
+(all-uppercase patterns with 2+ characters), and select specific output
+columns. This is useful for more controlled extraction.</p>
+<p>Explanation: - <code>date_col</code>, <code>date_start</code>,
+<code>date_end</code>: filter rows by date. -
+<code>remove_acronyms</code>: skip patterns like “NASA” or “USA”. You
+can combine these filters with any subset of columns for flexible
+outputs. —</p>
+<div id="parallel-matching" class="section level3">
+<h3>Parallel Matching</h3>
+<p><code>extract()</code> supports parallel processing via the
+<code>cl</code> parameter:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
+</div>
+<div id="summary" class="section level3">
+<h3>Summary</h3>
+<ul>
+<li><code>regextable</code> is a tool for extracting data from
+text.</li>
+<li>Use the included datasets to get started or supply your own lookup
+tables.</li>
+<li><code>extract()</code> by default handles text cleaning and
+efficient matching.</li>
+<li>Optional parameters allow advanced control over filtering and
+output.</li>
+</ul>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
