@@ -1,4 +1,3 @@
-# regextable: pattern-based text extraction and cleaning
 
 
 <!--DO NOT EDIT .md file, only README.qmd-->

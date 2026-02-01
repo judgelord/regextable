@@ -1,5 +1,5 @@
 ---
-title: "regextable: pattern-based text extraction and cleaning"
+# title: "regextable: pattern-based text extraction and cleaning"
 format: gfm
 editor-options: 
   chunk-output-type: console
