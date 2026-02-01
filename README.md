@@ -7,16 +7,8 @@
 
 ## Description
 
-<<<<<<< HEAD
-`regextable` extracts regex-based pattern matches from a data frame or
-character vector using a lookup table of regular expressions. For each
-input row, all patterns that match are returned, along with the matched
-substring, an internal row identifier (row_id), and optional columns
-from the input data or the regex table. If a text entry matches multiple
-patterns, multiple rows are generated to capture each match. Optional
-metadata from the pattern table can also be included, and text cleaning
-can be applied prior to matching.
-=======
+# `regextable` extracts regex-based pattern matches from a data frame or character vector using a lookup table of regular expressions. For each input row, all patterns that match are returned, along with the matched substring, an internal row identifier (row_id), and optional columns from the input data or the regex table. If a text entry matches multiple patterns, multiple rows are generated to capture each match. Optional metadata from the pattern table can also be included, and optional text cleaning can be applied prior to matching.
+
 `regextable` extracts regular-expression-based pattern matches from a
 vector of text using a lookup table of regular expressions. It requires
 two inputs:
@@ -32,11 +24,6 @@ For each matching substring, `regextable::extract` returns
 - the `pattern`
 - the matched substring
 - Optionally, other columns in `data` or `regex_table`
-
-Optionally, performance on large datasets can be improved by stopping
-the search for a row once a match is found. This should be done when the
-user is sure that there is only one match per row of input text.
->>>>>>> 9c802b66ef21a218cc151942f29b6eb4ce01ca58
 
 ## Installation
 
@@ -81,20 +68,12 @@ head(cr2007_03_01)
 ## Text cleaning
 
 Before matching, by default, `clean_text()` is applied to standardize
-<<<<<<< HEAD
-text. It converts text to lowercase, removes excess punctuation,
-replaces line breaks and dashes with spaces, and collapses multiple
-spaces into a single space. Text cleaning is applied only during
-matching and does not modify the original input data. Users can disable
-this behavior by setting `do_clean_text = FALSE`.
-=======
 text for better matching in messy text. It converts text to lowercase,
 removes excess punctuation, replaces line breaks and dashes with spaces,
 and collapses multiple spaces into a single space. Text cleaning is
 applied only during matching and does not modify the original input
 data. Users can disable this behavior by setting
 `do_clean_text = FALSE`.
->>>>>>> 9c802b66ef21a218cc151942f29b6eb4ce01ca58
 
 ``` r
 text <- "  HELLO---WORLD  "
@@ -146,18 +125,23 @@ are returned, one per match.
 
 A data frame with one row per match, including:
 
-<<<<<<< HEAD
 - `row_id`: the internal row number of the text in the input data
+
 - Optional columns from the input data (if data_return_cols specified)
+
 - Optional columns from the regex table (if regex_return_cols specified)
+
 - `pattern`: the regex pattern matched
-- `match`: the substring matched in the text
-=======
+
+- # `match`: the substring matched in the text
+
 - `pattern`, the first regex pattern matched in each row
+
 - `row_id`, the row number of the text
+
 - Additional columns from `data` specified in `data_return_cols`
+
 - Additional columns from `regex_table` specified in `regex_return_cols`
->>>>>>> 9c802b66ef21a218cc151942f29b6eb4ce01ca58
 
 ### Basic Usage
 
