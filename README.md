@@ -3,7 +3,7 @@
 
 <!--DO NOT EDIT .md file, only README.qmd-->
 
-# regextable <img src="man/figures/logo.png" align="right" widht="150"/>
+# regextable <img src="man/figures/logo.png" align="right" width="125"/>
 
 ## Description
 
