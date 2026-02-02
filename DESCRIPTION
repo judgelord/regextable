@@ -1,6 +1,6 @@
 Package: regextable
 Title: Pattern-Based Text Extraction and Standardization with Lookup Tables
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Shirlyn", "Dong", email = "shirlynd@umich.edu", role = c("aut", "cre")),
     person("Devin", "Judge-Lord", role = c("aut"))
