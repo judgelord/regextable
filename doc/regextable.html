@@ -12,7 +12,7 @@
 
 <meta name="author" content="Shirlyn Dong" />
 
-<meta name="date" content="2026-01-28" />
+<meta name="date" content="2026-02-02" />
 
 <title>regextable</title>
 
@@ -565,7 +565,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">regextable</h1>
 <h4 class="author">Shirlyn Dong</h4>
-<h4 class="date">2026-01-28</h4>
+<h4 class="date">2026-02-02</h4>
 
 
 
@@ -580,9 +580,8 @@ Optional metadata from the pattern table can also be included. Multiple
 rows may be returned for a single text if it matches multiple
 patterns.</p>
 <p>Install and load the package:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;judgelord/regextable&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -592,8 +591,8 @@ patterns.</p>
 names.</li>
 <li><code>cr2007_03_01</code>: A sample text dataset to search.</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -797,9 +796,9 @@ CRAMER
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">kable</span>(cr2007_03_01)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">subset</span>(cr2007_03_01, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(url, url_txt)))</span></code></pre></div>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -811,12 +810,6 @@ text
 </th>
 <th style="text-align:left;">
 header
-</th>
-<th style="text-align:left;">
-url
-</th>
-<th style="text-align:left;">
-url_txt
 </th>
 </tr>
 </thead>
@@ -832,12 +825,6 @@ HON. SAM GRAVES;Mr. GRAVES
 RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT;
 Congressional Record Vol. 153, No. 35
 </td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2</a>
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-2.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-2.htm</a>
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -851,12 +838,6 @@ INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE
 INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol. 153,
 No. 35
 </td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3</a>
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-3.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-3.htm</a>
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -868,12 +849,6 @@ HON. JAMES R. LANGEVIN;Mr. LANGEVIN
 <td style="text-align:left;">
 BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153,
 No. 35
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4</a>
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-4.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-4.htm</a>
 </td>
 </tr>
 <tr>
@@ -887,12 +862,6 @@ HON. JIM COSTA;Mr. COSTA
 A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153,
 No. 35
 </td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5</a>
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-5.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431-5.htm</a>
-</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -904,12 +873,6 @@ HON. SAM GRAVES;Mr. GRAVES
 <td style="text-align:left;">
 RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT
 </td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1" class="uri">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1</a>
-</td>
-<td style="text-align:left;">
-<a href="https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431.htm" class="uri">https://www.congress.gov/117/crec/2007/03/01/modified/CREC-2007-03-01-pt1-PgE431.htm</a>
-</td>
 </tr>
 </tbody>
 </table>
@@ -919,22 +882,22 @@ RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT
 need to call it manually. Cleaning standardizes spacing, punctuation,
 and capitalization, which helps regex pattern matching.</p>
 <p>Example of <code>clean_text()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
 </div>
 </div>
 <div id="basic-extraction" class="section level2">
 <h2>Basic Extraction</h2>
 <p>The simplest use of <code>extract()</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1080,17 +1043,17 @@ outputs. —</p>
 <h3>Parallel Matching</h3>
 <p><code>extract()</code> supports parallel processing via the
 <code>cl</code> parameter:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>)</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
 </div>
 <div id="summary" class="section level3">
 <h3>Summary</h3>
