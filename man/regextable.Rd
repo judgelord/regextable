@@ -30,6 +30,7 @@ for text analysis tasks where you need to match multiple patterns.
 Useful links:
 \itemize{
   \item \url{https://github.com/judgelord/regextable}
+  \item \url{https://judgelord.github.io/regextable/}
   \item Report bugs at \url{https://github.com/judgelord/regextable/issues}
 }
 
@@ -39,7 +40,7 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Devin Judge-Lord [contributor]
+  \item Devin Judge-Lord
 }
 
 }
