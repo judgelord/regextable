@@ -74,7 +74,7 @@ extract <- function(data,
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
   }
-  
+#   
   chk::chk_data(data)
   chk::chk_data(regex_table)
   chk::chk_subset(col_name, names(data))
@@ -217,7 +217,7 @@ extract_matches_all_internal <- function(text_search,
   
   if (verbose) {
     message(sprintf(
-      "Scanning %d patterns against %d text entries (first occurrence per pattern)...",
+      "Scanning %d patterns against %d text entries...",
       length(patterns),
       length(text_search)
     ))
@@ -342,7 +342,6 @@ extract_matches_one_internal <- function(text_search,
         error = function(e) rep(NA_character_, length(match_idx_local))
       )
       
-      # Fallback to cleaned text if needed
       na_idx <- is.na(actual_text)
       if (any(na_idx)) {
         actual_text[na_idx] <- stringi::stri_extract_first_regex(
