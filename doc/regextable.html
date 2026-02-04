@@ -1,34 +1,65 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
-<html>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
 
-<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<meta name="author" content="Shirlyn Dong" />
-
-<meta name="date" content="2026-02-02" />
+<meta name="author" content="Shirlyn Dong">
+<meta name="dcterms.date" content="2026-02-04">
 
 <title>regextable</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
-  }
-});
-</script>
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+}
+pre.numberSource { margin-left: 3em; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
 <script>$(document).ready(function(){
     if (typeof $('[data-toggle="tooltip"]').tooltip === 'function') {
         $('[data-toggle="tooltip"]').tooltip();
@@ -38,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     }
 });
 </script>
+
 <style type="text/css">
 .lightable-minimal {
 border-collapse: separate;
@@ -254,121 +286,6 @@ border: 0;
 }
 </style>
 
-<style type="text/css">
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-span.underline{text-decoration: underline;}
-div.column{display: inline-block; vertical-align: top; width: 50%;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-</style>
-
-
-
-<style type="text/css">
-code {
-white-space: pre;
-}
-.sourceCode {
-overflow: visible;
-}
-</style>
-<style type="text/css" data-origin="pandoc">
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    var j = 0;
-    while (j < rules.length) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
-        j++;
-        continue;
-      }
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') {
-        j++;
-        continue;
-      }
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
-</script>
-
-
 
 
 <style type="text/css">body {
@@ -381,34 +298,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
 }
 table {
 margin: 1em auto;
@@ -538,552 +427,258 @@ a[href^="http:"] {
 text-decoration: underline; }
 a[href^="https:"] {
 text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-
-
-
-
 </head>
 
 <body>
 
 
+<header id="title-block-header">
+<h1 class="title">regextable</h1>
+<p class="author">Shirlyn Dong</p>
+
+<p class="date">2026-02-04</p>
+</header>
 
 
-<h1 class="title toc-ignore">regextable</h1>
-<h4 class="author">Shirlyn Dong</h4>
-<h4 class="date">2026-02-02</h4>
-
-
-
-<div id="introduction" class="section level3">
-<h3>Introduction</h3>
-<p><code>regextable</code> extracts regex-based pattern matches from a
-data frame or character vector using a pattern lookup table. For each
-input row, all matching patterns are returned, along with the matched
-substring, an internal row identifier, and additional columns specified
-in <code>data_return_cols</code> and <code>regex_return_cols</code>.
-Optional metadata from the pattern table can also be included. Multiple
-rows may be returned for a single text if it matches multiple
-patterns.</p>
+<h3 id="introduction">Introduction</h3>
+<p><code>regextable</code> extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in <code>data_return_cols</code> and <code>regex_return_cols</code>. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.</p>
+<p>The function also supports additional parameters such as <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, and <code>cl</code>. These can be used to control text cleaning, limit matches per row, show progress messages, or speed up processing on large datasets.</p>
 <p>Install and load the package:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
 </div>
-<div id="data" class="section level2">
-<h2>Data</h2>
+<h2 id="data">Data</h2>
 <p>For demonstration, we use two included datasets:</p>
 <ul>
-<li><code>members</code>: A lookup table of regex patterns for member
-names.</li>
+<li><code>members</code>: A lookup table of regex patterns for member names.</li>
 <li><code>cr2007_03_01</code>: A sample text dataset to search.</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
-<table class="table" style="margin-left: auto; margin-right: auto;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr>
-<th style="text-align:right;">
-congress
-</th>
-<th style="text-align:left;">
-chamber
-</th>
-<th style="text-align:left;">
-bioname
-</th>
-<th style="text-align:left;">
-pattern
-</th>
-<th style="text-align:right;">
-icpsr
-</th>
-<th style="text-align:left;">
-state_abbrev
-</th>
-<th style="text-align:right;">
-district_code
-</th>
-<th style="text-align:left;">
-first_name
-</th>
-<th style="text-align:left;">
-last_name
-</th>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">congress</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">chamber</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">bioname</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">state_abbrev</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">district_code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">first_name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">last_name</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:right;">
-110
-</td>
-<td style="text-align:left;">
-President
-</td>
-<td style="text-align:left;">
-BUSH, George Walker
-</td>
-<td style="text-align:left;">
-george bush&amp;#124;george walker bush&amp;#124;bush&amp;#124;george w
-bush&amp;#124;bush&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)bush&amp;#124;bush, george&amp;#124;bush george&amp;#124;bush,
-g&amp;#124;president bush&amp;#124;g w bush
-</td>
-<td style="text-align:right;">
-99910
-</td>
-<td style="text-align:left;">
-USA
-</td>
-<td style="text-align:right;">
-0
-</td>
-<td style="text-align:left;">
-George
-</td>
-<td style="text-align:left;">
-BUSH
-</td>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">President</td>
+<td style="text-align: left;">BUSH, George Walker</td>
+<td style="text-align: left;">george bush&amp;#124;george walker bush&amp;#124;\bg bush&amp;#124;george w bush&amp;#124;\bna bush&amp;#124;(^&amp;#124;senator &amp;#124;representative )bush\b&amp;#124;bush, george&amp;#124;bush george&amp;#124;bush, g\b&amp;#124;president bush\b&amp;#124;g w bush</td>
+<td style="text-align: right;">99910</td>
+<td style="text-align: left;">USA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">George</td>
+<td style="text-align: left;">BUSH</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-110
-</td>
-<td style="text-align:left;">
-House
-</td>
-<td style="text-align:left;">
-BONNER, Jr., Josiah Robins (Jo)
-</td>
-<td style="text-align:left;">
-josiah bonner&amp;#124;josiah josiah robins
-bonner&amp;#124;bonner&amp;#124;josiah j bonner&amp;#124;jo
-bonner&amp;#124;jo josiah robins bonner&amp;#124;jo j
-bonner&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)bonner&amp;#124;bonner, jo&amp;#124;bonner, josiah&amp;#124;bonner
-josiah&amp;#124;bonner, j&amp;#124;representative bonner&amp;#124;j j
-bonner
-</td>
-<td style="text-align:right;">
-20300
-</td>
-<td style="text-align:left;">
-AL
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-Josiah
-</td>
-<td style="text-align:left;">
-BONNER
-</td>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">BONNER, Jr., Josiah Robins (Jo)</td>
+<td style="text-align: left;">josiah bonner&amp;#124;josiah josiah robins bonner&amp;#124;\bj bonner&amp;#124;josiah j bonner&amp;#124;jo bonner&amp;#124;jo josiah robins bonner&amp;#124;jo j bonner&amp;#124;(^&amp;#124;senator &amp;#124;representative )bonner\b&amp;#124;bonner, jo&amp;#124;bonner, josiah&amp;#124;bonner josiah&amp;#124;bonner, j\b&amp;#124;representative bonner\b&amp;#124;j j bonner</td>
+<td style="text-align: right;">20300</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Josiah</td>
+<td style="text-align: left;">BONNER</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-110
-</td>
-<td style="text-align:left;">
-House
-</td>
-<td style="text-align:left;">
-ROGERS, Mike Dennis
-</td>
-<td style="text-align:left;">
-mike rogers&amp;#124;mike dennis
-rogers&amp;#124;rogers.{1,4}al&amp;#124;mike d rogers&amp;#124;michael
-rogers&amp;#124;michael dennis rogers&amp;#124;michael d
-rogers&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)rogers{1,4}al&amp;#124;rogers, michael&amp;#124;rogers,
-mike&amp;#124;rogers mike&amp;#124;representative
-rogers{1,4}al&amp;#124;m d rogers
-</td>
-<td style="text-align:right;">
-20301
-</td>
-<td style="text-align:left;">
-AL
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-Mike
-</td>
-<td style="text-align:left;">
-ROGERS
-</td>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">ROGERS, Mike Dennis</td>
+<td style="text-align: left;">mike rogers&amp;#124;mike dennis rogers&amp;#124;\bm rogers.{1,4}al&amp;#124;mike d rogers&amp;#124;michael rogers&amp;#124;michael dennis rogers&amp;#124;michael d rogers&amp;#124;(^&amp;#124;senator &amp;#124;representative )rogers\b.{1,4}al&amp;#124;rogers, michael&amp;#124;rogers, mike&amp;#124;rogers mike&amp;#124;representative rogers\b.{1,4}al&amp;#124;m d rogers</td>
+<td style="text-align: right;">20301</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Mike</td>
+<td style="text-align: left;">ROGERS</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-110
-</td>
-<td style="text-align:left;">
-House
-</td>
-<td style="text-align:left;">
-DAVIS, Artur
-</td>
-<td style="text-align:left;">
-artur davis&amp;#124;davis&amp;#124;(^&amp;#124;senator
-&amp;#124;representative )davis{1,4}al&amp;#124;davis,
-artur&amp;#124;davis artur&amp;#124;davis, a&amp;#124;representative
-davis{1,4}al
-</td>
-<td style="text-align:right;">
-20302
-</td>
-<td style="text-align:left;">
-AL
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:left;">
-Artur
-</td>
-<td style="text-align:left;">
-DAVIS
-</td>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">DAVIS, Artur</td>
+<td style="text-align: left;">artur davis&amp;#124;\ba davis&amp;#124;(^&amp;#124;senator &amp;#124;representative )davis\b.{1,4}al&amp;#124;davis, artur&amp;#124;davis artur&amp;#124;davis, a\b&amp;#124;representative davis\b.{1,4}al</td>
+<td style="text-align: right;">20302</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Artur</td>
+<td style="text-align: left;">DAVIS</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-110
-</td>
-<td style="text-align:left;">
-House
-</td>
-<td style="text-align:left;">
-CRAMER, Robert E. (Bud), Jr. 
-</td>
-<td style="text-align:left;">
-robert cramer&amp;#124;robert e cramer&amp;#124;cramer&amp;#124;bud
-cramer&amp;#124;bud e
-cramer&amp;#124;cramer&amp;#124;(^&amp;#124;senator
-&amp;#124;representative )cramer&amp;#124;cramer, bud&amp;#124;cramer,
-robert&amp;#124;cramer robert&amp;#124;cramer, r&amp;#124;cramer,
-b&amp;#124;representative cramer&amp;#124;r e cramer
-</td>
-<td style="text-align:right;">
-29100
-</td>
-<td style="text-align:left;">
-AL
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-Robert
-</td>
-<td style="text-align:left;">
-CRAMER
-</td>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">CRAMER, Robert E. (Bud), Jr.</td>
+<td style="text-align: left;">robert cramer&amp;#124;robert e cramer&amp;#124;\br cramer&amp;#124;bud cramer&amp;#124;bud e cramer&amp;#124;\bb cramer&amp;#124;(^&amp;#124;senator &amp;#124;representative )cramer\b&amp;#124;cramer, bud&amp;#124;cramer, robert&amp;#124;cramer robert&amp;#124;cramer, r\b&amp;#124;cramer, b\b&amp;#124;representative cramer\b&amp;#124;r e cramer</td>
+<td style="text-align: right;">29100</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Robert</td>
+<td style="text-align: left;">CRAMER</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">subset</span>(cr2007_03_01, <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(url, url_txt)))</span></code></pre></div>
-<table class="table" style="margin-left: auto; margin-right: auto;">
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;cr2007_03_01&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(cr2007_03_01)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr>
-<th style="text-align:left;">
-date
-</th>
-<th style="text-align:left;">
-text
-</th>
-<th style="text-align:left;">
-header
-</th>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">date</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">header</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">url</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-2007-03-01
-</td>
-<td style="text-align:left;">
-HON. SAM GRAVES;Mr. GRAVES
-</td>
-<td style="text-align:left;">
-RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT;
-Congressional Record Vol. 153, No. 35
-</td>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: left;">RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-2007-03-01
-</td>
-<td style="text-align:left;">
-HON. MARK UDALL;Mr. UDALL
-</td>
-<td style="text-align:left;">
-INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE
-INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol. 153,
-No. 35
-</td>
+<tr class="even">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. MARK UDALL;Mr. UDALL</td>
+<td style="text-align: left;">INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-2007-03-01
-</td>
-<td style="text-align:left;">
-HON. JAMES R. LANGEVIN;Mr. LANGEVIN
-</td>
-<td style="text-align:left;">
-BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153,
-No. 35
-</td>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. JAMES R. LANGEVIN;Mr. LANGEVIN</td>
+<td style="text-align: left;">BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-2007-03-01
-</td>
-<td style="text-align:left;">
-HON. JIM COSTA;Mr. COSTA
-</td>
-<td style="text-align:left;">
-A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153,
-No. 35
-</td>
+<tr class="even">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. JIM COSTA;Mr. COSTA</td>
+<td style="text-align: left;">A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-2007-03-01
-</td>
-<td style="text-align:left;">
-HON. SAM GRAVES;Mr. GRAVES
-</td>
-<td style="text-align:left;">
-RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT
-</td>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: left;">RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1</td>
 </tr>
 </tbody>
 </table>
-<div id="text-cleaning" class="section level3">
-<h3>Text Cleaning</h3>
-<p><code>extract()</code> cleans text by default, so the user does not
-need to call it manually. Cleaning standardizes spacing, punctuation,
-and capitalization, which helps regex pattern matching.</p>
+</div>
+</div>
+<h3 id="text-cleaning">Text Cleaning</h3>
+<p><code>extract()</code> cleans text by default, so the user does not need to call it manually. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.</p>
 <p>Example of <code>clean_text()</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
 </div>
-</div>
-<div id="basic-extraction" class="section level2">
-<h2>Basic Extraction</h2>
+<h2 id="basic-extraction">Basic Extraction</h2>
 <p>The simplest use of <code>extract()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>)</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div>
-<table class="table" style="margin-left: auto; margin-right: auto;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> regextable<span class="sc">::</span><span class="fu">extract</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead>
-<tr>
-<th style="text-align:right;">
-row_id
-</th>
-<th style="text-align:left;">
-text
-</th>
-<th style="text-align:right;">
-icpsr
-</th>
-<th style="text-align:left;">
-pattern
-</th>
-<th style="text-align:left;">
-match
-</th>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">row_id</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">match</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-HON. SAM GRAVES;Mr. GRAVES
-</td>
-<td style="text-align:right;">
-20124
-</td>
-<td style="text-align:left;">
-samuel graves&amp;#124;graves&amp;#124;sam
-graves&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)graves&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves
-samuel&amp;#124;graves, s&amp;#124;representative graves/td&gt;
-<td style="text-align:left;">
-SAM GRAVES
-</td>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-HON. MARK UDALL;Mr. UDALL
-</td>
-<td style="text-align:right;">
-29906
-</td>
-<td style="text-align:left;">
-mark udall&amp;#124;udall&amp;#124;mark e
-udall&amp;#124;udall&amp;#124;(^&amp;#124;senator
-&amp;#124;representative )udall{1,4}co&amp;#124;udall,
-mark&amp;#124;udall mark&amp;#124;udall, m&amp;#124;representative
-udall{1,4}co&amp;#124;m e udall
-</td>
-<td style="text-align:left;">
-MARK UDALL
-</td>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">HON. MARK UDALL;Mr. UDALL</td>
+<td style="text-align: right;">29906</td>
+<td style="text-align: left;">mark udall&amp;#124;\bm udall&amp;#124;mark e udall&amp;#124;\bna udall&amp;#124;(^&amp;#124;senator &amp;#124;representative )udall\b.{1,4}co&amp;#124;udall, mark&amp;#124;udall mark&amp;#124;udall, m\b&amp;#124;representative udall\b.{1,4}co&amp;#124;m e udall</td>
+<td style="text-align: left;">MARK UDALL</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-HON. JAMES R. LANGEVIN;Mr. LANGEVIN
-</td>
-<td style="text-align:right;">
-20136
-</td>
-<td style="text-align:left;">
-james langevin&amp;#124;langevin&amp;#124;james r langevin&amp;#124;jim
-langevin&amp;#124;jim r langevin&amp;#124;(^&amp;#124;senator
-&amp;#124;representative )langevin&amp;#124;langevin,
-jim&amp;#124;langevin, james&amp;#124;langevin james&amp;#124;langevin,
-j&amp;#124;representative langevin&amp;#124;j r langevin
-</td>
-<td style="text-align:left;">
-james r langevin
-</td>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">HON. JAMES R. LANGEVIN;Mr. LANGEVIN</td>
+<td style="text-align: right;">20136</td>
+<td style="text-align: left;">james langevin&amp;#124;\bj langevin&amp;#124;james r langevin&amp;#124;jim langevin&amp;#124;jim r langevin&amp;#124;(^&amp;#124;senator &amp;#124;representative )langevin\b&amp;#124;langevin, jim&amp;#124;langevin, james&amp;#124;langevin james&amp;#124;langevin, j\b&amp;#124;representative langevin\b&amp;#124;j r langevin</td>
+<td style="text-align: left;">james r langevin</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-HON. JIM COSTA;Mr. COSTA
-</td>
-<td style="text-align:right;">
-20501
-</td>
-<td style="text-align:left;">
-jim costa&amp;#124;costa&amp;#124;james
-costa&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)costa&amp;#124;costa, james&amp;#124;costa, jim&amp;#124;costa
-jim&amp;#124;costa, j&amp;#124;representative costa/td&gt;
-<td style="text-align:left;">
-JIM COSTA
-</td>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">HON. JIM COSTA;Mr. COSTA</td>
+<td style="text-align: right;">20501</td>
+<td style="text-align: left;">jim costa&amp;#124;\bj costa&amp;#124;james costa&amp;#124;(^&amp;#124;senator &amp;#124;representative )costa\b&amp;#124;costa, james&amp;#124;costa, jim&amp;#124;costa jim&amp;#124;costa, j\b&amp;#124;representative costa\b</td>
+<td style="text-align: left;">JIM COSTA</td>
 </tr>
-<tr>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-HON. SAM GRAVES;Mr. GRAVES
-</td>
-<td style="text-align:right;">
-20124
-</td>
-<td style="text-align:left;">
-samuel graves&amp;#124;graves&amp;#124;sam
-graves&amp;#124;(^&amp;#124;senator &amp;#124;representative
-)graves&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves
-samuel&amp;#124;graves, s&amp;#124;representative graves/td&gt;
-<td style="text-align:left;">
-SAM GRAVES
-</td>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
 </tr>
 </tbody>
 </table>
-<p>Explanation: - <code>data</code>: the text dataset to search. -
-<code>col_name</code>: which column contains the text. -
-<code>regex_table</code>: the lookup table of patterns. -
-<code>data_return_cols</code>: additional columns from <code>data</code>
-to include in the result. - <code>regex_return_cols</code>: additional
-columns from the pattern table to attach. Each row in the output
-corresponds to a detected match, and includes both the original text and
-the matching pattern. —</p>
 </div>
-<div id="advanced-usage" class="section level2">
-<h2>Advanced Usage</h2>
-<p><code>extract()</code> can also filter data by date, remove acronyms
-(all-uppercase patterns with 2+ characters), and select specific output
-columns. This is useful for more controlled extraction.</p>
-<p>Explanation: - <code>date_col</code>, <code>date_start</code>,
-<code>date_end</code>: filter rows by date. -
-<code>remove_acronyms</code>: skip patterns like “NASA” or “USA”. You
-can combine these filters with any subset of columns for flexible
-outputs. —</p>
-<div id="parallel-matching" class="section level3">
-<h3>Parallel Matching</h3>
-<p><code>extract()</code> supports parallel processing via the
-<code>cl</code> parameter:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> <span class="fu">extract</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>)</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
 </div>
-<div id="summary" class="section level3">
-<h3>Summary</h3>
+<p>Explanation: - <code>data</code>: the text dataset to search. - <code>col_name</code>: which column contains the text. - <code>regex_table</code>: the lookup table of patterns. - <code>data_return_cols</code>: additional columns from <code>data</code> to include in the result. - <code>regex_return_cols</code>: additional columns from the pattern table to attach. Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern. —</p>
+<h2 id="advanced-usage">Advanced Usage</h2>
+<p><code>extract()</code> can also filter data by date, remove acronyms (all-uppercase patterns with 2+ characters), and select specific output columns. This is useful for more controlled extraction.</p>
+<p>Explanation: - <code>date_col</code>, <code>date_start</code>, <code>date_end</code>: filter rows by date. - <code>remove_acronyms</code>: skip patterns like “NASA” or “USA”. You can combine these filters with any subset of columns for flexible outputs. —</p>
+<h3 id="parallel-matching">Parallel Matching</h3>
+<p><code>extract()</code> supports parallel processing via the <code>cl</code> parameter:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> regextable<span class="sc">::</span><span class="fu">extract</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;text&quot;</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
+</div>
+<h3 id="summary">Summary</h3>
 <ul>
-<li><code>regextable</code> is a tool for extracting data from
-text.</li>
-<li>Use the included datasets to get started or supply your own lookup
-tables.</li>
-<li><code>extract()</code> by default handles text cleaning and
-efficient matching.</li>
-<li>Optional parameters allow advanced control over filtering and
-output.</li>
+<li><code>regextable</code> is a tool for extracting data from text.</li>
+<li>Use the included datasets to get started or supply your own lookup tables.</li>
+<li><code>extract()</code> by default handles text cleaning and efficient matching.</li>
+<li>Optional parameters allow advanced control over filtering and output.</li>
 </ul>
-</div>
-</div>
 
 
 
-<!-- code folding -->
 
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
-
-</body>
-</html>
+</body></html>

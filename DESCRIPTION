@@ -27,9 +27,10 @@ Suggests:
     kableExtra,
     knitr,
     rmarkdown,
+    quarto,
     spelling,
     testthat (>= 3.0.0)
-VignetteBuilder: knitr
+VignetteBuilder: quarto
 URL: https://github.com/judgelord/regextable, https://judgelord.github.io/regextable/
 BugReports: https://github.com/judgelord/regextable/issues
 Config/testthat/edition: 3

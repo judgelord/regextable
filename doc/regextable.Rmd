@@ -59,7 +59,7 @@ data("members")
 kable(members)
 
 data("cr2007_03_01")
-kable(subset(cr2007_03_01, select = -c(url, url_txt)))
+kable(cr2007_03_01)
 ```
 
 ### Text Cleaning

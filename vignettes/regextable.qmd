@@ -3,6 +3,10 @@ title: "regextable"
 author: "Shirlyn Dong"
 date: "`r Sys.Date()`"
 format: html
+vignette: >
+  %\VignetteIndexEntry{regextable}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
@@ -35,6 +39,8 @@ kable <- function(x){
 ### Introduction
 
 `regextable` extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in `data_return_cols` and `regex_return_cols`. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.
+
+The function also supports additional parameters such as `do_clean_text`, `unique_match`, `verbose`, and `cl`. These can be used to control text cleaning, limit matches per row, show progress messages, or speed up processing on large datasets.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -72,7 +78,7 @@ clean_text(text)
 The simplest use of `extract()`:
 
 ```{r}
-result <- extract(
+result <- regextable::extract(
   data = cr2007_03_01,
   regex_table = members,
   data_return_cols = c("text"),
@@ -123,7 +129,7 @@ You can combine these filters with any subset of columns for flexible outputs.
 ```{r, eval=FALSE}
 library(parallel)
 clust <- makeCluster(2)
-result_parallel <- extract(
+result_parallel <- regextable::extract(
   data = cr2007_03_01,
   regex_table = members,
   cl = clust,

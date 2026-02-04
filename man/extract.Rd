@@ -17,7 +17,7 @@ extract(
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
   verbose = TRUE,
-  one_match = FALSE,
+  unique_match = FALSE,
   cl = NULL
 )
 }
@@ -46,7 +46,7 @@ extract(
 
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 
-\item{one_match}{Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.}
+\item{unique_match}{Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.}
 
 \item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 }
@@ -66,7 +66,7 @@ Uses a regex lookup table to extract pattern matches.
 \details{
 Pattern matching is performed using R's regular expression engine and is
 case-insensitive by default. For each input row, the function checks patterns
-in \code{regex_table} and returns matches based on the \code{one_match} parameter.
+in \code{regex_table} and returns matches based on the \code{unique_match} parameter.
 }
 \examples{
 # Create sample data
@@ -86,5 +86,5 @@ patterns <- data.frame(
 extract(data, "text", patterns)
 
 # Extract one match per row
-extract(data, "text", patterns, one_match = TRUE)
+extract(data, "text", patterns, unique_match = TRUE)
 }
