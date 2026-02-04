@@ -115,7 +115,7 @@ are returned, one per match.
 - **`do_clean_text`**: (default `TRUE`) If `TRUE`, cleans text before
   matching.
 - **`verbose`**: (default `TRUE`) If `TRUE`, displays progress messages.
-- **unique_match** (default `FALSE`) If `TRUE`, stops searching after
+- **`unique_match`** (default `FALSE`) If `TRUE`, stops searching after
   first match to find at most one match per row.
 - **`cl`**: (default `NULL`) A cluster object or integer specifying
   child processes for parallel evaluation (ignored on Windows).
