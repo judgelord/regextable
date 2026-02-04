@@ -1,14 +1,11 @@
 #' @title Extract pattern matches from text
-#' @description Uses a regex lookup table to extract **all** pattern matches.
+#' @description Uses a regex lookup table to extract pattern matches.
 #' 
 #' @details
 #' Pattern matching is performed using R's regular expression engine and is
-#' case-insensitive by default. For each input row, the function checks every
-#' pattern in `regex_table` and returns the first match of each pattern.
-#'
-#' The output contains one row per pattern match per input row. If multiple
-#' patterns match the same text, multiple rows will be returned for that text.
-#'
+#' case-insensitive by default. For each input row, the function checks patterns
+#' in `regex_table` and returns matches based on the `unique_match` parameter.
+#' 
 #' @param data A data frame or character vector containing the text to search.
 #' @param col_name Column name in data frame containing text to search through.
 #' @param regex_table A regex lookup table with a pattern column.
@@ -21,6 +18,7 @@
 #' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
+#' @param unique_match Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.
 #' @param cl A cluster object created by `parallel::makeCluster()`, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to [pbapply::pblapply()].
 #' 
 #' @return A tibble (data frame) with columns:
@@ -45,27 +43,31 @@
 #'   category = c("fruit", "fruit", "fruit")
 #' )
 #' 
-#' # Extract matches
+#' # Extract all matches
 #' extract(data, "text", patterns)
+#' 
+#' # Extract one match per row
+#' extract(data, "text", patterns, unique_match = TRUE)
 #' @importFrom chk chk_data chk_subset chk_character chk_flag
 #' @importFrom pbapply pblapply pboptions
-#' @importFrom stringi stri_detect_regex stri_extract_first_regex
+#' @importFrom stringi stri_detect_regex stri_extract_first_regex stri_replace_first_regex
 #' @importFrom dplyr %>% as_tibble group_by summarise across all_of distinct ungroup bind_rows
 #' @importFrom stats na.omit
 #' @export
 extract <- function(data,
-                    col_name = "text",
-                    regex_table,
-                    pattern_col = "pattern",
-                    data_return_cols = NULL,
-                    regex_return_cols = NULL,
-                    date_col = NULL,
-                    date_start = NULL,
-                    date_end = NULL,
-                    remove_acronyms = FALSE,
-                    do_clean_text = TRUE,
-                    verbose = TRUE,
-                    cl = NULL) {
+                     col_name = "text",
+                     regex_table,
+                     pattern_col = "pattern",
+                     data_return_cols = NULL,
+                     regex_return_cols = NULL,
+                     date_col = NULL,
+                     date_start = NULL,
+                     date_end = NULL,
+                     remove_acronyms = FALSE,
+                     do_clean_text = TRUE,
+                     verbose = TRUE,
+                     unique_match = FALSE,
+                     cl = NULL) {
   
   # Validate input and data
   if (is.character(data) && is.null(dim(data))) {
@@ -129,7 +131,6 @@ extract <- function(data,
     return(dplyr::tibble())
   }
   
-  # Text prep
   text_raw <- data[[col_name]]
   text_search <- text_raw
   
@@ -137,16 +138,28 @@ extract <- function(data,
     text_search <- clean_text(text_search)
   }
   
-  # Run text matching
-  matches_found <- extract_matches_all_internal(
-    text_search = text_search,
-    text_raw = text_raw,
-    row_ids = data$row_id,
-    patterns = patterns,
-    id_col_name = "row_id",
-    verbose = verbose,
-    cl = cl
-  )
+  if (unique_match) {
+    # Stop searching after first match
+    matches_found <- extract_matches_one_internal(
+      text_search = text_search,
+      text_raw = text_raw,
+      row_ids = data$row_id,
+      patterns = patterns,
+      id_col_name = "row_id",
+      verbose = verbose,
+      cl = cl
+    )
+  } else {
+    matches_found <- extract_matches_all_internal(
+      text_search = text_search,
+      text_raw = text_raw,
+      row_ids = data$row_id,
+      patterns = patterns,
+      id_col_name = "row_id",
+      verbose = verbose,
+      cl = cl
+    )
+  }
   
   if (nrow(matches_found) == 0) {
     if (verbose) message("Number of rows with matches: 0")
@@ -192,15 +205,15 @@ extract <- function(data,
 }
 
 #' @title Extract All matches per pattern
-#' @description Internal function to extract matches using dual-text approach.
+#' @description Internal function to extract all matches using dual-text approach.
 #' @keywords internal
 extract_matches_all_internal <- function(text_search,
-                                         text_raw,
-                                         row_ids,
-                                         patterns,
-                                         id_col_name,
-                                         verbose = FALSE,
-                                         cl = NULL) {
+                                          text_raw,
+                                          row_ids,
+                                          patterns,
+                                          id_col_name,
+                                          verbose = FALSE,
+                                          cl = NULL) {
   
   if (verbose) {
     message(sprintf(
@@ -259,5 +272,109 @@ extract_matches_all_internal <- function(text_search,
   
   names(df)[names(df) == "row_id"] <- id_col_name
   df <- df[order(df$row_id), ]
+  df
+}
+
+#' @title Extract One match per row 
+#' @description Internal function to extract at most one match per row.
+#' @keywords internal
+extract_matches_one_internal <- function(text_search,
+                                          text_raw,
+                                          row_ids,
+                                          patterns,
+                                          id_col_name,
+                                          verbose = FALSE,
+                                          cl = NULL) {
+  
+  if (verbose) {
+    message(sprintf(
+      "Scanning: %d patterns against %d text entries...",
+      length(patterns),
+      length(text_search)
+    ))
+  }
+  
+  n_rows <- length(text_search)
+  
+  # Initialize storage for results
+  matched_patterns <- rep(NA_character_, n_rows)
+  exact_matches <- rep(NA_character_, n_rows)
+  unmatched_indices <- seq_len(n_rows)
+  
+  regex_opts <- stringi::stri_opts_regex(case_insensitive = TRUE)
+  
+  # Set up progress bar
+  if (verbose) {
+    pb <- pbapply::startpb(min = 0, max = length(patterns))
+    on.exit(pbapply::closepb(pb), add = TRUE)
+  }
+  
+  # Process patterns in order with progress bar
+  for (i in seq_along(patterns)) {
+    pat <- patterns[i]
+    
+    if (verbose) {
+      pbapply::setpb(pb, i)
+    }
+    
+    if (length(unmatched_indices) == 0) break
+    
+    # Get text for unmatched rows
+    current_text_search <- text_search[unmatched_indices]
+    current_text_raw <- text_raw[unmatched_indices]
+    
+    # Check for matches
+    has_match <- tryCatch(
+      stringi::stri_detect_regex(current_text_search, pat, opts_regex = regex_opts),
+      error = function(e) rep(FALSE, length(current_text_search))
+    )
+    
+    if (any(has_match)) {
+      match_idx_local <- which(has_match)
+      match_idx_global <- unmatched_indices[match_idx_local]
+      
+      actual_text <- tryCatch(
+        stringi::stri_extract_first_regex(
+          current_text_raw[match_idx_local],
+          pat,
+          opts_regex = regex_opts
+        ),
+        error = function(e) rep(NA_character_, length(match_idx_local))
+      )
+      
+      # Fallback to cleaned text if needed
+      na_idx <- is.na(actual_text)
+      if (any(na_idx)) {
+        actual_text[na_idx] <- stringi::stri_extract_first_regex(
+          current_text_search[match_idx_local][na_idx],
+          pat,
+          opts_regex = regex_opts
+        )
+      }
+      
+      matched_patterns[match_idx_global] <- pat
+      exact_matches[match_idx_global] <- actual_text
+      
+      # Remove matched rows from further consideration
+      unmatched_indices <- unmatched_indices[-match_idx_local]
+    }
+  }
+  
+  # Create result dataframe
+  result_indices <- which(!is.na(matched_patterns))
+  
+  if (length(result_indices) == 0) {
+    return(dplyr::tibble())
+  }
+  
+  df <- dplyr::tibble(
+    row_id = row_ids[result_indices],
+    pattern = matched_patterns[result_indices],
+    match = exact_matches[result_indices]
+  )
+  
+  names(df)[names(df) == "row_id"] <- id_col_name
+  df <- df[order(df$row_id), ]
+  
   df
 }

@@ -107,7 +107,6 @@ A data frame with one row per match, including:
 - Optional columns from the regex table (if regex_return_cols specified)
 - `pattern`: the regex pattern matched
 - `match`: the substring matched in the text
-=======
 - `pattern`, the first regex pattern matched in each row
 - `row_id`, the row number of the text
 - Additional columns from `data` specified in `data_return_cols`

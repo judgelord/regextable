@@ -17,6 +17,7 @@ extract(
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
   verbose = TRUE,
+  one_match = FALSE,
   cl = NULL
 )
 }
@@ -45,6 +46,8 @@ extract(
 
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 
+\item{one_match}{Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.}
+
 \item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 }
 \value{
@@ -58,15 +61,12 @@ A tibble (data frame) with columns:
 }
 }
 \description{
-Uses a regex lookup table to extract \strong{all} pattern matches.
+Uses a regex lookup table to extract pattern matches.
 }
 \details{
 Pattern matching is performed using R's regular expression engine and is
-case-insensitive by default. For each input row, the function checks every
-pattern in \code{regex_table} and returns the first match of each pattern.
-
-The output contains one row per pattern match per input row. If multiple
-patterns match the same text, multiple rows will be returned for that text.
+case-insensitive by default. For each input row, the function checks patterns
+in \code{regex_table} and returns matches based on the \code{one_match} parameter.
 }
 \examples{
 # Create sample data
@@ -82,6 +82,9 @@ patterns <- data.frame(
   category = c("fruit", "fruit", "fruit")
 )
 
-# Extract matches
+# Extract all matches
 extract(data, "text", patterns)
+
+# Extract one match per row
+extract(data, "text", patterns, one_match = TRUE)
 }
