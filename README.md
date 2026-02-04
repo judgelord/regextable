@@ -51,15 +51,15 @@ head(members)
 
 data("cr2007_03_01")
 head(cr2007_03_01)
-#> # A tibble: 6 × 5
-#>   date       text                                header                                                    url   url_txt
-#>   <date>     <chr>                               <chr>                                                     <chr> <chr>  
-#> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE… http… https:…
-#> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH AN… http… https:…
-#> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional R… http… https:…
-#> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional … http… https:…
-#> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE… http… https:…
-#> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIE… http… https:…
+#> # A tibble: 6 × 4
+#>   date       text                                header                                                            url  
+#>   <date>     <chr>                               <chr>                                                             <chr>
+#> 1 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; … http…
+#> 2 2007-03-01 HON. MARK UDALL;Mr. UDALL           INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSAR… http…
+#> 3 2007-03-01 HON. JAMES R. LANGEVIN;Mr. LANGEVIN BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vo… http…
+#> 4 2007-03-01 HON. JIM COSTA;Mr. COSTA            A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record V… http…
+#> 5 2007-03-01 HON. SAM GRAVES;Mr. GRAVES          RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT    http…
+#> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AME… http…
 ```
 
 ## Text cleaning
@@ -115,6 +115,8 @@ are returned, one per match.
 - **`do_clean_text`**: (default `TRUE`) If `TRUE`, cleans text before
   matching.
 - **`verbose`**: (default `TRUE`) If `TRUE`, displays progress messages.
+- **unique_match** (default `FALSE`) If `TRUE`, stops searching after
+  first match to find at most one match per row.
 - **`cl`**: (default `NULL`) A cluster object or integer specifying
   child processes for parallel evaluation (ignored on Windows).
 
@@ -123,21 +125,13 @@ are returned, one per match.
 A data frame with one row per match, including:
 
 - `row_id`: the internal row number of the text in the input data
-
 - Optional columns from the input data (if data_return_cols specified)
-
 - Optional columns from the regex table (if regex_return_cols specified)
-
 - `pattern`: the regex pattern matched
-
-- # `match`: the substring matched in the text
-
+- `match`: the substring matched in the text
 - `pattern`, the first regex pattern matched in each row
-
 - `row_id`, the row number of the text
-
 - Additional columns from `data` specified in `data_return_cols`
-
 - Additional columns from `regex_table` specified in `regex_return_cols`
 
 ### Basic Usage
