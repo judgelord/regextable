@@ -178,3 +178,44 @@ test_that("non-character col_name errors on factor/list columns", {
   df <- data.frame(text = I(list("ACME","XYZ")))
   expect_error(extract(df, "text", regex_table))
 })
+
+test_that("unique_match returns only one match per row", {
+  df <- data.frame(
+    id = 1,
+    text = "ACME and XYZ Corp",
+    stringsAsFactors = FALSE
+  )
+  regex_table <- data.frame(pattern = c("ACME", "XYZ Corp"))
+  
+  result <- extract(
+    df,
+    col_name = "text",
+    regex_table = regex_table,
+    unique_match = TRUE,
+    verbose = FALSE
+  )
+  
+  expect_equal(nrow(result), 1)
+  expect_equal(result$pattern, "ACME")
+})
+
+test_that("unique_match still returns multiple rows for multiple inputs", {
+  df <- data.frame(
+    id = 1:2,
+    text = c("ACME here", "XYZ Corp there"),
+    stringsAsFactors = FALSE
+  )
+  regex_table <- data.frame(pattern = c("ACME", "XYZ Corp"))
+  
+  result <- extract(
+    df,
+    "text",
+    regex_table,
+    unique_match = TRUE,
+    data_return_cols = "id",
+    verbose = FALSE
+  )
+  
+  expect_equal(nrow(result), 2)
+  expect_setequal(result$pattern, c("ACME", "XYZ Corp"))
+})
