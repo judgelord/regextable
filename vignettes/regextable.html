@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Shirlyn Dong">
+<meta name="dcterms.date" content="2026-02-05">
+
+<title>regextable</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="regextable_files/libs/clipboard/clipboard.min.js"></script>
+<script src="regextable_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="regextable_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="regextable_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="regextable_files/libs/quarto-html/popper.min.js"></script>
+<script src="regextable_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="regextable_files/libs/quarto-html/anchor.min.js"></script>
+<link href="regextable_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="regextable_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="regextable_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="regextable_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="regextable_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="regextable_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="regextable_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">regextable</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Shirlyn Dong </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 5, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p><code>regextable</code> extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in <code>data_return_cols</code> and <code>regex_return_cols</code>. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.</p>
+<p>The function also supports additional parameters such as <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, and <code>cl</code>. These can be used to control text cleaning, limit matches per row, show progress messages, or speed up processing on large datasets.</p>
+<p>Install and load the package:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>For demonstration, we use two included datasets:</p>
+<ul>
+<li><code>members</code>: A lookup table of regex patterns for member names.</li>
+<li><code>cr2007_03_01</code>: A sample text dataset to search.</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"members"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">congress</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">chamber</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">bioname</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">state_abbrev</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">district_code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">first_name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">last_name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">President</td>
+<td style="text-align: left;">BUSH, George Walker</td>
+<td style="text-align: left;">george bush&amp;#124;george walker bush&amp;#124;\bg bush&amp;#124;george w bush&amp;#124;\bna bush&amp;#124;(^&amp;#124;senator &amp;#124;representative )bush\b&amp;#124;bush, george&amp;#124;bush george&amp;#124;bush, g\b&amp;#124;president bush\b&amp;#124;g w bush</td>
+<td style="text-align: right;">99910</td>
+<td style="text-align: left;">USA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">George</td>
+<td style="text-align: left;">BUSH</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">BONNER, Jr., Josiah Robins (Jo)</td>
+<td style="text-align: left;">josiah bonner&amp;#124;josiah josiah robins bonner&amp;#124;\bj bonner&amp;#124;josiah j bonner&amp;#124;jo bonner&amp;#124;jo josiah robins bonner&amp;#124;jo j bonner&amp;#124;(^&amp;#124;senator &amp;#124;representative )bonner\b&amp;#124;bonner, jo&amp;#124;bonner, josiah&amp;#124;bonner josiah&amp;#124;bonner, j\b&amp;#124;representative bonner\b&amp;#124;j j bonner</td>
+<td style="text-align: right;">20300</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Josiah</td>
+<td style="text-align: left;">BONNER</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">ROGERS, Mike Dennis</td>
+<td style="text-align: left;">mike rogers&amp;#124;mike dennis rogers&amp;#124;\bm rogers.{1,4}al&amp;#124;mike d rogers&amp;#124;michael rogers&amp;#124;michael dennis rogers&amp;#124;michael d rogers&amp;#124;(^&amp;#124;senator &amp;#124;representative )rogers\b.{1,4}al&amp;#124;rogers, michael&amp;#124;rogers, mike&amp;#124;rogers mike&amp;#124;representative rogers\b.{1,4}al&amp;#124;m d rogers</td>
+<td style="text-align: right;">20301</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Mike</td>
+<td style="text-align: left;">ROGERS</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">DAVIS, Artur</td>
+<td style="text-align: left;">artur davis&amp;#124;\ba davis&amp;#124;(^&amp;#124;senator &amp;#124;representative )davis\b.{1,4}al&amp;#124;davis, artur&amp;#124;davis artur&amp;#124;davis, a\b&amp;#124;representative davis\b.{1,4}al</td>
+<td style="text-align: right;">20302</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Artur</td>
+<td style="text-align: left;">DAVIS</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">110</td>
+<td style="text-align: left;">House</td>
+<td style="text-align: left;">CRAMER, Robert E. (Bud), Jr.</td>
+<td style="text-align: left;">robert cramer&amp;#124;robert e cramer&amp;#124;\br cramer&amp;#124;bud cramer&amp;#124;bud e cramer&amp;#124;\bb cramer&amp;#124;(^&amp;#124;senator &amp;#124;representative )cramer\b&amp;#124;cramer, bud&amp;#124;cramer, robert&amp;#124;cramer robert&amp;#124;cramer, r\b&amp;#124;cramer, b\b&amp;#124;representative cramer\b&amp;#124;r e cramer</td>
+<td style="text-align: right;">29100</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Robert</td>
+<td style="text-align: left;">CRAMER</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"cr2007_03_01"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(cr2007_03_01)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">date</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">header</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: left;">RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. MARK UDALL;Mr. UDALL</td>
+<td style="text-align: left;">INTRODUCING A CONCURRENT RESOLUTION HONORING THE 50TH ANNIVERSARY OF THE INTERNATIONAL GEOPHYSICAL YEAR (IGY); Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. JAMES R. LANGEVIN;Mr. LANGEVIN</td>
+<td style="text-align: left;">BIOSURVEILLANCE ENHANCEMENT ACT OF 2007; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. JIM COSTA;Mr. COSTA</td>
+<td style="text-align: left;">A TRIBUTE TO THE LIFE OF MRS. VERNA DUTY; Congressional Record Vol. 153, No. 35</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2007-03-01</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: left;">RECOGNIZING JARRETT MUCK FOR ACHIEVING THE RANK OF EAGLE SCOUT</td>
+<td style="text-align: left;">https://www.congress.gov/congressional-record/2007/03/01/extensions-of-remarks-section/article/E431-1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="text-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="text-cleaning">Text Cleaning</h3>
+<p><code>extract()</code> cleans text by default, so the user does not need to call it manually. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.</p>
+<p>Example of <code>clean_text()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">"  HELLO---WORLD  "</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "hello world"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="basic-extraction" class="level2">
+<h2 class="anchored" data-anchor-id="basic-extraction">Basic Extraction</h2>
+<p>The simplest use of <code>extract()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> regextable<span class="sc">::</span><span class="fu">extract</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">"text"</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">"icpsr"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">row_id</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">match</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">HON. MARK UDALL;Mr. UDALL</td>
+<td style="text-align: right;">29906</td>
+<td style="text-align: left;">mark udall&amp;#124;\bm udall&amp;#124;mark e udall&amp;#124;\bna udall&amp;#124;(^&amp;#124;senator &amp;#124;representative )udall\b.{1,4}co&amp;#124;udall, mark&amp;#124;udall mark&amp;#124;udall, m\b&amp;#124;representative udall\b.{1,4}co&amp;#124;m e udall</td>
+<td style="text-align: left;">MARK UDALL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">HON. JAMES R. LANGEVIN;Mr. LANGEVIN</td>
+<td style="text-align: right;">20136</td>
+<td style="text-align: left;">james langevin&amp;#124;\bj langevin&amp;#124;james r langevin&amp;#124;jim langevin&amp;#124;jim r langevin&amp;#124;(^&amp;#124;senator &amp;#124;representative )langevin\b&amp;#124;langevin, jim&amp;#124;langevin, james&amp;#124;langevin james&amp;#124;langevin, j\b&amp;#124;representative langevin\b&amp;#124;j r langevin</td>
+<td style="text-align: left;">james r langevin</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">HON. JIM COSTA;Mr. COSTA</td>
+<td style="text-align: right;">20501</td>
+<td style="text-align: left;">jim costa&amp;#124;\bj costa&amp;#124;james costa&amp;#124;(^&amp;#124;senator &amp;#124;representative )costa\b&amp;#124;costa, james&amp;#124;costa, jim&amp;#124;costa jim&amp;#124;costa, j\b&amp;#124;representative costa\b</td>
+<td style="text-align: left;">JIM COSTA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Explanation: - <code>data</code>: the text dataset to search. - <code>col_name</code>: which column contains the text. - <code>regex_table</code>: the lookup table of patterns. - <code>data_return_cols</code>: additional columns from <code>data</code> to include in the result. - <code>regex_return_cols</code>: additional columns from the pattern table to attach. Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern. —</p>
+</section>
+<section id="advanced-usage" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-usage">Advanced Usage</h2>
+<p><code>extract()</code> can also filter data by date, remove acronyms (all-uppercase patterns with 2+ characters), and select specific output columns. This is useful for more controlled extraction.</p>
+<p>Explanation: - <code>date_col</code>, <code>date_start</code>, <code>date_end</code>: filter rows by date. - <code>remove_acronyms</code>: skip patterns like “NASA” or “USA”. You can combine these filters with any subset of columns for flexible outputs. —</p>
+<section id="parallel-matching" class="level3">
+<h3 class="anchored" data-anchor-id="parallel-matching">Parallel Matching</h3>
+<p><code>extract()</code> supports parallel processing via the <code>cl</code> parameter:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>clust <span class="ot">&lt;-</span> <span class="fu">makeCluster</span>(<span class="dv">2</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>result_parallel <span class="ot">&lt;-</span> regextable<span class="sc">::</span><span class="fu">extract</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> cr2007_03_01,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_table =</span> members,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cl =</span> clust,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_return_cols =</span> <span class="fu">c</span>(<span class="st">"text"</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">"icpsr"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">Summary</h3>
+<ul>
+<li><code>regextable</code> is a tool for extracting data from text.</li>
+<li>Use the included datasets to get started or supply your own lookup tables.</li>
+<li><code>extract()</code> by default handles text cleaning and efficient matching.</li>
+<li>Optional parameters allow advanced control over filtering and output.</li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
