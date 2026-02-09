@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Shirlyn Dong">
-<meta name="dcterms.date" content="2026-02-05">
+<meta name="dcterms.date" content="2026-02-09">
 
 <title>regextable</title>
 <style>
@@ -437,7 +437,7 @@ text-decoration: underline; }
 <h1 class="title">regextable</h1>
 <p class="author">Shirlyn Dong</p>
 
-<p class="date">2026-02-05</p>
+<p class="date">2026-02-09</p>
 </header>
 
 
@@ -449,7 +449,7 @@ text-decoration: underline; }
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
 </div>
-<h2 id="data">Data</h2>
+<h3 id="data">Data</h3>
 <p>For demonstration, we use two included datasets:</p>
 <ul>
 <li><code>members</code>: A lookup table of regex patterns for member names.</li>
@@ -581,14 +581,14 @@ text-decoration: underline; }
 </div>
 </div>
 <h3 id="text-cleaning">Text Cleaning</h3>
-<p><code>extract()</code> cleans text by default, so the user does not need to call it manually. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.</p>
+<p><code>extract()</code> cleans text by default, but can be disabled by setting the parameter <code>do_clean_text</code> to false. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.</p>
 <p>Example of <code>clean_text()</code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">clean_text</span>(text)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;hello world&quot;</span></span></code></pre></div>
 </div>
-<h2 id="basic-extraction">Basic Extraction</h2>
+<h3 id="basic-extraction">Basic Extraction</h3>
 <p>The simplest use of <code>extract()</code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> regextable<span class="sc">::</span><span class="fu">extract</span>(</span>
@@ -651,7 +651,7 @@ text-decoration: underline; }
 </div>
 </div>
 <p>Explanation: - <code>data</code>: the text dataset to search. - <code>col_name</code>: which column contains the text. - <code>regex_table</code>: the lookup table of patterns. - <code>data_return_cols</code>: additional columns from <code>data</code> to include in the result. - <code>regex_return_cols</code>: additional columns from the pattern table to attach. Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern. —</p>
-<h2 id="advanced-usage">Advanced Usage</h2>
+<h3 id="advanced-usage">Advanced Usage</h3>
 <p><code>extract()</code> can also filter data by date, remove acronyms (all-uppercase patterns with 2+ characters), and select specific output columns. This is useful for more controlled extraction.</p>
 <p>Explanation: - <code>date_col</code>, <code>date_start</code>, <code>date_end</code>: filter rows by date. - <code>remove_acronyms</code>: skip patterns like “NASA” or “USA”. You can combine these filters with any subset of columns for flexible outputs. —</p>
 <h3 id="parallel-matching">Parallel Matching</h3>
