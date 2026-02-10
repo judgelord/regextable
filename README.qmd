@@ -57,7 +57,6 @@ The examples below use the example regex lookup table `members` and example data
 
 ```{r}
 data("members")
-members <- members[members$congress == 107, ]
 head(members)
 
 data("cr2007_03_01")

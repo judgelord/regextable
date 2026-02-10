@@ -41,11 +41,16 @@ package directly.
 
 ``` r
 data("members")
-members <- members[members$congress == 107, ]
 head(members)
-#> # A tibble: 0 × 9
-#> # ℹ 9 variables: congress <dbl>, chamber <chr>, bioname <chr>, pattern <chr>, icpsr <dbl>, state_abbrev <chr>,
-#> #   district_code <dbl>, first_name <chr>, last_name <chr>
+#> # A tibble: 6 × 11
+#>   chamber   congress bioname             pattern icpsr state state_abbrev district_code bioguide_id first_name last_name
+#>   <chr>        <dbl> <chr>               <chr>   <dbl> <int> <chr>                <dbl> <chr>       <chr>      <chr>    
+#> 1 President      107 BUSH, George Walker "georg… 99910    NA USA                      0 <NA>        George     BUSH     
+#> 2 House          107 CALLAHAN, Herbert … "herbe… 15090     1 AL                       1 C000052     Herbert    CALLAHAN 
+#> 3 House          107 CRAMER, Robert E. … "rober… 29100     1 AL                       5 C000868     Robert     CRAMER   
+#> 4 House          107 EVERETT, Robert Te… "rober… 29300     1 AL                       2 E000268     Robert     EVERETT  
+#> 5 House          107 BACHUS, Spencer T.… "spenc… 29301     1 AL                       6 B000013     Spencer    BACHUS   
+#> 6 House          107 HILLIARD, Earl Fre… "earl … 29302     1 AL                       7 H000621     Earl       HILLIARD
 
 data("cr2007_03_01")
 head(cr2007_03_01)
@@ -148,7 +153,15 @@ result <- extract(
 )
 
 head(result)
-#> # A tibble: 0 × 0
+#> # A tibble: 6 × 5
+#>   row_id text                                icpsr pattern                                                         match
+#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
+#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
+#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
+#> 4      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 5      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
+#> 6      7 HON. EDOLPHUS TOWNS;Mr. TOWNS       15072 "edolphus towns|\\be towns|ed towns|(^|senator |representative… EDOL…
 ```
 
 ### Advanced Usage
@@ -172,7 +185,15 @@ result_advanced <- extract(
 )
 
 head(result_advanced)
-#> # A tibble: 0 × 0
+#> # A tibble: 6 × 5
+#>   row_id text                                icpsr pattern                                                         match
+#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
+#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
+#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
+#> 4      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
+#> 5      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
+#> 6      7 HON. EDOLPHUS TOWNS;Mr. TOWNS       15072 "edolphus towns|\\be towns|ed towns|(^|senator |representative… EDOL…
 ```
 
 ### Future Development
