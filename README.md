@@ -34,20 +34,18 @@ library(regextable)
 
 The examples below use the example regex lookup table `members` and
 example data `cr2007_03_01` from the `legislators` package, which are
-also included in this package for illustration.
+also included in this package for illustration. For performance reasons,
+the members dataset is subset to congress == 107 in the examples. Users
+who need to search the full legislator dataset should use the
+legislators package directly.
 
 ``` r
 data("members")
+members <- members[members$congress == 107, ]
 head(members)
-#> # A tibble: 6 × 9
-#>   congress chamber   bioname                         pattern       icpsr state_abbrev district_code first_name last_name
-#>      <dbl> <chr>     <chr>                           <chr>         <dbl> <chr>                <dbl> <chr>      <chr>    
-#> 1      110 President BUSH, George Walker             "george bush… 99910 USA                      0 George     BUSH     
-#> 2      110 House     BONNER, Jr., Josiah Robins (Jo) "josiah bonn… 20300 AL                       1 Josiah     BONNER   
-#> 3      110 House     ROGERS, Mike Dennis             "mike rogers… 20301 AL                       3 Mike       ROGERS   
-#> 4      110 House     DAVIS, Artur                    "artur davis… 20302 AL                       7 Artur      DAVIS    
-#> 5      110 House     CRAMER, Robert E. (Bud), Jr.    "robert cram… 29100 AL                       5 Robert     CRAMER   
-#> 6      110 House     EVERETT, Robert Terry           "robert ever… 29300 AL                       2 Robert     EVERETT
+#> # A tibble: 0 × 9
+#> # ℹ 9 variables: congress <dbl>, chamber <chr>, bioname <chr>, pattern <chr>, icpsr <dbl>, state_abbrev <chr>,
+#> #   district_code <dbl>, first_name <chr>, last_name <chr>
 
 data("cr2007_03_01")
 head(cr2007_03_01)
@@ -150,15 +148,7 @@ result <- extract(
 )
 
 head(result)
-#> # A tibble: 6 × 5
-#>   row_id text                                icpsr pattern                                                         match
-#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
-#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
-#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
-#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
-#> 4      4 HON. JIM COSTA;Mr. COSTA            20501 "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …
-#> 5      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
-#> 6      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
+#> # A tibble: 0 × 0
 ```
 
 ### Advanced Usage
@@ -182,15 +172,7 @@ result_advanced <- extract(
 )
 
 head(result_advanced)
-#> # A tibble: 6 × 5
-#>   row_id text                                icpsr pattern                                                         match
-#>    <int> <chr>                               <dbl> <chr>                                                           <chr>
-#> 1      1 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
-#> 2      2 HON. MARK UDALL;Mr. UDALL           29906 "mark udall|\\bm udall|mark e udall|\\bna udall|(^|senator |re… MARK…
-#> 3      3 HON. JAMES R. LANGEVIN;Mr. LANGEVIN 20136 "james langevin|\\bj langevin|james r langevin|jim langevin|ji… jame…
-#> 4      4 HON. JIM COSTA;Mr. COSTA            20501 "jim costa|\\bj costa|james costa|(^|senator |representative )… JIM …
-#> 5      5 HON. SAM GRAVES;Mr. GRAVES          20124 "samuel graves|\\bs graves|sam graves|(^|senator |representati… SAM …
-#> 6      6 HON. SANFORD D. BISHOP;Mr. BISHOP   29339 "sanford bishop|sanford dixon bishop|\\bs bishop|sanford d bis… sanf…
+#> # A tibble: 0 × 0
 ```
 
 ### Future Development
