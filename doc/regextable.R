@@ -80,5 +80,5 @@ kable(head(result))
 #   regex_return_cols = c("icpsr")
 # )
 # stopCluster(clust)
-# head(result_parallel)
+# kable(head(result_parallel))
 

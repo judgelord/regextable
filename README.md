@@ -34,10 +34,10 @@ library(regextable)
 
 The examples below use the example regex lookup table `members` and
 example data `cr2007_03_01` from the `legislators` package, which are
-also included in this package for illustration. For performance reasons,
-the members dataset is subset to congress == 107 in the examples. Users
-who need to search the full legislator dataset should use the
-legislators package directly.
+also included in this package for illustration. For better performance,
+`members` is subset to `congress == 107` in the examples. Users who need
+to search the full legislator dataset should use the `legislators`
+package directly.
 
 ``` r
 data("members")

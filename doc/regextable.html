@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Shirlyn Dong">
-<meta name="dcterms.date" content="2026-02-09">
+<meta name="dcterms.date" content="2026-02-10">
 
 <title>regextable</title>
 <style>
@@ -437,7 +437,7 @@ text-decoration: underline; }
 <h1 class="title">regextable</h1>
 <p class="author">Shirlyn Dong</p>
 
-<p class="date">2026-02-09</p>
+<p class="date">2026-02-10</p>
 </header>
 
 
@@ -455,6 +455,7 @@ text-decoration: underline; }
 <li><code>members</code>: A lookup table of regex patterns for member names.</li>
 <li><code>cr2007_03_01</code>: A sample text dataset to search.</li>
 </ul>
+<p><strong>Note:</strong> For better performance, <code>members</code> is subset to <code>congress == 107</code> in the examples.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;members&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(members)</span></code></pre></div>
@@ -667,7 +668,7 @@ text-decoration: underline; }
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">regex_return_cols =</span> <span class="fu">c</span>(<span class="st">&quot;icpsr&quot;</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopCluster</span>(clust)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result_parallel)</span></code></pre></div>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(result_parallel))</span></code></pre></div>
 </div>
 <h3 id="summary">Summary</h3>
 <ul>
