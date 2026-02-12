@@ -37,3 +37,32 @@ kable <- function(x){
   }
 }
 ```
+
+### Introduction
+
+This vignette demonstrates how to extract mentions of Native American Tribes from public comment data using a regular expression (regex) lookup table of Native American Tribes and Groups. This approach is similar to the core `regextable::extract()` workflow but uses a specialized lookup table of tribe names and name variants. 
+
+Install and load the package:
+```{r, message=FALSE}
+library(regextable)
+library(kableExtra)
+```
+
+### Native American Tribe Regex Table
+
+This lookup table includes:
+- Name
+- Strings
+- Source
+- Website
+- Notes
+- Type
+- Emphasis
+
+```{r}
+library(googlesheets4)
+gs4_deauth()
+
+tribes_regex <- read_sheet("1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg")
+kable(head(tribes_regex))
+```
