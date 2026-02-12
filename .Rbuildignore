@@ -12,3 +12,4 @@
 ^pkgdown$
 ^regextable\.Rproj$
 ^regextable_files$
+^vignettes/native-tribes\.qmd$
