@@ -46,8 +46,7 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
-library(httr2)
-library(base64enc)
+library(rvest)
 ```
 
 ### Native American Tribe Regex Table
@@ -70,27 +69,37 @@ kable(head(tribes_regex))
 ```
 
 ### Data Agencies
-```{r load_github_rda, include=TRUE}
-get_github_rda <- function(owner, repo, path) {
-  url <- sprintf(
-    "https://api.github.com/repos/%s/%s/contents/%s",
-    owner, repo, path
-  )
-  
-  resp <- httr2::request(url) |> httr2::req_perform()
-  json <- httr2::resp_body_json(resp)
-  
-  raw_file <- base64enc::base64decode(json$content)
-  
-  tmp <- tempfile(fileext = ".rda")
-  writeBin(raw_file, tmp)
-  load(tmp, envir = .GlobalEnv)
-}
 
-get_github_rda(
-  owner = "judgelord",
-  repo = "2025",
-  path = "data/body_text_clean.rda"
+```{r}
+html <- read_html("https://www.ncai.org/tribal-directory")
+
+tribe_names <- html %>% 
+  html_nodes("h2.TribeCard_regionTitle__8Sffj") %>% 
+  html_text(trim = TRUE)
+
+regions <- html %>%
+  html_nodes(".TribeCard_regionLabel___OVFL") %>%
+  html_text(trim = TRUE)
+
+congressional_district <- html %>%
+  html_nodes("li.TribeCard_tagItem__UjDJv.TribeCard_generic_MLwRU") %>%
+  html_text(trim = TRUE)
+
+recognition <- html %>%
+  html_nodes("li.TribeCard_tagItem__UjDJv.TribeCard_federal__bQB0g") %>%
+  html_text(trim = TRUE)
+
+leader <- html %>%
+  html_node(".TribeCard_columns__jeDha") %>%
+  html_node("p") %>%
+  html_text(trim = TRUE)
+
+tribes_df <- data.frame(
+  Tribe = tribe_names,
+  Regions = regions,
+  Congressional_District = congressional_district,
+  stringsAsFactors = FALSE
 )
-kable(head(body_text_clean))
+
+kable(head(tribes))
 ```
