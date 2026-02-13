@@ -46,6 +46,8 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
+library(httr2)
+library(base64enc)
 ```
 
 ### Native American Tribe Regex Table
@@ -65,4 +67,30 @@ gs4_deauth()
 
 tribes_regex <- read_sheet("1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg")
 kable(head(tribes_regex))
+```
+
+### Data Agencies
+```{r load_github_rda, include=TRUE}
+get_github_rda <- function(owner, repo, path) {
+  url <- sprintf(
+    "https://api.github.com/repos/%s/%s/contents/%s",
+    owner, repo, path
+  )
+  
+  resp <- httr2::request(url) |> httr2::req_perform()
+  json <- httr2::resp_body_json(resp)
+  
+  raw_file <- base64enc::base64decode(json$content)
+  
+  tmp <- tempfile(fileext = ".rda")
+  writeBin(raw_file, tmp)
+  load(tmp, envir = .GlobalEnv)
+}
+
+get_github_rda(
+  owner = "judgelord",
+  repo = "2025",
+  path = "data/body_text_clean.rda"
+)
+kable(head(body_text_clean))
 ```
