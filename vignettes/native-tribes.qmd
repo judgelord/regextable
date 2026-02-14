@@ -47,6 +47,7 @@ Install and load the package:
 library(regextable)
 library(kableExtra)
 library(rvest)
+library(tidyr)
 ```
 
 ### Native American Tribe Regex Table
@@ -71,27 +72,42 @@ kable(head(tribes_regex))
 ### Data Agencies
 
 ```{r}
+max_page <- read_html("https://www.ncai.org/tribal-directory") %>%
+  html_elements(".Pagination_numberButton__vLhpm") %>%
+  html_text() %>%
+  as.numeric() %>%
+  max(na.rm = TRUE)
 
-cards <- read_html("https://www.ncai.org/tribal-directory") %>% 
-  html_elements("article.TribeCard_tribeCard__UJcdx")
+all_pages <- paste0("https://www.ncai.org/tribal-directory/page/", 1:max_page)
 
-tribes_df <- map_df(cards, function(card) {
-  tibble(
-    Region = card %>% html_element(".TribeCard_regionLabel___OVFL") %>% html_text(trim = TRUE),
-    Tribe = card %>% html_element("h2") %>% html_text(trim = TRUE),
-    Leader = card %>% html_element("section:nth-of-type(1) p:nth-of-type(1)") 
-                  %>% html_text(trim = TRUE),
-    
-    Tel = card %>% html_element(xpath = ".//p[strong[contains(., 'Tel:')]]") 
-               %>% html_text(trim = TRUE) %>% str_remove("Tel: "),
-    Fax = card %>% html_element(xpath = ".//p[strong[contains(., 'Fax:')]]") 
-               %>% html_text(trim = TRUE) %>% str_remove("Fax: "),
-    
-    Address  = card %>% html_element("section:nth-of-type(2)") %>% html_text2(),
-    
-    Recognition = card %>% html_element(".TribeCard_federal__bQB0g") %>% html_text(trim = TRUE),
-    District = card %>% html_element(".TribeCard_generic_MLwRU") %>% html_text(trim = TRUE)
-  )
+tribes_df <- map_df(all_pages, function(url) {
+  
+  message("Scraping: ", url)
+  html <- read_html(url)
+  cards <- html %>% html_elements("article.TribeCard_tribeCard__UJcdx")
+  
+  map_df(cards, function(card) {
+    tibble(
+      Region = card %>% html_element(".TribeCard_regionLabel___OVFL") 
+                    %>% html_text(trim = TRUE) 
+                    %>% str_remove(" Region"),
+      Tribe = card %>% html_element("h2") %>% html_text(trim = TRUE),
+      Leader = card %>% html_element("section:nth-of-type(1) p:nth-of-type(1)") 
+                    %>% html_text(trim = TRUE),
+      Tel = card %>% html_element(xpath = ".//p[strong[contains(., 'Tel:')]]") 
+                 %>% html_text(trim = TRUE) 
+                 %>% str_remove("Tel: "),
+      Fax = card %>% html_element(xpath = ".//p[strong[contains(., 'Fax:')]]") 
+                 %>% html_text(trim = TRUE) 
+                 %>% str_remove("Fax: "),
+      Address = card %>% html_element("section:nth-of-type(2)") %>% html_text2(),
+      Recognition = card %>% html_element(".TribeCard_federal__bQB0g") 
+                         %>% html_text(trim = TRUE),
+      District = card %>% html_element(".TribeCard_generic__MLwRU") 
+                      %>% html_text(trim = TRUE)
+                      %>% str_remove("Congressional District ")
+    )
+  })
 })
 
 kable(head(tribes_df))
