@@ -47,7 +47,10 @@ Install and load the package:
 library(regextable)
 library(kableExtra)
 library(rvest)
-library(tidyr)
+library(googlesheets4)
+library(purrr)
+library(tibble)
+library(stringr)
 ```
 
 ### Native American Tribe Regex Table
@@ -111,4 +114,15 @@ tribes_df <- map_df(all_pages, function(url) {
 })
 
 kable(head(tribes_df))
+```
+
+### Extracting Example 1
+
+```{r}
+tribe_directory_df <- extract(
+  data = tribes_df,
+  regex_table = tribes_regex,
+  col_name = "Tribe",
+  pattern_col = "Strings"
+)
 ```

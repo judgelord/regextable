@@ -29,7 +29,11 @@ Suggests:
     rmarkdown,
     quarto,
     spelling,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    rvest,
+    purrr,
+    tibble,
+    googlesheets4
 VignetteBuilder: quarto
 URL: https://github.com/judgelord/regextable, https://judgelord.github.io/regextable/
 BugReports: https://github.com/judgelord/regextable/issues
