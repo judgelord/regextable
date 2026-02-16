@@ -116,13 +116,17 @@ tribes_df <- map_df(all_pages, function(url) {
 kable(head(tribes_df))
 ```
 
-### Extracting Example 1
+### Extracting Tribe Names from Directory
+
+This example demonstrates how to use `regextable::extract()` to extract Native American Tribe names in the Tribal Directory data (`tribes_df`). It applies the tribe regex patterns in `tribes_regex` from the "Native American Tribes/Groups Regex Table" sheet to the `Tribe` column and returns the matched tribe names along with their source reference.
 
 ```{r}
 tribe_directory_df <- extract(
-  data = tribes_df,
-  regex_table = tribes_regex,
-  col_name = "Tribe",
-  pattern_col = "Strings"
+    data = tribes_df,
+    regex_table = tribes_regex,
+    col_name = "Tribe",
+    pattern_col = "Strings",
+    data_return_cols = "Tribe",
+    regex_return_cols = "Source"
 )
 ```
