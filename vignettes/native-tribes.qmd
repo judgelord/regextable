@@ -65,9 +65,7 @@ This lookup table includes:
 - Emphasis
 
 ```{r}
-library(googlesheets4)
-gs4_deauth()
-
+gs4_auth()
 tribes_regex <- read_sheet("1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg")
 kable(head(tribes_regex))
 ```
@@ -129,4 +127,6 @@ tribe_directory_df <- extract(
     data_return_cols = "Tribe",
     regex_return_cols = "Source"
 )
+
+kable(head(tribe_directory_df))
 ```
