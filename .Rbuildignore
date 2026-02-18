@@ -13,3 +13,5 @@
 ^regextable\.Rproj$
 ^regextable_files$
 ^vignettes/native-tribes\.qmd$
+^vignettes/agencies\.qmd$
+vignettes/*.html
