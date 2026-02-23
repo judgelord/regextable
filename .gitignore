@@ -1,5 +1,7 @@
-raw
 /Meta/
-regextable.Rproj
+/regextable.Rproj
+.RData
 .Rhistory
-/doc/
+.Rproj.user/
+pkgdown/favicon/
+regextable_files/libs/
