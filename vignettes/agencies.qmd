@@ -59,3 +59,12 @@ regex_table <- corporations_data_sample
 ```
 
 
+```{r}
+data_url <- "https://raw.githubusercontent.com/judgelord/rulemaking/main/data/UnifiedAgenda.Rdata"
+tmp2 <- tempfile(fileext = ".Rdata")
+download.file(data_url, tmp2, mode = "wb")
+load(tmp2)
+data_table <- UnifiedAgenda
+```
+
+

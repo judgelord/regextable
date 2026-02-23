@@ -47,7 +47,6 @@ Install and load the package:
 library(regextable)
 library(kableExtra)
 library(rvest)
-library(googlesheets4)
 library(purrr)
 library(tibble)
 library(stringr)
@@ -65,8 +64,7 @@ This lookup table includes:
 - Emphasis
 
 ```{r}
-gs4_auth()
-tribes_regex <- read_sheet("1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg")
+tribes_regex <- read.csv("/Users/shirl/Downloads/Native_American_Tribes_Regex_Table.csv", stringsAsFactors = FALSE)
 kable(head(tribes_regex))
 ```
 

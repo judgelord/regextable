@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Shirlyn Dong">
-<meta name="dcterms.date" content="2026-02-17">
+<meta name="dcterms.date" content="2026-02-23">
 
 <title>Native American Tribes Regex Table</title>
 <style>
@@ -116,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 17, 2026</p>
+      <p class="date">February 23, 2026</p>
     </div>
   </div>
   
@@ -146,9 +146,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="native-american-tribe-regex-table">Native American Tribe Regex Table</h3>
 <p>This lookup table includes: - Name - Strings - Source - Website - Notes - Type - Emphasis</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gs4_auth</span>()</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tribes_regex <span class="ot">&lt;-</span> <span class="fu">read_sheet</span>(<span class="st">"1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(tribes_regex))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#gs4_auth()</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#tribes_regex &lt;- read_sheet("1LaTgX3ffCrND5Nj1r7TzZqWvrit_clPGk2zIoNxo9Hg")</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#kable(head(tribes_regex))</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>tribes_regex <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"/Users/shirl/Downloads/Native_American_Tribes_Regex_Table.csv"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(tribes_regex))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="table caption-top table-sm table-striped small">
 <thead>
@@ -168,7 +170,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Ahahui o Hawaii</td>
 <td style="text-align: left;">Comments for Hawaii Rulemaking</td>
 <td style="text-align: left;">http://www2.hawaii.edu/~ahahui/about-ahahui-o-hawaii.htm</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;">Center within University</td>
 <td style="text-align: left;">Law</td>
 </tr>
@@ -177,7 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">American Indian Business Association</td>
 <td style="text-align: left;">https://www.ncai.org/tribal-directory/tribal-organizations</td>
 <td style="text-align: left;">https://aiba.unm.edu/?fbclid=IwAR3d-ys6QaMLfpf_HzVWHUuvDA1FGswcUX9Oh8ZiAizYwn_eNSusQsoOwOY</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;">Center within University</td>
 <td style="text-align: left;">Business</td>
 </tr>
@@ -186,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">American Indian Policy Institute</td>
 <td style="text-align: left;">https://nativeamericatoday.com/political-organizations-and-advocacy-groups/</td>
 <td style="text-align: left;">https://aipi.asu.edu/</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;">Center within University</td>
 <td style="text-align: left;">Governance/Advocacy</td>
 </tr>
@@ -195,7 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">center for indian law and policy</td>
 <td style="text-align: left;">Unmatched Commenters List</td>
 <td style="text-align: left;">https://law.seattleu.edu/centers-and-institutes/center-for-indian-law-and-policy/</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;">Center within University</td>
 <td style="text-align: left;">Law</td>
 </tr>
@@ -204,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Center for Indigenous Research</td>
 <td style="text-align: left;">Googling other organization</td>
 <td style="text-align: left;">https://ipsr.ku.edu/cfirst/</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;"></td>
 <td style="text-align: left;">Center within University</td>
 <td style="text-align: left;">Research</td>
 </tr>
