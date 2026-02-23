@@ -14,4 +14,6 @@
 ^regextable_files$
 ^vignettes/native-tribes\.qmd$
 ^vignettes/agencies\.qmd$
+^vignettes/\.quarto$
+^vignettes/\.quarto/_freeze
 vignettes/*.html
