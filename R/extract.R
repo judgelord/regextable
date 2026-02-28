@@ -74,7 +74,7 @@ extract <- function(data,
     data <- data.frame(text = data, stringsAsFactors = FALSE)
     col_name <- "text"
   }
-#   
+   
   chk::chk_data(data)
   chk::chk_data(regex_table)
   chk::chk_subset(col_name, names(data))
@@ -129,6 +129,25 @@ extract <- function(data,
   if (length(patterns) == 0) {
     if (verbose) message("No patterns provided (or all removed via filters).")
     return(dplyr::tibble())
+  }
+  
+  # Pre-extraction warning
+  if (verbose) {
+    total_chars <- sum(nchar(data[[col_name]]))
+    n_patterns <- nrow(regex_table)
+    n_rows <- nrow(data)
+    
+    if (!is.null(data_return_cols) && col_name %in% data_return_cols && total_chars > 1e6) {
+      message(
+        "WARNING: Input text is large (", total_chars, " characters). \nReturning the original column for each match ",
+        "may produce a very large output. Consider limiting data_return_cols or splitting the text."
+      )
+    } if (n_patterns * n_rows > 1e6) {
+      message(
+        "WARNING: Number of rows (", n_rows, ") × number of patterns (", n_patterns, ") is high. ",
+        "\nThis may be slow or memory-intensive. Consider further parsing the text"
+      )
+    }
   }
   
   text_raw <- data[[col_name]]
