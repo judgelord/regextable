@@ -32,12 +32,13 @@ library(regextable)
 
 ## Data
 
-The examples below use the example regex lookup table `members` and
-example data `cr2007_03_01` from the `legislators` package, which are
-also included in this package for illustration. For better performance,
-`members` is subset to `congress == 107` in the examples. Users who need
-to search the full legislator dataset should use the `legislators`
-package directly.
+The examples below use an example regex lookup table of members of
+Congress, `members`, and example text data from the Congressional
+Record, `cr2007_03_01`, from the
+[`legislators`](https://judgelord.github.io/legislators/) package, which
+are also included in this package, subset to `congress == 107`, for
+illustration. Users who need to search for legislators should use the
+`legislators` package.
 
 ``` r
 data("members")

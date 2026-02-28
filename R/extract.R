@@ -142,7 +142,8 @@ extract <- function(data,
         "WARNING: Input text is large (", total_chars, " characters). \nReturning the original column for each match ",
         "may produce a very large output. Consider limiting data_return_cols or splitting the text."
       )
-    } if (n_patterns * n_rows > 1e6) {
+    } 
+    if (n_patterns * n_rows > 1e6) {
       message(
         "WARNING: Number of rows (", n_rows, ") × number of patterns (", n_patterns, ") is high. ",
         "\nThis may be slow or memory-intensive. Consider further parsing the text"
