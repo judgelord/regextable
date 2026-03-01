@@ -145,7 +145,7 @@ extract <- function(data,
     } 
     if (n_patterns * n_rows > 1e6) {
       message(
-        "WARNING: Number of rows (", n_rows, ") × number of patterns (", n_patterns, ") is high. ",
+        "WARNING: Number of rows (", n_rows, ") * number of patterns (", n_patterns, ") is high. ",
         "\nThis may be slow or memory-intensive. Consider further parsing the text"
       )
     }

@@ -1,0 +1,12 @@
+---
+title: "Corporations Regextable"
+author: "Shirlyn Dong"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Corporations}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
