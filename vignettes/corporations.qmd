@@ -38,3 +38,15 @@ kable <- function(x){
 }
 ```
 
+### Introduction
+
+
+Install and load the package:
+```{r, message=FALSE}
+library(regextable)
+library(kableExtra)
+library(rvest)
+library(purrr)
+library(tibble)
+library(stringr)
+```
