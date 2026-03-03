@@ -50,3 +50,10 @@ library(purrr)
 library(tibble)
 library(stringr)
 ```
+
+```{r}
+tribes_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+kable(head(tribes_regex))
+```
+
+
