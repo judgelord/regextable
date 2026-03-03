@@ -40,6 +40,7 @@ kable <- function(x){
 
 ### Introduction
 
+This vignette demonstrates how to extract aliases from a corporation crosswalk data file using a regular-expression (regex) lookup table containing sample corporation aliases. The approach is similar to the core regextable::extract() workflow but showcases a specialized lookup table of corporations aliases.
 
 Install and load the package:
 ```{r, message=FALSE}
