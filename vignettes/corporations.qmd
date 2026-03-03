@@ -10,3 +10,31 @@ vignette: >
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  cache = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  tidy = FALSE,
+  fig.align = 'center',
+  fig.path = "figures/native-tribes-",
+  R.options = list(width = 120)
+)
+
+# Format kable tables
+kable <- function(x){
+  if (knitr::is_latex_output()) {
+    head(x, 5) |>
+      knitr::kable(booktabs = TRUE, format = 'latex') |>
+      kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
+  } else {
+    head(x, 5) |>
+      knitr::kable(escape = TRUE) |>
+      kableExtra::kable_styling()
+  }
+}
+```
+
