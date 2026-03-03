@@ -51,9 +51,20 @@ library(tibble)
 library(stringr)
 ```
 
+
+
 ```{r}
-tribes_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
-kable(head(tribes_regex))
+data <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+kable(head(data))
 ```
 
+```{r}
+corp_url <- "https://raw.githubusercontent.com/judgelord/corporations/main/data/corporations_data_sample.rda"
+tmp <- tempfile(fileext = ".rda")
+download.file(corp_url, tmp, mode = "wb")
+load(tmp)
+regex_table <- corporations_data_sample
+rm(corporations_data_sample)
+regex_table <- reegx_table %>% select(-FED_RSSD, -naics)
+```
 
