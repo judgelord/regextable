@@ -52,20 +52,36 @@ library(tibble)
 library(stringr)
 ```
 
+### Sample Corporations Regex Table
 
-
-```{r}
-data <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
-kable(head(data))
-```
+This lookup table includes:
+- aliases
+- clean_aliases
+- cik
+- ticker
+- sources
 
 ```{r}
 corp_url <- "https://raw.githubusercontent.com/judgelord/corporations/main/data/corporations_data_sample.rda"
 tmp <- tempfile(fileext = ".rda")
 download.file(corp_url, tmp, mode = "wb")
 load(tmp)
-regex_table <- corporations_data_sample
+corp_regex <- corporations_data_sample
 rm(corporations_data_sample)
-regex_table <- reegx_table %>% select(-FED_RSSD, -naics)
+corp_regex <- corp_regex %>% select(-FED_RSSD, -naics)
 ```
 
+### Data Corporations
+```{r}
+corporations_crosswalk <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+kable(head(corporations_crosswalk))
+```
+
+### Extracting Aliases from Corporation Crosswalk
+
+```{r}
+corp_df <- extract(data = corporations_crosswalk,
+                   col_name = "aliases",
+                   regex_table = corp_regex,
+                   pattern_col = "aliases")
+```
