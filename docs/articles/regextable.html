@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-02-28</p>
+      <p class="date">2026-03-03</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/regextable.qmd" class="external-link"><code>vignettes/regextable.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -94,71 +94,83 @@
 <div class="cell-output-display">
 <table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead><tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">congress</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">chamber</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">congress</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">bioname</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">state</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">state_abbrev</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">district_code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">bioguide_id</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">first_name</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">last_name</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">110</td>
 <td style="text-align: left;">President</td>
+<td style="text-align: right;">107</td>
 <td style="text-align: left;">BUSH, George Walker</td>
 <td style="text-align: left;">george bush&amp;#124;george walker bush&amp;#124;\bg bush&amp;#124;george w bush&amp;#124;\bna bush&amp;#124;(^&amp;#124;senator &amp;#124;representative )bush\b&amp;#124;bush, george&amp;#124;bush george&amp;#124;bush, g\b&amp;#124;president bush\b&amp;#124;g w bush</td>
 <td style="text-align: right;">99910</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">USA</td>
 <td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
 <td style="text-align: left;">George</td>
 <td style="text-align: left;">BUSH</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">110</td>
 <td style="text-align: left;">House</td>
-<td style="text-align: left;">BONNER, Jr., Josiah Robins (Jo)</td>
-<td style="text-align: left;">josiah bonner&amp;#124;josiah josiah robins bonner&amp;#124;\bj bonner&amp;#124;josiah j bonner&amp;#124;jo bonner&amp;#124;jo josiah robins bonner&amp;#124;jo j bonner&amp;#124;(^&amp;#124;senator &amp;#124;representative )bonner\b&amp;#124;bonner, jo&amp;#124;bonner, josiah&amp;#124;bonner josiah&amp;#124;bonner, j\b&amp;#124;representative bonner\b&amp;#124;j j bonner</td>
-<td style="text-align: right;">20300</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: left;">CALLAHAN, Herbert Leon (Sonny)</td>
+<td style="text-align: left;">herbert callahan&amp;#124;herbert leon callahan&amp;#124;\bh callahan&amp;#124;herbert l callahan&amp;#124;sonny callahan&amp;#124;sonny leon callahan&amp;#124;sonny l callahan&amp;#124;\bs callahan&amp;#124;(^&amp;#124;senator &amp;#124;representative )callahan\b&amp;#124;callahan, sonny&amp;#124;callahan, herbert&amp;#124;callahan herbert&amp;#124;callahan, h\b&amp;#124;callahan, s\b&amp;#124;representative callahan\b&amp;#124;h l callahan</td>
+<td style="text-align: right;">15090</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">AL</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">Josiah</td>
-<td style="text-align: left;">BONNER</td>
+<td style="text-align: left;">C000052</td>
+<td style="text-align: left;">Herbert</td>
+<td style="text-align: left;">CALLAHAN</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">110</td>
 <td style="text-align: left;">House</td>
-<td style="text-align: left;">ROGERS, Mike Dennis</td>
-<td style="text-align: left;">mike rogers&amp;#124;mike dennis rogers&amp;#124;\bm rogers.{1,4}al&amp;#124;mike d rogers&amp;#124;michael rogers&amp;#124;michael dennis rogers&amp;#124;michael d rogers&amp;#124;(^&amp;#124;senator &amp;#124;representative )rogers\b.{1,4}al&amp;#124;rogers, michael&amp;#124;rogers, mike&amp;#124;rogers mike&amp;#124;representative rogers\b.{1,4}al&amp;#124;m d rogers</td>
-<td style="text-align: right;">20301</td>
-<td style="text-align: left;">AL</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">Mike</td>
-<td style="text-align: left;">ROGERS</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">110</td>
-<td style="text-align: left;">House</td>
-<td style="text-align: left;">DAVIS, Artur</td>
-<td style="text-align: left;">artur davis&amp;#124;\ba davis&amp;#124;(^&amp;#124;senator &amp;#124;representative )davis\b.{1,4}al&amp;#124;davis, artur&amp;#124;davis artur&amp;#124;davis, a\b&amp;#124;representative davis\b.{1,4}al</td>
-<td style="text-align: right;">20302</td>
-<td style="text-align: left;">AL</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">Artur</td>
-<td style="text-align: left;">DAVIS</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">110</td>
-<td style="text-align: left;">House</td>
+<td style="text-align: right;">107</td>
 <td style="text-align: left;">CRAMER, Robert E. (Bud), Jr.</td>
 <td style="text-align: left;">robert cramer&amp;#124;robert e cramer&amp;#124;\br cramer&amp;#124;bud cramer&amp;#124;bud e cramer&amp;#124;\bb cramer&amp;#124;(^&amp;#124;senator &amp;#124;representative )cramer\b&amp;#124;cramer, bud&amp;#124;cramer, robert&amp;#124;cramer robert&amp;#124;cramer, r\b&amp;#124;cramer, b\b&amp;#124;representative cramer\b&amp;#124;r e cramer</td>
 <td style="text-align: right;">29100</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">AL</td>
 <td style="text-align: right;">5</td>
+<td style="text-align: left;">C000868</td>
 <td style="text-align: left;">Robert</td>
 <td style="text-align: left;">CRAMER</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">House</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: left;">EVERETT, Robert Terry</td>
+<td style="text-align: left;">robert everett&amp;#124;robert terry everett&amp;#124;\br everett&amp;#124;robert t everett&amp;#124;terry everett&amp;#124;terry terry everett&amp;#124;terry t everett&amp;#124;\bt everett&amp;#124;(^&amp;#124;senator &amp;#124;representative )everett\b.{1,4}al&amp;#124;everett, terry&amp;#124;everett, robert&amp;#124;everett robert&amp;#124;everett, r\b&amp;#124;everett, t\b&amp;#124;representative everett\b.{1,4}al&amp;#124;r t everett</td>
+<td style="text-align: right;">29300</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">E000268</td>
+<td style="text-align: left;">Robert</td>
+<td style="text-align: left;">EVERETT</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">House</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: left;">BACHUS, Spencer T., III</td>
+<td style="text-align: left;">spencer bachus&amp;#124;spencer t bachus&amp;#124;\bs bachus&amp;#124;\bna bachus&amp;#124;(^&amp;#124;senator &amp;#124;representative )bachus\b&amp;#124;bachus, spencer&amp;#124;bachus spencer&amp;#124;bachus, s\b&amp;#124;representative bachus\b&amp;#124;s t bachus</td>
+<td style="text-align: right;">29301</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AL</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">B000013</td>
+<td style="text-align: left;">Spencer</td>
+<td style="text-align: left;">BACHUS</td>
 </tr>
 </tbody>
 </table>
@@ -265,18 +277,18 @@
 <td style="text-align: left;">james r langevin</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">HON. JIM COSTA;Mr. COSTA</td>
-<td style="text-align: right;">20501</td>
-<td style="text-align: left;">jim costa&amp;#124;\bj costa&amp;#124;james costa&amp;#124;(^&amp;#124;senator &amp;#124;representative )costa\b&amp;#124;costa, james&amp;#124;costa, jim&amp;#124;costa jim&amp;#124;costa, j\b&amp;#124;representative costa\b</td>
-<td style="text-align: left;">JIM COSTA</td>
-</tr>
-<tr class="odd">
 <td style="text-align: right;">5</td>
 <td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
 <td style="text-align: right;">20124</td>
 <td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
 <td style="text-align: left;">SAM GRAVES</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">HON. SANFORD D. BISHOP;Mr. BISHOP</td>
+<td style="text-align: right;">29339</td>
+<td style="text-align: left;">sanford bishop&amp;#124;sanford dixon bishop&amp;#124;\bs bishop&amp;#124;sanford d bishop&amp;#124;\bna bishop&amp;#124;(^&amp;#124;senator &amp;#124;representative )bishop\b.{1,4}ga&amp;#124;bishop, sanford&amp;#124;bishop sanford&amp;#124;bishop, s\b&amp;#124;representative bishop\b.{1,4}ga&amp;#124;s d bishop</td>
+<td style="text-align: left;">sanford d bishop</td>
 </tr>
 </tbody>
 </table>

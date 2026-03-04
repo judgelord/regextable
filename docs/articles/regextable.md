@@ -34,13 +34,13 @@ data("members")
 kable(members)
 ```
 
-| congress | chamber | bioname | pattern | icpsr | state_abbrev | district_code | first_name | last_name |
-|---:|:---|:---|:---|---:|:---|---:|:---|:---|
-| 110 | President | BUSH, George Walker | george bush&#124;george walker bush&#124;\bg bush&#124;george w bush&#124;\bna bush&#124;(^&#124;senator &#124;representative )bush\b&#124;bush, george&#124;bush george&#124;bush, g\b&#124;president bush\b&#124;g w bush | 99910 | USA | 0 | George | BUSH |
-| 110 | House | BONNER, Jr., Josiah Robins (Jo) | josiah bonner&#124;josiah josiah robins bonner&#124;\bj bonner&#124;josiah j bonner&#124;jo bonner&#124;jo josiah robins bonner&#124;jo j bonner&#124;(^&#124;senator &#124;representative )bonner\b&#124;bonner, jo&#124;bonner, josiah&#124;bonner josiah&#124;bonner, j\b&#124;representative bonner\b&#124;j j bonner | 20300 | AL | 1 | Josiah | BONNER |
-| 110 | House | ROGERS, Mike Dennis | mike rogers&#124;mike dennis rogers&#124;\bm rogers.{1,4}al&#124;mike d rogers&#124;michael rogers&#124;michael dennis rogers&#124;michael d rogers&#124;(^&#124;senator &#124;representative )rogers\b.{1,4}al&#124;rogers, michael&#124;rogers, mike&#124;rogers mike&#124;representative rogers\b.{1,4}al&#124;m d rogers | 20301 | AL | 3 | Mike | ROGERS |
-| 110 | House | DAVIS, Artur | artur davis&#124;\ba davis&#124;(^&#124;senator &#124;representative )davis\b.{1,4}al&#124;davis, artur&#124;davis artur&#124;davis, a\b&#124;representative davis\b.{1,4}al | 20302 | AL | 7 | Artur | DAVIS |
-| 110 | House | CRAMER, Robert E. (Bud), Jr. | robert cramer&#124;robert e cramer&#124;\br cramer&#124;bud cramer&#124;bud e cramer&#124;\bb cramer&#124;(^&#124;senator &#124;representative )cramer\b&#124;cramer, bud&#124;cramer, robert&#124;cramer robert&#124;cramer, r\b&#124;cramer, b\b&#124;representative cramer\b&#124;r e cramer | 29100 | AL | 5 | Robert | CRAMER |
+| chamber | congress | bioname | pattern | icpsr | state | state_abbrev | district_code | bioguide_id | first_name | last_name |
+|:---|---:|:---|:---|---:|---:|:---|---:|:---|:---|:---|
+| President | 107 | BUSH, George Walker | george bush&#124;george walker bush&#124;\bg bush&#124;george w bush&#124;\bna bush&#124;(^&#124;senator &#124;representative )bush\b&#124;bush, george&#124;bush george&#124;bush, g\b&#124;president bush\b&#124;g w bush | 99910 | NA | USA | 0 | NA | George | BUSH |
+| House | 107 | CALLAHAN, Herbert Leon (Sonny) | herbert callahan&#124;herbert leon callahan&#124;\bh callahan&#124;herbert l callahan&#124;sonny callahan&#124;sonny leon callahan&#124;sonny l callahan&#124;\bs callahan&#124;(^&#124;senator &#124;representative )callahan\b&#124;callahan, sonny&#124;callahan, herbert&#124;callahan herbert&#124;callahan, h\b&#124;callahan, s\b&#124;representative callahan\b&#124;h l callahan | 15090 | 1 | AL | 1 | C000052 | Herbert | CALLAHAN |
+| House | 107 | CRAMER, Robert E. (Bud), Jr. | robert cramer&#124;robert e cramer&#124;\br cramer&#124;bud cramer&#124;bud e cramer&#124;\bb cramer&#124;(^&#124;senator &#124;representative )cramer\b&#124;cramer, bud&#124;cramer, robert&#124;cramer robert&#124;cramer, r\b&#124;cramer, b\b&#124;representative cramer\b&#124;r e cramer | 29100 | 1 | AL | 5 | C000868 | Robert | CRAMER |
+| House | 107 | EVERETT, Robert Terry | robert everett&#124;robert terry everett&#124;\br everett&#124;robert t everett&#124;terry everett&#124;terry terry everett&#124;terry t everett&#124;\bt everett&#124;(^&#124;senator &#124;representative )everett\b.{1,4}al&#124;everett, terry&#124;everett, robert&#124;everett robert&#124;everett, r\b&#124;everett, t\b&#124;representative everett\b.{1,4}al&#124;r t everett | 29300 | 1 | AL | 2 | E000268 | Robert | EVERETT |
+| House | 107 | BACHUS, Spencer T., III | spencer bachus&#124;spencer t bachus&#124;\bs bachus&#124;\bna bachus&#124;(^&#124;senator &#124;representative )bachus\b&#124;bachus, spencer&#124;bachus spencer&#124;bachus, s\b&#124;representative bachus\b&#124;s t bachus | 29301 | 1 | AL | 6 | B000013 | Spencer | BACHUS |
 
 ``` r
 
@@ -93,8 +93,8 @@ kable(head(result))
 | 1 | HON. SAM GRAVES;Mr. GRAVES | 20124 | samuel graves&#124;\bs graves&#124;sam graves&#124;(^&#124;senator &#124;representative )graves\b&#124;graves, sam&#124;graves, samuel&#124;graves samuel&#124;graves, s\b&#124;representative graves\b | SAM GRAVES |
 | 2 | HON. MARK UDALL;Mr. UDALL | 29906 | mark udall&#124;\bm udall&#124;mark e udall&#124;\bna udall&#124;(^&#124;senator &#124;representative )udall\b.{1,4}co&#124;udall, mark&#124;udall mark&#124;udall, m\b&#124;representative udall\b.{1,4}co&#124;m e udall | MARK UDALL |
 | 3 | HON. JAMES R. LANGEVIN;Mr. LANGEVIN | 20136 | james langevin&#124;\bj langevin&#124;james r langevin&#124;jim langevin&#124;jim r langevin&#124;(^&#124;senator &#124;representative )langevin\b&#124;langevin, jim&#124;langevin, james&#124;langevin james&#124;langevin, j\b&#124;representative langevin\b&#124;j r langevin | james r langevin |
-| 4 | HON. JIM COSTA;Mr. COSTA | 20501 | jim costa&#124;\bj costa&#124;james costa&#124;(^&#124;senator &#124;representative )costa\b&#124;costa, james&#124;costa, jim&#124;costa jim&#124;costa, j\b&#124;representative costa\b | JIM COSTA |
 | 5 | HON. SAM GRAVES;Mr. GRAVES | 20124 | samuel graves&#124;\bs graves&#124;sam graves&#124;(^&#124;senator &#124;representative )graves\b&#124;graves, sam&#124;graves, samuel&#124;graves samuel&#124;graves, s\b&#124;representative graves\b | SAM GRAVES |
+| 6 | HON. SANFORD D. BISHOP;Mr. BISHOP | 29339 | sanford bishop&#124;sanford dixon bishop&#124;\bs bishop&#124;sanford d bishop&#124;\bna bishop&#124;(^&#124;senator &#124;representative )bishop\b.{1,4}ga&#124;bishop, sanford&#124;bishop sanford&#124;bishop, s\b&#124;representative bishop\b.{1,4}ga&#124;s d bishop | sanford d bishop |
 
 Explanation: - `data`: the text dataset to search. - `col_name`: which
 column contains the text. - `regex_table`: the lookup table of

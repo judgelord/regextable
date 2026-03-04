@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>corporations • regextable</title>
+<title>Corporations Regextable • regextable</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,8 @@
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="corporations_files/libs/quarto-html/popper.min.js"></script><script src="corporations_files/libs/quarto-html/tippy.umd.min.js"></script><link href="corporations_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="corporations_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="corporations">
+<script src="corporations_files/libs/kePrint-0.0.1/kePrint.js"></script><link href="corporations_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Corporations Regextable">
 <meta property="og:image" content="https://judgelord.github.io/regextable/logo.png">
 </head>
 <body>
@@ -53,10 +54,10 @@
 </nav><div class="container template-quarto">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1></h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Corporations Regextable</h1>
 
-
-
+      <p class="author">Shirlyn Dong</p>
+      <p class="date">2026-03-03</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/corporations.qmd" class="external-link"><code>vignettes/corporations.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -67,10 +68,189 @@
 
 
 
-
-
-
-<script id="quarto-html-after-body" type="application/javascript">
+    <section class="level3"><h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h3>
+<p>This vignette demonstrates how to extract mentions of corporations from public datasets using a regular expression (regex) lookup table of corporation names and their aliases. The approach parallels the core <code><a href="../reference/extract.html">regextable::extract()</a></code> workflow but uses a specialized lookup table for corporations, including aliases, tickers, and other metadata.</p>
+<p>Install and load the package:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/" class="external-link">rvest</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+</section><section class="level3"><h3 id="corporations-regex-table">Corporations Regex Table<a class="anchor" aria-label="anchor" href="#corporations-regex-table"></a>
+</h3>
+<p>The corporations_regex lookup table includes:</p>
+<ul>
+<li>
+<code>aliases</code>: alternative names or variants for a corporation</li>
+<li>
+<code>cik</code>: SEC Central Index Key</li>
+<li>
+<code>ticker</code>: stock ticker symbol, if applicable</li>
+<li>
+<code>sources</code>: reference for the alias (e.g., cik, sec)</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">corporations_regex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/corporations_crosswalk.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">aliases</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">cik</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">ticker</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">sources</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD NEW YORK SER 33</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">cik</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CORPORATE INCOME FUND SEVENTY NINTH SHORT TERM SERIES</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">cik</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 155</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">cik</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 156</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">cik</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUVEEN TAX EXEMPT UNIT TRUST SERIES 169 NATIONAL TRUST 169</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">cik</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><section class="level3"><h3 id="data-corporations">Data Corporations<a class="anchor" aria-label="anchor" href="#data-corporations"></a>
+</h3>
+<p>The dataset <code>project_2025_coalition_and_contributors</code> contains organizations and contributors involved in Project 2025. This dataset is used alongside the corporations regex table to identify and standardize corporation mentions.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">project_2025_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/judgelord/corporations/main/data/project_2025_coalition_and_contributors.rda"</span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".rda"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="va">project_2025_url</span>, <span class="va">tmp</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">project_2025_coalition_and_contributors</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">type</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">organization</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">individual</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">role</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Organization</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Advisory Board Member</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Organization</td>
+<td style="text-align: left;">Alliance Defending Freedom</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Advisory Board Member</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Organization</td>
+<td style="text-align: left;">American Accountability Foundation</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Advisory Board Member</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Organization</td>
+<td style="text-align: left;">American Center for Law and Justice</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Advisory Board Member</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Organization</td>
+<td style="text-align: left;">American Compass</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Advisory Board Member</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><section class="level3"><h3 id="extracting-aliases-from-corporation-crosswalk">Extracting Aliases from Corporation Crosswalk<a class="anchor" aria-label="anchor" href="#extracting-aliases-from-corporation-crosswalk"></a>
+</h3>
+<p>The <code><a href="../reference/extract.html">regextable::extract()</a></code> function matches organization names in the dataset against the corporation regex table. This process standardizes names and removes common acronym matches to reduce false positives.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">corp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">project_2025_coalition_and_contributors</span>,</span>
+<span>                   col_name <span class="op">=</span> <span class="st">"organization"</span>,</span>
+<span>                   regex_table <span class="op">=</span> <span class="va">corporations_regex</span>,</span>
+<span>                   pattern_col <span class="op">=</span> <span class="st">"aliases"</span>,</span>
+<span>                   data_return_cols <span class="op">=</span> <span class="st">"organization"</span>,</span>
+<span>                   remove_acronyms <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">corp_df</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">row_id</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">organization</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">match</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;">M&amp;#124;C ACQUISITION CORP.&amp;#124;F &amp; M Bank-Pulaski</td>
+<td style="text-align: left;">m</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;">I O MAGIC CORP/CA&amp;#124;I O MAGIC CORP&amp;#124;I OMAGIC CORP/CA&amp;#124;I/OMAGIC CORP&amp;#124;I/O MAGIC CORP&amp;#124;I</td>
+<td style="text-align: left;">i</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;">T/R SYSTEMS INC&amp;#124;T</td>
+<td style="text-align: left;">t</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;">E&amp;#124;CLASS MB PARTNERS FUND I, LLC&amp;#124;MARKEL-EAGLE PARTNERS FUND I, LLC</td>
+<td style="text-align: left;">e</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Alabama Policy Institute</td>
+<td style="text-align: left;">M/A-COM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&amp;#124;MACOM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&amp;#124;M/ACOM TECHNOLOGY SOLUTIONS&amp;#124;M</td>
+<td style="text-align: left;">m</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -153,7 +333,8 @@
       }
     }
   });
-  </script></main>
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

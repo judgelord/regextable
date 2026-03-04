@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   message = FALSE,
   tidy = FALSE,
   fig.align = 'center',
-  fig.path = "figures/native-tribes-",
+  fig.path = "figures/corporations",
   R.options = list(width = 120)
 )
 
@@ -77,7 +77,6 @@ download.file(project_2025_url, tmp, mode = "wb")
 load(tmp)
 kable(head(project_2025_coalition_and_contributors))
 ```
-
 
 ### Extracting Aliases from Corporation Crosswalk
 
