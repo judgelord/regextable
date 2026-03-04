@@ -62,26 +62,24 @@ This lookup table includes:
 - sources
 
 ```{r}
-corp_url <- "https://raw.githubusercontent.com/judgelord/corporations/main/data/corporations_data_sample.rda"
+project_2025_url <- "https://raw.githubusercontent.com/judgelord/corporations/main/data/project_2025_coalition_and_contributors.rda"
 tmp <- tempfile(fileext = ".rda")
-download.file(corp_url, tmp, mode = "wb")
+download.file(project_2025_url, tmp, mode = "wb")
 load(tmp)
-corp_regex <- corporations_data_sample
-rm(corporations_data_sample)
-corp_regex <- corp_regex %>% select(-FED_RSSD, -naics)
+kable(head(project_2025_coalition_and_contributors))
 ```
 
 ### Data Corporations
 ```{r}
-corporations_crosswalk <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
-kable(head(corporations_crosswalk))
+corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+kable(head(corporations_regex))
 ```
 
 ### Extracting Aliases from Corporation Crosswalk
 
 ```{r}
-corp_df <- extract(data = corporations_crosswalk,
-                   col_name = "aliases",
-                   regex_table = corp_regex,
+corp_df <- extract(data = project_2025_coalition_and_contributors,
+                   col_name = "organization",
+                   regex_table = corporations_regex,
                    pattern_col = "aliases")
 ```
