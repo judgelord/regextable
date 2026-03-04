@@ -40,7 +40,7 @@ kable <- function(x){
 
 ### Introduction
 
-This vignette demonstrates how to extract aliases from a corporation crosswalk data file using a regular-expression (regex) lookup table containing sample corporation aliases. The approach is similar to the core regextable::extract() workflow but showcases a specialized lookup table of corporations aliases.
+This vignette demonstrates how to extract mentions of corporations from public datasets using a regular expression (regex) lookup table of corporation names and their aliases. The approach parallels the core `regextable::extract()` workflow but uses a specialized lookup table for corporations, including aliases, tickers, and other metadata.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -52,14 +52,23 @@ library(tibble)
 library(stringr)
 ```
 
-### Sample Corporations Regex Table
+### Corporations Regex Table
 
-This lookup table includes:
-- aliases
-- clean_aliases
-- cik
-- ticker
-- sources
+The corporations_regex lookup table includes:
+
+- `aliases`: alternative names or variants for a corporation
+- `cik`: SEC Central Index Key
+- `ticker`: stock ticker symbol, if applicable
+- `sources`: reference for the alias (e.g., cik, sec)
+
+```{r}
+corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+kable(head(corporations_regex))
+```
+
+### Data Corporations
+
+The dataset `project_2025_coalition_and_contributors` contains organizations and contributors involved in Project 2025. This dataset is used alongside the corporations regex table to identify and standardize corporation mentions.
 
 ```{r}
 project_2025_url <- "https://raw.githubusercontent.com/judgelord/corporations/main/data/project_2025_coalition_and_contributors.rda"
@@ -69,17 +78,18 @@ load(tmp)
 kable(head(project_2025_coalition_and_contributors))
 ```
 
-### Data Corporations
-```{r}
-corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
-kable(head(corporations_regex))
-```
 
 ### Extracting Aliases from Corporation Crosswalk
+
+The `regextable::extract()` function matches organization names in the dataset against the corporation regex table. This process standardizes names and removes common acronym matches to reduce false positives.
 
 ```{r}
 corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,
-                   pattern_col = "aliases")
+                   pattern_col = "aliases",
+                   data_return_cols = "organization",
+                   remove_acronyms = TRUE)
+
+kable(head(corp_df))
 ```
