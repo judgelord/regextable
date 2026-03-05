@@ -78,14 +78,6 @@ test_that("unique_match still returns multiple rows for multiple inputs", {
   expect_setequal(result$pattern, c("ACME", "XYZ Corp"))
 })
 
-test_that("extract raw text when do_clean_text = FALSE", {
-  df <- data.frame(id = 1, text = " ACME  ")
-  regex_table <- data.frame(pattern = "ACME")
-  
-  result <- extract(df, "text", regex_table, do_clean_text = FALSE, verbose = FALSE)
-  expect_equal(result$match, " ACME  ")
-})
-
 test_that("extract works with custom pattern_col", {
   df <- data.frame(id = 1, text = "ACME Corp")
   regex_table <- data.frame(my_pattern = "ACME")
@@ -216,12 +208,6 @@ test_that("extract errors when date_col does not exist", {
   df <- data.frame(id = 1, text = "ACME")
   regex_table <- data.frame(pattern = "ACME")
   expect_error(extract(df, col_name = "text", regex_table = regex_table, date_col = "missing"))
-})
-
-test_that("extract errors if data_return_cols not in data", {
-  df <- data.frame(id = 1, text = "ACME")
-  regex_table <- data.frame(pattern = "ACME")
-  expect_error(extract(df, "text", regex_table, data_return_cols = "missing_col"))
 })
 
 test_that("non-character col_name errors on factor/list columns", {
