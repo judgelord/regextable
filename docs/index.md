@@ -208,3 +208,7 @@ head(result_advanced)
   inclusive or more restrictive word boundaries.
 - Enable user-defined ID systems (e.g., corporations, campaigns) and
   control whether text is returned with matches.
+- Allow users to plug in their own regex_table without requiring a
+  wrapper function.
+- For additional data, direct users to download tables from the package
+  creator’s repository.

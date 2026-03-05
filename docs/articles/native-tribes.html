@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Native American Tribes Regex Table</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-03</p>
+      <p class="date">2026-03-05</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/native-tribes.qmd" class="external-link"><code>vignettes/native-tribes.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -70,7 +70,7 @@
 
     <section class="level3"><h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
-<p>This vignette demonstrates how to extract mentions of Native American Tribes from public comment data using a regular expression (regex) lookup table of Native American Tribes and Groups. This approach is similar to the core <code><a href="../reference/extract.html">regextable::extract()</a></code> workflow but uses a specialized lookup table of tribe names and name variants.</p>
+<p>This vignette demonstrates how to extract references to Native American tribes using a regex lookup table. This approach is similar to the core <code><a href="../reference/extract.html">regextable::extract()</a></code> workflow but uses a specialized lookup table of tribe names and name variants.</p>
 <p>Install and load the package:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
@@ -81,8 +81,9 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="level3"><h3 id="native-american-tribe-regex-table">Native American Tribe Regex Table<a class="anchor" aria-label="anchor" href="#native-american-tribe-regex-table"></a>
+</section><section class="level3"><h3 id="regex-table-of-native-american-tribes">Regex Table of Native American Tribes<a class="anchor" aria-label="anchor" href="#regex-table-of-native-american-tribes"></a>
 </h3>
+<p>The following table contains tribe names and regex patterns used for matching. Each row represents a tribe and includes possible spelling variations or alternate names used in text.</p>
 <p>This lookup table includes: - Name - Strings - Source - Website - Notes - Type - Emphasis</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
@@ -149,8 +150,9 @@
 </table>
 </div>
 </div>
-</section><section class="level3"><h3 id="data-agencies">Data Agencies<a class="anchor" aria-label="anchor" href="#data-agencies"></a>
+</section><section class="level3"><h3 id="extracting-tribe-names-from-directory">Extracting Tribe Names from Directory<a class="anchor" aria-label="anchor" href="#extracting-tribe-names-from-directory"></a>
 </h3>
+<p>To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">max_page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html" class="external-link">read_html</a></span><span class="op">(</span><span class="st">"https://www.ncai.org/tribal-directory"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -259,9 +261,9 @@
 </table>
 </div>
 </div>
-</section><section class="level3"><h3 id="extracting-tribe-names-from-directory">Extracting Tribe Names from Directory<a class="anchor" aria-label="anchor" href="#extracting-tribe-names-from-directory"></a>
+</section><section class="level3"><h3 id="extracting-tribe-names-from-directory-1">Extracting Tribe Names from Directory<a class="anchor" aria-label="anchor" href="#extracting-tribe-names-from-directory-1"></a>
 </h3>
-<p>This example demonstrates how to use <code><a href="../reference/extract.html">regextable::extract()</a></code> to extract Native American Tribe names in the Tribal Directory data (<code>tribes_df</code>). It applies the tribe regex patterns in <code>tribes_regex</code> from the “Native American Tribes/Groups Regex Table” sheet to the <code>Tribe</code> column and returns the matched tribe names along with their source reference.</p>
+<p>This example demonstrates how to use <code><a href="../reference/extract.html">regextable::extract()</a></code> to extract Native American Tribe names in the Tribal Directory data (<code>tribes_df</code>). The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>Tribe</code> column using the regex patterns in the <code>Strings</code> column of <code>tribes_regex</code>. When a match is found, the function returns the original tribe name along with metadata from the regex table, such as the source reference.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tribe_directory_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span></span>

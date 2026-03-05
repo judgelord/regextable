@@ -2,10 +2,8 @@
 
 ### Introduction
 
-This vignette demonstrates how to extract mentions of Native American
-Tribes from public comment data using a regular expression (regex)
-lookup table of Native American Tribes and Groups. This approach is
-similar to the core
+This vignette demonstrates how to extract references to Native American
+tribes using a regex lookup table. This approach is similar to the core
 [`regextable::extract()`](https://judgelord.github.io/regextable/reference/extract.md)
 workflow but uses a specialized lookup table of tribe names and name
 variants.
@@ -21,7 +19,11 @@ library(tibble)
 library(stringr)
 ```
 
-### Native American Tribe Regex Table
+### Regex Table of Native American Tribes
+
+The following table contains tribe names and regex patterns used for
+matching. Each row represents a tribe and includes possible spelling
+variations or alternate names used in text.
 
 This lookup table includes: - Name - Strings - Source - Website -
 Notes - Type - Emphasis
@@ -39,7 +41,12 @@ kable(head(tribes_regex))
 | Center for Indian Law and Policy (Seattle University) | center for indian law and policy | Unmatched Commenters List | https://law.seattleu.edu/centers-and-institutes/center-for-indian-law-and-policy/ |  | Center within University | Law |
 | Center for Indigenous Research, Science, and Technology (Kansas University) | Center for Indigenous Research | Googling other organization | https://ipsr.ku.edu/cfirst/ |  | Center within University | Research |
 
-### Data Agencies
+### Extracting Tribe Names from Directory
+
+To demonstrate extraction, this vignette collects tribe names from the
+National Congress of American Indians (NCAI) Tribal Directory. The
+directory provides publicly available information about federally
+recognized tribes.
 
 ``` r
 max_page <- read_html("https://www.ncai.org/tribal-directory") %>%
@@ -96,10 +103,12 @@ kable(head(tribes_df))
 This example demonstrates how to use
 [`regextable::extract()`](https://judgelord.github.io/regextable/reference/extract.md)
 to extract Native American Tribe names in the Tribal Directory data
-(`tribes_df`). It applies the tribe regex patterns in `tribes_regex`
-from the “Native American Tribes/Groups Regex Table” sheet to the
-`Tribe` column and returns the matched tribe names along with their
-source reference.
+(`tribes_df`). The
+[`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
+function searches the `Tribe` column using the regex patterns in the
+`Strings` column of `tribes_regex`. When a match is found, the function
+returns the original tribe name along with metadata from the regex
+table, such as the source reference.
 
 ``` r
 tribe_directory_df <- extract(
