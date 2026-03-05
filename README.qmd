@@ -157,3 +157,5 @@ head(result_advanced)
 -   Add support for `typo_table` to correct known text errors before matching.
 -   Improve strict matching rules for patterns that may need more inclusive or more restrictive word boundaries.
 -   Enable user-defined ID systems (e.g., corporations, campaigns) and control whether text is returned with matches.
+-   Allow users to plug in their own regex_table without requiring a wrapper function.
+-   For additional data, direct users to download tables from the package creator’s repository.
