@@ -59,9 +59,11 @@ kable(cr2007_03_01)
 ### Text Cleaning
 
 [`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
-cleans text by default, but can be disabled by setting the parameter
-`do_clean_text` to false. Cleaning standardizes spacing, punctuation,
-and capitalization, which helps regex pattern matching.
+performs basic text cleaning by default - standardizing spaces,
+punctuation, and capitalization—to improve pattern matching. This can be
+disabled by setting `do_clean_text = FALSE`. Cleaning standardizes
+spacing, punctuation, and capitalization, which helps regex pattern
+matching.
 
 Example of
 [`clean_text()`](https://judgelord.github.io/regextable/reference/clean_text.md):

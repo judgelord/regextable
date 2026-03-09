@@ -92,7 +92,7 @@ kable(head(tribes_df))
 
 | Region | Tribe | Leader | Tel | Fax | Address | Recognition | District |
 |:---|:---|:---|:---|:---|:---|:---|:---|
-| Southern Plains | Absentee-Shawnee Tribe of Indians of Oklahoma | Edwina Butler-Wolfe (Governor) | \(405\) 275-4030 | \(405\) 273-7938 | 2025 S. Gordon Cooper Drive Shawnee, OK 74801-9005 | \|Federally Recognize | \|OK-05 |
+| Southern Plains | Absentee-Shawnee Tribe of Indians of Oklahoma | John Raymond Johnson (Governor) | \(405\) 275-4030 | \(405\) 273-7938 | 2025 S. Gordon Cooper Drive Shawnee, OK 74801-9005 | \|Federally Recognize | \|OK-05 |
 | Alaska | Agdaagux Tribe of King Cove | Etta Kuzakin (President) | \(907\) 497-2648 | \(907\) 497-2803 | PO Box 249 King Cove, AK 99612-0249 | \|Federally Recognize | \|AK-01 |
 | Pacific | Agua Caliente Band of Cahuilla Indians | Reid D. Milanovich (Chairman) | \(760\) 699-6800 | \(760\) 699-6919 | 5401 Dinah Shore Dr Palm Springs, CA 92264-5970 | \|Federally Recognize | \|CA-45 |
 | Western | Ak-Chin Indian Community | Robert Miguel (Chairman) | \(520\) 568-1000 | \(520\) 568-1001 | 42507 W Peters and Nall Road Maricopa, AZ 85138-394 | \|Federally Recognize | \|AZ-07 |
