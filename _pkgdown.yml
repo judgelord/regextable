@@ -1,22 +1,22 @@
 url: https://judgelord.github.io/regextable/
-
 template:
   bootstrap: 5
   bootswatch: simplex
-
 navbar:
   structure:
-    left: [home, reference, articles]
-
+    left:
+    - home
+    - reference
+    - articles
 articles:
-  - title: "Native American Tribes Regex Table"
-    desc: "Example of extracting tribe names using regextable and a regex lookup table"
-    contents:
-      - native-tribes
-      - agencies
-      - corporations
+- title: Native American Tribes Regex Table
+  desc: Example of extracting tribe names using regextable and a regex lookup table
+  contents:
+  - native-tribes
+  - agencies
+  - corporations
+home:
+  title: regextable
+  desc: Pattern-based text extraction using regex lookup tables
+  navbar: yes
 
-home: 
-  title: "regextable"
-  desc: "Pattern-based text extraction using regex lookup tables"
-  navbar: true
