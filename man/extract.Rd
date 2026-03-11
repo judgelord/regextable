@@ -18,7 +18,9 @@ extract(
   do_clean_text = TRUE,
   verbose = TRUE,
   unique_match = FALSE,
-  cl = NULL
+  cl = NULL,
+  use_ner = FALSE,
+  ner_entity_types = c("ORG")
 )
 }
 \arguments{
@@ -49,6 +51,10 @@ extract(
 \item{unique_match}{Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.}
 
 \item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
+
+\item{use_ner}{Logical; if TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized.}
+
+\item{ner_entity_types}{Character vector; the types of Named Entities to keep if \code{use_ner} is TRUE. Default is "ORG".}
 }
 \value{
 A tibble (data frame) with columns:

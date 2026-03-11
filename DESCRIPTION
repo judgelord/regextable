@@ -31,7 +31,6 @@ Suggests:
     spelling,
     testthat (>= 3.0.0),
     rvest,
-    pbapply,
     purrr,
     spacyr,
     tibble,

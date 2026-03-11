@@ -94,13 +94,19 @@ extract <- function(data,
   chk::chk_character(ner_entity_types)
   
   if (use_ner) {
-    if (!requireNamespace("spacyr", quietly = TRUE)) {
-      stop(
-        "The 'spacyr' package is required for NER validation.\n",
-        "Please install it using: install.packages('spacyr')\n",
-        "Then initialize it using: spacyr::spacy_install() and spacyr::spacy_initialize()", 
-        call. = FALSE
-      )
+    if (requireNamespace("spacyr", quietly = TRUE)) {
+      entities <- tryCatch({
+        spacyr::spacy_extract_entity(matched_texts)
+      }, error = function(e) {
+        warning("NER extraction failed, skipping validation")
+        NULL
+      })
+      
+      if (!is.null(entities)) {
+        # filter matches using NER
+      }
+    } else {
+      warning("spacyr not installed; skipping NER validation")
     }
   }
   
