@@ -15,6 +15,7 @@ Install and load the package:
 library(regextable)
 library(kableExtra)
 library(rvest)
+library(pbapply)
 library(purrr)
 library(tibble)
 library(stringr)
@@ -30,16 +31,46 @@ comprehensive matching.
 
 ``` r
 corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+
+# Clean aliases and create pattern
+
+corporations_regex$aliases <- tolower(corporations_regex$aliases)
+suffixes <- c(
+  "\\binc\\b", "\\bcorp\\b", "\\bcorporation\\b",
+  "\\bllc\\b", "\\blp\\b", "\\bltd\\b", "\\bincorporated\\b"
+)
+suffix_pattern <- paste0("(?:", paste(suffixes, collapse = "|"), ")")
+corporations_regex$aliases <- gsub(
+  paste0("[,.]?\\s*", suffix_pattern, "[.]?"),
+  "",
+  corporations_regex$aliases,
+  perl = TRUE
+)
+corporations_regex$aliases <- gsub("[[:punct:]]+$", "", corporations_regex$aliases)
+corporations_regex$aliases <- gsub("\\s+", " ", corporations_regex$aliases)
+corporations_regex$aliases <- trimws(corporations_regex$aliases)
+pbapply::pboptions(type = "none")
+corporations_regex$pattern <- pbapply::pbsapply(corporations_regex$aliases, function(x){
+  parts <- unlist(strsplit(x, "\\|"))
+  parts <- trimws(parts)
+  parts <- parts[nchar(parts) > 1]
+  parts <- unique(parts)
+  parts <- parts[order(nchar(parts), decreasing = TRUE)]
+  paste(parts, collapse="|")
+})
+corporations_regex <- corporations_regex[nchar(corporations_regex$pattern) > 1, ]
+corporations_regex$pattern <- paste0("\\b(?:", corporations_regex$pattern, ")\\b")
+
 kable(head(corporations_regex))
 ```
 
-| aliases | cik | ticker | sources |
-|:---|---:|:---|:---|
-| DEFINED ASSET FUNDS MUNICIPAL INVT TR FD NEW YORK SER 33 | 3 |  | cik |
-| CORPORATE INCOME FUND SEVENTY NINTH SHORT TERM SERIES | 13 |  | cik |
-| DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 155 | 14 |  | cik |
-| DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 156 | 17 |  | cik |
-| NUVEEN TAX EXEMPT UNIT TRUST SERIES 169 NATIONAL TRUST 169 | 18 |  | cik |
+| aliases | cik | FED_RSSD | ticker | naics | sources | pattern |
+|:---|---:|---:|:---|---:|:---|:---|
+| defined asset funds municipal invt tr fd new york ser 33 | 3 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd new york ser 33)\b |
+| corporate income fund seventy ninth short term series | 13 | NA |  | NA | cik | \b(?:corporate income fund seventy ninth short term series)\b |
+| defined asset funds municipal invt tr fd mon pymt ser 155 | 14 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd mon pymt ser 155)\b |
+| defined asset funds municipal invt tr fd mon pymt ser 156 | 17 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd mon pymt ser 156)\b |
+| nuveen tax exempt unit trust series 169 national trust 169 | 18 | NA |  | NA | cik | \b(?:nuveen tax exempt unit trust series 169 national trust 169)\b |
 
 ### Data Corporations
 
@@ -76,7 +107,6 @@ reduce false positives.
 corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,
-                   pattern_col = "aliases",
                    data_return_cols = "organization",
                    remove_acronyms = TRUE)
 
@@ -85,8 +115,8 @@ kable(head(corp_df))
 
 | row_id | organization | pattern | match |
 |---:|:---|:---|:---|
-| 1 | Alabama Policy Institute | M&#124;C ACQUISITION CORP.&#124;F & M Bank-Pulaski | m |
-| 1 | Alabama Policy Institute | I O MAGIC CORP/CA&#124;I O MAGIC CORP&#124;I OMAGIC CORP/CA&#124;I/OMAGIC CORP&#124;I/O MAGIC CORP&#124;I | i |
-| 1 | Alabama Policy Institute | T/R SYSTEMS INC&#124;T | t |
-| 1 | Alabama Policy Institute | E&#124;CLASS MB PARTNERS FUND I, LLC&#124;MARKEL-EAGLE PARTNERS FUND I, LLC | e |
-| 1 | Alabama Policy Institute | M/A-COM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&#124;MACOM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&#124;M/ACOM TECHNOLOGY SOLUTIONS&#124;M | m |
+| 2 | Alliance Defending Freedom | \b(?:alliance)\b | Alliance |
+| 3 | American Accountability Foundation | \b(?:american)\b | American |
+| 4 | American Center for Law and Justice | \b(?:american)\b | American |
+| 5 | American Compass | \b(?:american)\b | American |
+| 5 | American Compass | \b(?:urban compass&#124;compass)\b | Compass |

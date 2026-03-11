@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Corporations Regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-09</p>
+      <p class="date">2026-03-10</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/corporations.qmd" class="external-link"><code>vignettes/corporations.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -77,6 +77,7 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/" class="external-link">rvest</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/psolymos/pbapply" class="external-link">pbapply</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
@@ -87,45 +88,93 @@
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corporations_regex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/corporations_crosswalk.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Clean aliases and create pattern</span></span>
+<span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span><span class="op">)</span></span>
+<span><span class="va">suffixes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"\\binc\\b"</span>, <span class="st">"\\bcorp\\b"</span>, <span class="st">"\\bcorporation\\b"</span>,</span>
+<span>  <span class="st">"\\bllc\\b"</span>, <span class="st">"\\blp\\b"</span>, <span class="st">"\\bltd\\b"</span>, <span class="st">"\\bincorporated\\b"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">suffix_pattern</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"(?:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">suffixes</span>, collapse <span class="op">=</span> <span class="st">"|"</span><span class="op">)</span>, <span class="st">")"</span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"[,.]?\\s*"</span>, <span class="va">suffix_pattern</span>, <span class="st">"[.]?"</span><span class="op">)</span>,</span>
+<span>  <span class="st">""</span>,</span>
+<span>  <span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span>,</span>
+<span>  perl <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[[:punct:]]+$"</span>, <span class="st">""</span>, <span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"\\s+"</span>, <span class="st">" "</span>, <span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span><span class="op">)</span></span>
+<span><span class="fu">pbapply</span><span class="fu">::</span><span class="fu"><a href="https://peter.solymos.org/pbapply/reference/pboptions.html" class="external-link">pboptions</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">pattern</span> <span class="op">&lt;-</span> <span class="fu">pbapply</span><span class="fu">::</span><span class="fu"><a href="https://peter.solymos.org/pbapply/reference/pbapply.html" class="external-link">pbsapply</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">aliases</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">parts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"\\|"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">parts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="va">parts</span><span class="op">)</span></span>
+<span>  <span class="va">parts</span> <span class="op">&lt;-</span> <span class="va">parts</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">parts</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">parts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">parts</span><span class="op">)</span></span>
+<span>  <span class="va">parts</span> <span class="op">&lt;-</span> <span class="va">parts</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">parts</span><span class="op">)</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">parts</span>, collapse<span class="op">=</span><span class="st">"|"</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">corporations_regex</span> <span class="op">&lt;-</span> <span class="va">corporations_regex</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nchar</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">pattern</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span>, <span class="op">]</span></span>
+<span><span class="va">corporations_regex</span><span class="op">$</span><span class="va">pattern</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"\\b(?:"</span>, <span class="va">corporations_regex</span><span class="op">$</span><span class="va">pattern</span>, <span class="st">")\\b"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">corporations_regex</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output-display">
 <table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead><tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">aliases</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">cik</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">FED_RSSD</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">ticker</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">naics</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">sources</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD NEW YORK SER 33</td>
+<td style="text-align: left;">defined asset funds municipal invt tr fd new york ser 33</td>
 <td style="text-align: right;">3</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">cik</td>
+<td style="text-align: left;">\b(?:defined asset funds municipal invt tr fd new york ser 33)\b</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">CORPORATE INCOME FUND SEVENTY NINTH SHORT TERM SERIES</td>
+<td style="text-align: left;">corporate income fund seventy ninth short term series</td>
 <td style="text-align: right;">13</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">cik</td>
+<td style="text-align: left;">\b(?:corporate income fund seventy ninth short term series)\b</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 155</td>
+<td style="text-align: left;">defined asset funds municipal invt tr fd mon pymt ser 155</td>
 <td style="text-align: right;">14</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">cik</td>
+<td style="text-align: left;">\b(?:defined asset funds municipal invt tr fd mon pymt ser 155)\b</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">DEFINED ASSET FUNDS MUNICIPAL INVT TR FD MON PYMT SER 156</td>
+<td style="text-align: left;">defined asset funds municipal invt tr fd mon pymt ser 156</td>
 <td style="text-align: right;">17</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">cik</td>
+<td style="text-align: left;">\b(?:defined asset funds municipal invt tr fd mon pymt ser 156)\b</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">NUVEEN TAX EXEMPT UNIT TRUST SERIES 169 NATIONAL TRUST 169</td>
+<td style="text-align: left;">nuveen tax exempt unit trust series 169 national trust 169</td>
 <td style="text-align: right;">18</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;"></td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">cik</td>
+<td style="text-align: left;">\b(?:nuveen tax exempt unit trust series 169 national trust 169)\b</td>
 </tr>
 </tbody>
 </table>
@@ -192,7 +241,6 @@
 <code class="sourceCode R"><span><span class="va">corp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">project_2025_coalition_and_contributors</span>,</span>
 <span>                   col_name <span class="op">=</span> <span class="st">"organization"</span>,</span>
 <span>                   regex_table <span class="op">=</span> <span class="va">corporations_regex</span>,</span>
-<span>                   pattern_col <span class="op">=</span> <span class="st">"aliases"</span>,</span>
 <span>                   data_return_cols <span class="op">=</span> <span class="st">"organization"</span>,</span>
 <span>                   remove_acronyms <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -207,34 +255,34 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Alabama Policy Institute</td>
-<td style="text-align: left;">M&amp;#124;C ACQUISITION CORP.&amp;#124;F &amp; M Bank-Pulaski</td>
-<td style="text-align: left;">m</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Alliance Defending Freedom</td>
+<td style="text-align: left;">\b(?:alliance)\b</td>
+<td style="text-align: left;">Alliance</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Alabama Policy Institute</td>
-<td style="text-align: left;">I O MAGIC CORP/CA&amp;#124;I O MAGIC CORP&amp;#124;I OMAGIC CORP/CA&amp;#124;I/OMAGIC CORP&amp;#124;I/O MAGIC CORP&amp;#124;I</td>
-<td style="text-align: left;">i</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">American Accountability Foundation</td>
+<td style="text-align: left;">\b(?:american)\b</td>
+<td style="text-align: left;">American</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Alabama Policy Institute</td>
-<td style="text-align: left;">T/R SYSTEMS INC&amp;#124;T</td>
-<td style="text-align: left;">t</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">American Center for Law and Justice</td>
+<td style="text-align: left;">\b(?:american)\b</td>
+<td style="text-align: left;">American</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Alabama Policy Institute</td>
-<td style="text-align: left;">E&amp;#124;CLASS MB PARTNERS FUND I, LLC&amp;#124;MARKEL-EAGLE PARTNERS FUND I, LLC</td>
-<td style="text-align: left;">e</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">American Compass</td>
+<td style="text-align: left;">\b(?:american)\b</td>
+<td style="text-align: left;">American</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">Alabama Policy Institute</td>
-<td style="text-align: left;">M/A-COM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&amp;#124;MACOM TECHNOLOGY SOLUTIONS HOLDINGS, INC.&amp;#124;M/ACOM TECHNOLOGY SOLUTIONS&amp;#124;M</td>
-<td style="text-align: left;">m</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">American Compass</td>
+<td style="text-align: left;">\b(?:urban compass&amp;#124;compass)\b</td>
+<td style="text-align: left;">Compass</td>
 </tr>
 </tbody>
 </table>
