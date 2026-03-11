@@ -207,8 +207,9 @@ extract <- function(data,
   if (use_ner) {
     if (verbose) message("Validating matches using Named Entity Recognition (NER)...")
     
-    matched_texts <- text_raw[matches_found$row_id]
-    names(matched_texts) <- as.character(matches_found$row_id)
+    unique_rows <- unique(matches_found$row_id)
+    matched_texts <- text_raw[unique_rows]
+    names(matched_texts) <- as.character(unique_rows)
     
     entities <- tryCatch({
       spacyr::spacy_extract_entity(matched_texts)
