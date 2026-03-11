@@ -20,6 +20,8 @@
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @param unique_match Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.
 #' @param cl A cluster object created by `parallel::makeCluster()`, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to [pbapply::pblapply()].
+#' @param use_ner Logical; if TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized.
+#' @param ner_entity_types Character vector; the types of Named Entities to keep if `use_ner` is TRUE. Default is "ORG".
 #' 
 #' @return A tibble (data frame) with columns:
 #' \itemize{
@@ -67,7 +69,9 @@ extract <- function(data,
                      do_clean_text = TRUE,
                      verbose = TRUE,
                      unique_match = FALSE,
-                     cl = NULL) {
+                     cl = NULL,
+                     use_ner = FALSE,
+                     ner_entity_types = c("ORG")) {
   
   # Validate input and data
   if (is.character(data) && is.null(dim(data))) {
@@ -86,6 +90,19 @@ extract <- function(data,
   
   chk::chk_character(data[[col_name]], x_name = paste0("column '", col_name, "'"))
   chk::chk_flag(verbose)
+  chk::chk_flag(use_ner)
+  chk::chk_character(ner_entity_types)
+  
+  if (use_ner) {
+    if (!requireNamespace("spacyr", quietly = TRUE)) {
+      stop(
+        "The 'spacyr' package is required for NER validation.\n",
+        "Please install it using: install.packages('spacyr')\n",
+        "Then initialize it using: spacyr::spacy_install() and spacyr::spacy_initialize()", 
+        call. = FALSE
+      )
+    }
+  }
   
   opb <- pbapply::pboptions(type = if (verbose) "timer" else "none")
   on.exit(pbapply::pboptions(opb), add = TRUE)
@@ -184,6 +201,40 @@ extract <- function(data,
   if (nrow(matches_found) == 0) {
     if (verbose) message("Number of rows with matches: 0")
     return(dplyr::tibble())
+  }
+  
+  # Preprocessing Entity Extraction
+  if (use_ner) {
+    if (verbose) message("Validating matches using Named Entity Recognition (NER)...")
+    
+    matched_texts <- text_raw[matches_found$row_id]
+    names(matched_texts) <- as.character(matches_found$row_id)
+    
+    entities <- tryCatch({
+      spacyr::spacy_extract_entity(matched_texts)
+    }, error = function(e) {
+      warning("NER extraction failed. Returning unvalidated matches. Did you run spacyr::spacy_initialize()?")
+      return(NULL)
+    })
+    
+    if (!is.null(entities)) {
+      valid_entities <- entities[entities$ent_type %in% ner_entity_types, ]
+      valid_rows <- sapply(seq_len(nrow(matches_found)), function(i) {
+        r_id <- as.character(matches_found$row_id[i])
+        m_text <- matches_found$match[i]
+        doc_ents <- valid_entities[valid_entities$doc_id == r_id, "text"]
+        any(grepl(m_text, doc_ents, ignore.case = TRUE))
+      })
+      
+      matches_found <- matches_found[valid_rows, ]
+      
+      if (verbose) message(sprintf("NER Validation complete. %d validated matches retained.", nrow(matches_found)))
+    }
+    
+    if (nrow(matches_found) == 0) {
+      if (verbose) message("Number of rows with matches after NER validation: 0")
+      return(dplyr::tibble())
+    }
   }
   
   # Join regex metadata

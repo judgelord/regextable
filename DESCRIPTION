@@ -33,6 +33,7 @@ Suggests:
     rvest,
     pbapply,
     purrr,
+    spacyr,
     tibble,
     googlesheets4
 VignetteBuilder: quarto
