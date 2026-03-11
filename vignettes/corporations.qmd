@@ -47,6 +47,7 @@ Install and load the package:
 library(regextable)
 library(kableExtra)
 library(rvest)
+library(pbapply)
 library(purrr)
 library(tibble)
 library(stringr)
@@ -58,6 +59,36 @@ The corporations_regex table contains corporations, their common aliases, ticker
 
 ```{r}
 corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
+
+# Clean aliases and create pattern
+
+corporations_regex$aliases <- tolower(corporations_regex$aliases)
+suffixes <- c(
+  "\\binc\\b", "\\bcorp\\b", "\\bcorporation\\b",
+  "\\bllc\\b", "\\blp\\b", "\\bltd\\b", "\\bincorporated\\b"
+)
+suffix_pattern <- paste0("(?:", paste(suffixes, collapse = "|"), ")")
+corporations_regex$aliases <- gsub(
+  paste0("[,.]?\\s*", suffix_pattern, "[.]?"),
+  "",
+  corporations_regex$aliases,
+  perl = TRUE
+)
+corporations_regex$aliases <- gsub("[[:punct:]]+$", "", corporations_regex$aliases)
+corporations_regex$aliases <- gsub("\\s+", " ", corporations_regex$aliases)
+corporations_regex$aliases <- trimws(corporations_regex$aliases)
+pbapply::pboptions(type = "none")
+corporations_regex$pattern <- pbapply::pbsapply(corporations_regex$aliases, function(x){
+  parts <- unlist(strsplit(x, "\\|"))
+  parts <- trimws(parts)
+  parts <- parts[nchar(parts) > 1]
+  parts <- unique(parts)
+  parts <- parts[order(nchar(parts), decreasing = TRUE)]
+  paste(parts, collapse="|")
+})
+corporations_regex <- corporations_regex[nchar(corporations_regex$pattern) > 1, ]
+corporations_regex$pattern <- paste0("\\b(?:", corporations_regex$pattern, ")\\b")
+
 kable(head(corporations_regex))
 ```
 
@@ -81,7 +112,6 @@ The `extract()` function searches the `organization` column of the dataset using
 corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,
-                   pattern_col = "aliases",
                    data_return_cols = "organization",
                    remove_acronyms = TRUE)
 
