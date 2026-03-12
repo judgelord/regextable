@@ -170,6 +170,10 @@
 <strong><code>unique_match</code></strong> (default <code>FALSE</code>) If <code>TRUE</code>, stops searching after first match to find at most one match per row.</li>
 <li>
 <strong><code>cl</code></strong>: (default <code>NULL</code>) A cluster object or integer specifying child processes for parallel evaluation (ignored on Windows).</li>
+<li>
+<strong><code>use_ner</code></strong>: (default <code>FALSE</code>) If TRUE, uses the ‘spacyr’ package to validate that matches are actual Named Entities (e.g., organizations). Requires ‘spacyr’ to be installed and initialized.</li>
+<li>
+<strong><code>ner_entity_types</code></strong>: (default <code>c("ORG")</code>) Character vector; the types of Named Entities to keep if <code>use_ner</code> is TRUE.</li>
 </ul>
 </div>
 <div class="section level3">

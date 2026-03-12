@@ -11,9 +11,10 @@ pattern table can also be included. Multiple rows may be returned for a
 single text if it matches multiple patterns.
 
 The function also supports additional parameters such as
-`do_clean_text`, `unique_match`, `verbose`, and `cl`. These can be used
-to control text cleaning, limit matches per row, show progress messages,
-or speed up processing on large datasets.
+`do_clean_text`, `unique_match`, `verbose`, `cl`, and optional Named
+Entity Recognition validation via `use_ner.` These can be used to
+control text cleaning, limit matches per row, show progress messages, or
+speed up processing on large datasets.
 
 Install and load the package:
 
@@ -113,9 +114,51 @@ can also filter data by date, remove acronyms (all-uppercase patterns
 with 2+ characters), and select specific output columns. This is useful
 for more controlled extraction.
 
+``` r
+result_advanced <- extract(
+  data = cr2007_03_01,
+  regex_table = members,
+  date_col = "date",
+  date_start = "2007-01-01",
+  date_end = "2007-12-31",
+  remove_acronyms = TRUE,
+  data_return_cols = c("text"),
+  regex_return_cols = c("icpsr")
+)
+
+kable(head(result_advanced))
+```
+
 Explanation: - `date_col`, `date_start`, `date_end`: filter rows by
 date. - `remove_acronyms`: skip patterns like “NASA” or “USA”. You can
 combine these filters with any subset of columns for flexible outputs. —
+
+### Named Entity Recognition (NER) Validation
+
+[`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
+optionally supports validation using Named Entity Recognition (NER).
+When `use_ner = TRUE`, the function uses the `spacyr` package to confirm
+that regex matches correspond to actual named entities in the text.
+
+Two arguments used for this behavior:
+
+- `use_ner`: Logical; if `TRUE`, validates matches using `spacyr` Named
+  Entity Recognition.
+- `ner_entity_types`: Character vector specifying which entity types to
+  retain. For example, `"ORG"` keeps only organization entities.
+
+Example:
+
+``` r
+result_ner <- regextable::extract(
+  data = cr2007_03_01,
+  regex_table = members,
+  use_ner = TRUE,
+  ner_entity_types = c("PERSON"),
+  data_return_cols = "text",
+  regex_return_cols = "icpsr"
+)
+```
 
 ### Parallel Matching
 

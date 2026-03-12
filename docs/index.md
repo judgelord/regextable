@@ -125,6 +125,11 @@ per match.
   first match to find at most one match per row.
 - **`cl`**: (default `NULL`) A cluster object or integer specifying
   child processes for parallel evaluation (ignored on Windows).
+- **`use_ner`**: (default `FALSE`) If TRUE, uses the ‘spacyr’ package to
+  validate that matches are actual Named Entities (e.g., organizations).
+  Requires ‘spacyr’ to be installed and initialized.
+- **`ner_entity_types`**: (default `c("ORG")`) Character vector; the
+  types of Named Entities to keep if `use_ner` is TRUE.
 
 ### Returns
 

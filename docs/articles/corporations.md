@@ -53,6 +53,8 @@ project_2025_url <- "https://raw.githubusercontent.com/judgelord/corporations/ma
 tmp <- tempfile(fileext = ".rda")
 download.file(project_2025_url, tmp, mode = "wb")
 load(tmp)
+unlink(tmp)
+remove(tmp, project_2025_url)
 kable(head(project_2025_coalition_and_contributors))
 ```
 
@@ -80,7 +82,6 @@ corp_df <- extract(data = project_2025_coalition_and_contributors,
                    data_return_cols = "organization",
                    remove_acronyms = TRUE,
                    use_ner = TRUE)
-
 kable(head(corp_df))
 ```
 
