@@ -94,19 +94,17 @@ extract <- function(data,
   chk::chk_character(ner_entity_types)
   
   if (use_ner) {
-    if (requireNamespace("spacyr", quietly = TRUE)) {
-      entities <- tryCatch({
-        spacyr::spacy_extract_entity(matched_texts)
-      }, error = function(e) {
-        warning("NER extraction failed, skipping validation")
-        NULL
-      })
-      
-      if (!is.null(entities)) {
-        # filter matches using NER
-      }
-    } else {
-      warning("spacyr not installed; skipping NER validation")
+    if (!requireNamespace("spacyr", quietly = TRUE)) {
+      message("WARNING: The 'spacyr' package is not installed. Setting use_ner to FALSE.")
+      use_ner <- FALSE
+    }
+    
+    valid_spacy_tags <- c("PERSON", "NORP", "FAC", "ORG", "GPE", "LOC", "PRODUCT",
+                          "EVENT", "WORK_OF_ART", "LAW", "LANGUAGE", "DATE",
+                          "TIME", "PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL")
+    if (!all(ner_entity_types %in% valid_spacy_tags)) {
+      message("WARNING: One or more 'ner_entity_types' are not standard spaCy tags. 
+              If you are not using a custom model, check for typos.")
     }
   }
   
@@ -220,7 +218,7 @@ extract <- function(data,
     entities <- tryCatch({
       spacyr::spacy_extract_entity(matched_texts)
     }, error = function(e) {
-      warning("NER extraction failed. Returning unvalidated matches. Did you run spacyr::spacy_initialize()?")
+      message("WARNING: NER extraction failed. Returning unvalidated matches. Did you run spacyr::spacy_initialize()?")
       return(NULL)
     })
     

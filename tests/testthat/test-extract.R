@@ -251,3 +251,42 @@ test_that("verbose warning for long input text", {
   
   expect_message(extract(df, "text", regex_table, verbose = TRUE))
 })
+
+test_that("use_ner runs without error", {
+  skip_if_not_installed("spacyr")
+  skip_on_cran()
+  
+  spacyr::spacy_initialize()
+  
+  df <- data.frame(text = "Apple hired John", stringsAsFactors = FALSE)
+  regex_table <- data.frame(pattern = c("Apple", "John"))
+  
+  expect_no_error(
+    extract(df, "text", regex_table, use_ner = TRUE, verbose = FALSE)
+  )
+  
+  spacyr::spacy_finalize()
+})
+
+test_that("ner_entity_types argument works", {
+  skip_if_not_installed("spacyr")
+  skip_on_cran()
+  
+  spacyr::spacy_initialize()
+  
+  df <- data.frame(text = "Apple hired John", stringsAsFactors = FALSE)
+  regex_table <- data.frame(pattern = c("Apple", "John"))
+  
+  result <- extract(
+    df,
+    "text",
+    regex_table,
+    use_ner = TRUE,
+    ner_entity_types = c("ORG", "PERSON"),
+    verbose = FALSE
+  )
+  
+  expect_true(nrow(result) >= 0)
+  
+  spacyr::spacy_finalize()
+})
