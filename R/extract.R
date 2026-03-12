@@ -98,10 +98,9 @@ extract <- function(data,
       message("WARNING: The 'spacyr' package is not installed. Setting use_ner to FALSE.")
       use_ner <- FALSE
     }
-    
-    valid_spacy_tags <- c("PERSON", "NORP", "FAC", "ORG", "GPE", "LOC", "PRODUCT",
-                          "EVENT", "WORK_OF_ART", "LAW", "LANGUAGE", "DATE",
-                          "TIME", "PERCENT", "MONEY", "QUANTITY", "ORDINAL", "CARDINAL")
+    valid_spacy_tags <- c("CARDINAL", "DATE", "EVENT", "FAC", "GPE", "LANGUAGE", "LAW",
+                          "LOC", "MONEY", "NORP", "ORDINAL", "ORG", "PERCENT", "PERSON",
+                          "PRODUCT", "QUANTITY", "TIME", "WORK_OF_ART")
     if (!all(ner_entity_types %in% valid_spacy_tags)) {
       message("WARNING: One or more 'ner_entity_types' are not standard spaCy tags. 
               If you are not using a custom model, check for typos.")
@@ -211,9 +210,8 @@ extract <- function(data,
   if (use_ner) {
     if (verbose) message("Validating matches using Named Entity Recognition (NER)...")
     
-    unique_rows <- unique(matches_found$row_id)
-    matched_texts <- text_raw[unique_rows]
-    names(matched_texts) <- as.character(unique_rows)
+    matched_texts <- text_raw[matches_found$row_id]
+    names(matched_texts) <- as.character(matches_found$row_id)
     
     entities <- tryCatch({
       spacyr::spacy_extract_entity(matched_texts)
