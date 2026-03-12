@@ -54,7 +54,7 @@ result <- regextable::extract(
 kable(head(result))
 
 
-## ----eval = FALSE, include= FALSE---------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 # result_advanced <- extract(
 #   data = cr2007_03_01,
 #   regex_table = members,
@@ -67,6 +67,17 @@ kable(head(result))
 # )
 # 
 # kable(head(result_advanced))
+
+
+## ----eval = FALSE-------------------------------------------------------------
+# result_ner <- regextable::extract(
+#   data = cr2007_03_01,
+#   regex_table = members,
+#   use_ner = TRUE,
+#   ner_entity_types = c("PERSON"),
+#   data_return_cols = "text",
+#   regex_return_cols = "icpsr"
+# )
 
 
 ## ----eval=FALSE---------------------------------------------------------------
