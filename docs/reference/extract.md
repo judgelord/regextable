@@ -19,7 +19,9 @@ extract(
   do_clean_text = TRUE,
   verbose = TRUE,
   unique_match = FALSE,
-  cl = NULL
+  cl = NULL,
+  use_ner = FALSE,
+  ner_entity_types = c("ORG")
 )
 ```
 
@@ -86,6 +88,17 @@ extract(
   or an integer to indicate number of child-processes (integer values
   are ignored on Windows) for parallel evaluations. Passed to
   [`pbapply::pblapply()`](https://peter.solymos.org/pbapply/reference/pbapply.html).
+
+- use_ner:
+
+  Logical; if TRUE, uses the 'spacyr' package to validate that matches
+  are actual Named Entities (e.g., organizations). Requires 'spacyr' to
+  be installed and initialized.
+
+- ner_entity_types:
+
+  Character vector; the types of Named Entities to keep if `use_ner` is
+  TRUE. Default is "ORG".
 
 ## Value
 

@@ -23,54 +23,24 @@ library(stringr)
 
 ### Regex Table of Corporations
 
-The corporations_regex table contains corporations, their common
-aliases, ticker symbols, and reference sources used for matching and
-standardization. The aliases column includes alternative names,
+The corporations_regex table contains a sample of corporations, their
+common aliases, ticker symbols, and reference sources used for matching
+and standardization. The aliases column includes alternative names,
 abbreviations, or common variants for each corporation to ensure
 comprehensive matching.
 
 ``` r
-corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_crosswalk.csv", stringsAsFactors = FALSE)
-
-# Clean aliases and create pattern
-
-corporations_regex$aliases <- tolower(corporations_regex$aliases)
-suffixes <- c(
-  "\\binc\\b", "\\bcorp\\b", "\\bcorporation\\b",
-  "\\bllc\\b", "\\blp\\b", "\\bltd\\b", "\\bincorporated\\b"
-)
-suffix_pattern <- paste0("(?:", paste(suffixes, collapse = "|"), ")")
-corporations_regex$aliases <- gsub(
-  paste0("[,.]?\\s*", suffix_pattern, "[.]?"),
-  "",
-  corporations_regex$aliases,
-  perl = TRUE
-)
-corporations_regex$aliases <- gsub("[[:punct:]]+$", "", corporations_regex$aliases)
-corporations_regex$aliases <- gsub("\\s+", " ", corporations_regex$aliases)
-corporations_regex$aliases <- trimws(corporations_regex$aliases)
-pbapply::pboptions(type = "none")
-corporations_regex$pattern <- pbapply::pbsapply(corporations_regex$aliases, function(x){
-  parts <- unlist(strsplit(x, "\\|"))
-  parts <- trimws(parts)
-  parts <- parts[nchar(parts) > 1]
-  parts <- unique(parts)
-  parts <- parts[order(nchar(parts), decreasing = TRUE)]
-  paste(parts, collapse="|")
-})
-corporations_regex <- corporations_regex[nchar(corporations_regex$pattern) > 1, ]
-corporations_regex$pattern <- paste0("\\b(?:", corporations_regex$pattern, ")\\b")
-
+corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_regex.csv", stringsAsFactors = FALSE)
 kable(head(corporations_regex))
 ```
 
 | aliases | cik | FED_RSSD | ticker | naics | sources | pattern |
-|:---|---:|---:|:---|---:|:---|:---|
-| defined asset funds municipal invt tr fd new york ser 33 | 3 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd new york ser 33)\b |
-| corporate income fund seventy ninth short term series | 13 | NA |  | NA | cik | \b(?:corporate income fund seventy ninth short term series)\b |
-| defined asset funds municipal invt tr fd mon pymt ser 155 | 14 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd mon pymt ser 155)\b |
-| defined asset funds municipal invt tr fd mon pymt ser 156 | 17 | NA |  | NA | cik | \b(?:defined asset funds municipal invt tr fd mon pymt ser 156)\b |
-| nuveen tax exempt unit trust series 169 national trust 169 | 18 | NA |  | NA | cik | \b(?:nuveen tax exempt unit trust series 169 national trust 169)\b |
+|:---|---:|:---|:---|---:|:---|:---|
+| booz allen & hamilton&#124;booz allen hamilton&#124;booz allen hamilton | 13222 | NA |  | NA | cik | \b(?:booz allen & hamilton&#124;booz allen hamilton)\b |
+| taft stettinius & hollister | 909789 | NA |  | NA | cik | \b(?:taft stettinius & hollister)\b |
+| case&#124;case | 922321 | NA |  | NA | cik | \b(?:case)\b |
+| young america | 1058951 | NA |  | NA | cik | \b(?:young america)\b |
+| alliance | 1086796 | NA |  | NA | cik | \b(?:alliance)\b |
 
 ### Data Corporations
 
@@ -108,15 +78,16 @@ corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,
                    data_return_cols = "organization",
-                   remove_acronyms = TRUE)
+                   remove_acronyms = TRUE,
+                   use_ner = TRUE)
 
 kable(head(corp_df))
 ```
 
 | row_id | organization | pattern | match |
 |---:|:---|:---|:---|
-| 2 | Alliance Defending Freedom | \b(?:alliance)\b | Alliance |
 | 3 | American Accountability Foundation | \b(?:american)\b | American |
 | 4 | American Center for Law and Justice | \b(?:american)\b | American |
 | 5 | American Compass | \b(?:american)\b | American |
 | 5 | American Compass | \b(?:urban compass&#124;compass)\b | Compass |
+| 7 | American Cornerstone Institute | \b(?:american)\b | American |
