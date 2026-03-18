@@ -126,22 +126,21 @@ are returned, one per match.
 - **`use_ner`**: (default `FALSE`) If TRUE, uses the ‘spacyr’ package to
   validate that matches are actual Named Entities (e.g., organizations).
   Requires ‘spacyr’ to be installed and initialized.
-- **`ner_entity_types`**: (default `c("ORG")`) Character vector; the
-  types of Named Entities to keep if `use_ner` is TRUE.
+- **`ner_entity_types`**: (default c(“ORG”)) Character vector; the types
+  of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”,
+  “PERSON”, “GPE”, “LAW”).
 
 ### Returns
 
 A data frame with one row per match, including:
 
 - `row_id`: the internal row number of the text in the input data
-- Optional columns from the input data (if data_return_cols specified)
-- Optional columns from the regex table (if regex_return_cols specified)
 - `pattern`: the regex pattern matched
 - `match`: the substring matched in the text
-- `pattern`, the first regex pattern matched in each row
-- `row_id`, the row number of the text
-- Additional columns from `data` specified in `data_return_cols`
-- Additional columns from `regex_table` specified in `regex_return_cols`
+- Additional columns from the input `data` (if `data_return_cols`
+  specified)
+- Additional columns from the regex `table` (if `regex_return_cols`
+  specified)
 
 ### Basic Usage
 
