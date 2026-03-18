@@ -210,18 +210,17 @@ extract <- function(data,
   if (use_ner) {
     if (verbose) message("Validating matches using Named Entity Recognition (NER)...")
 
-    matched_texts <- text_raw[matches_found$row_id]
-    names(matched_texts) <- as.character(matches_found$row_id)
+    unique_row_ids <- unique(matches_found$row_id)
+    matched_texts <- text_raw[unique_row_ids]
+    names(matched_texts) <- as.character(unique_row_ids)
 
     entities <- tryCatch(
       {
         spacyr::spacy_extract_entity(matched_texts)
-      },
-      error = function(e) {
-        warning("NER extraction failed. Returning unvalidated matches. Did you run spacyr::spacy_initialize()?")
+      },error = function(e) {
+        warning(paste("NER extraction failed. The exact error was:", e$message))
         return(NULL)
-      }
-    )
+      })
 
     if (!is.null(entities)) {
       valid_entities <- entities[entities$ent_type %in% ner_entity_types, ]
