@@ -217,10 +217,12 @@ extract <- function(data,
     entities <- tryCatch(
       {
         spacyr::spacy_extract_entity(matched_texts)
-      },error = function(e) {
+      },
+      error = function(e) {
         warning(paste("NER extraction failed. The exact error was:", e$message))
         return(NULL)
-      })
+      }
+    )
 
     if (!is.null(entities)) {
       valid_entities <- entities[entities$ent_type %in% ner_entity_types, ]
