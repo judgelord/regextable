@@ -260,9 +260,14 @@ extract <- function(data,
     )
   }
 
+  data_cols_to_join <- "row_id"
+  if (!is.null(data_return_cols)) {
+    data_cols_to_join <- c("row_id", data_return_cols[data_return_cols %in% names(data)])
+  }
+  
   result <- dplyr::left_join(
     matches_found,
-    data,
+    data[, data_cols_to_join, drop = FALSE],
     by = "row_id"
   )
 
