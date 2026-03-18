@@ -174,7 +174,7 @@ extract <- function(data,
   text_raw <- data[[col_name]]
   text_search <- text_raw
   
-  if (do_clean_text && exists("clean_text", mode = "function")) {
+  if (do_clean_text) {
     text_search <- clean_text(text_search)
   }
   
