@@ -39,7 +39,7 @@ kable <- function(x){
 
 ### Introduction
 
-This vignette demonstrates how to extract sub agency names using a regex lookup table of agencies, sub agency names, sections, departments, subagency_nmae, and other_aliases The `regextable::extract()` workflow allows consistent identification of corporation names across datasets, even when multiple aliases or variants are used.
+This vignette demonstrates how to extract sub-agency names using a regex lookup table that includes agencies, sub-agency names, sections, and departments. The regextable::extract() function provides a consistent workflow for identifying sub-agency names across different texts.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -52,15 +52,36 @@ library(tibble)
 library(stringr)
 ```
 
+### Agencies Data File
+
+The `agencies_by_section` table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization.
+
 ```{r}
 load("/Users/shirl/Downloads/agencies_by_section.rda")
 kable(head(agencies_regex))
 ```
 
+### Body Data Files
+
+The `body_parsed` dataset contains text sections along with associated organizational metadata. Each row includes the full text, the section and department it belongs to, the agency and sub-agency names, sub-agency acronyms, and any detected mentions of agencies or acronyms.
 
 ```{r}
 load("/Users/shirl/Downloads/body_parsed.rda")
 kable(head(racialized_terms))
 ```
 
+### Extracting Sub-Agency Names from Body Texts
 
+The `extract()` function searches the text column of the dataset, `body_parsed` using patterns from the `subagency_name` column in the `agencies_by_section` regex table. It returns the matching sub-agency names for each text entry and performs Named Entity Recognition (NER) to validate that matches correspond to actual organizational entities. Additionally, it returns related columns from the dataset, such as text and department, and metadata from the regex table, such as agency.
+
+```{r}
+agencies_df <- extract(
+  data = body_parsed,
+  col_name = "text",
+  regex_table = agencies_by_section,
+  pattern_col = "subagency_name",
+  data_return_cols = c("text", "department"),
+  regex_return_cols = c("agency"),
+  use_ner = TRUE
+)
+```
