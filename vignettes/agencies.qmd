@@ -81,4 +81,5 @@ agencies_df <- extract(
   regex_return_cols = c("agency"),
   use_ner = TRUE
 )
+kable(head(agencies_df))
 ```
