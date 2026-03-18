@@ -20,18 +20,15 @@ knitr::opts_chunk$set(
   message = FALSE,
   tidy = FALSE,
   fig.align = 'center',
-  fig.path = "figures/agencies-",
   R.options = list(width = 120)
 )
 
-kable <- function(x){
+kable <- function(x, ...){
   if (knitr::is_latex_output()) {
-    head(x, 5) |>
-      knitr::kable(booktabs = TRUE, format = 'latex') |>
+    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
-    head(x, 5) |>
-      knitr::kable(escape = TRUE) |>
+    knitr::kable(x, escape = TRUE, ...) |>
       kableExtra::kable_styling()
   }
 }
@@ -39,7 +36,7 @@ kable <- function(x){
 
 ### Introduction
 
-This vignette demonstrates how to extract sub-agency names using a regex lookup table that includes agencies, sub-agency names, sections, and departments. The regextable::extract() function provides a consistent workflow for identifying sub-agency names across different texts.
+This vignette demonstrates how to extract sub-agency names from texts using a regex lookup table that includes agencies, sub-agency names, sections, and departments. The `regextable::extract()` function provides a consistent workflow for identifying sub-agency names across different texts.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -58,7 +55,7 @@ The `agencies_by_section` table contains a sample of agencies, including their s
 
 ```{r}
 load("/Users/shirl/Downloads/agencies_by_section.rda")
-kable(head(agencies_regex))
+kable(head(agencies_by_section))
 ```
 
 ### Body Data Files
@@ -67,12 +64,12 @@ The `body_parsed` dataset contains text sections along with associated organizat
 
 ```{r}
 load("/Users/shirl/Downloads/body_parsed.rda")
-kable(head(racialized_terms))
+kable(head(body_parsed))
 ```
 
 ### Extracting Sub-Agency Names from Body Texts
 
-The `extract()` function searches the text column of the dataset, `body_parsed` using patterns from the `subagency_name` column in the `agencies_by_section` regex table. It returns the matching sub-agency names for each text entry and performs Named Entity Recognition (NER) to validate that matches correspond to actual organizational entities. Additionally, it returns related columns from the dataset, such as text and department, and metadata from the regex table, such as agency.
+The `extract()` function searches the `text` column of the `body_parsed` dataset using patterns from the `subagency_name` column in the `agencies_by_section` regex table. It returns the matching sub-agency names for each text entry and performs Named Entity Recognition (NER) to validate that matches correspond to actual organizational entities. Additionally, it returns related columns from the dataset (`text` and `department`), as well as a column from the regex table (`agency`).
 
 ```{r}
 agencies_df <- extract(

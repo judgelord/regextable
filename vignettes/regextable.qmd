@@ -17,20 +17,16 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   tidy = FALSE,
-  fig.align = "center",
-  fig.path = "man/figures/vignette-",
+  fig.align = 'center',
   R.options = list(width = 120)
 )
 
-# Format kable tables
-kable <- function(x) {
+kable <- function(x, ...){
   if (knitr::is_latex_output()) {
-    head(x, 5) |>
-      knitr::kable(booktabs = TRUE, format = "latex") |>
+    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
-    head(x, 5) |>
-      knitr::kable(escape = TRUE) |>
+    knitr::kable(x, escape = TRUE, ...) |>
       kableExtra::kable_styling()
   }
 }
