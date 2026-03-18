@@ -290,3 +290,43 @@ test_that("ner_entity_types argument works", {
   
   spacyr::spacy_finalize()
 })
+
+test_that("use_ner handles multiple matches per row without duplicate docname error", {
+  skip_if_not_installed("spacyr")
+  skip_on_cran()
+  
+  spacyr::spacy_initialize()
+  
+  df <- data.frame(id = 1, text = "Apple and Microsoft are tech giants.")
+  regex_table <- data.frame(pattern = c("Apple", "Microsoft"))
+  
+  expect_no_error({
+    result <- extract(df, "text", regex_table, use_ner = TRUE, unique_match = FALSE, verbose = FALSE)
+  })
+  
+  expect_equal(nrow(result), 2)
+  spacyr::spacy_finalize()
+})
+
+test_that("use_ner accurately filters out non-entities", {
+  skip_if_not_installed("spacyr")
+  skip_on_cran()
+  
+  spacyr::spacy_initialize()
+  
+  df <- data.frame(
+    id = 1:2, 
+    text = c("Tim Cook works at Apple.", "I ate a green apple today.")
+  )
+  regex_table <- data.frame(pattern = "Apple")
+  
+  result <- extract(
+    df, "text", regex_table, 
+    use_ner = TRUE, ner_entity_types = "ORG", verbose = FALSE
+  )
+  
+  expect_equal(nrow(result), 1)
+  expect_equal(result$row_id, 1) 
+  
+  spacyr::spacy_finalize()
+})
