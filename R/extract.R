@@ -102,8 +102,8 @@ extract <- function(data,
       "LOC", "MONEY", "NORP", "ORDINAL", "ORG", "PERCENT", "PERSON",
       "PRODUCT", "QUANTITY", "TIME", "WORK_OF_ART"
     )
-    if (verbose && !all(ner_entity_types %in% valid_spacy_tags)) {
-      message("One or more 'ner_entity_types' are not standard spaCy tags.
+    if (!all(ner_entity_types %in% valid_spacy_tags)) {
+      warning("One or more 'ner_entity_types' are not standard spaCy tags.
               If you are not using a custom model, check for typos.")
     }
   }
