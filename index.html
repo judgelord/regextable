@@ -173,7 +173,7 @@
 <li>
 <strong><code>use_ner</code></strong>: (default <code>FALSE</code>) If TRUE, uses the ‘spacyr’ package to validate that matches are actual Named Entities (e.g., organizations). Requires ‘spacyr’ to be installed and initialized.</li>
 <li>
-<strong><code>ner_entity_types</code></strong>: (default <code>c("ORG")</code>) Character vector; the types of Named Entities to keep if <code>use_ner</code> is TRUE.</li>
+<strong><code>ner_entity_types</code></strong>: (default c(“ORG”)) Character vector; the types of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”, “PERSON”, “GPE”, “LAW”).</li>
 </ul>
 </div>
 <div class="section level3">
@@ -183,20 +183,12 @@
 <ul>
 <li>
 <code>row_id</code>: the internal row number of the text in the input data</li>
-<li>Optional columns from the input data (if data_return_cols specified)</li>
-<li>Optional columns from the regex table (if regex_return_cols specified)</li>
 <li>
 <code>pattern</code>: the regex pattern matched</li>
 <li>
 <code>match</code>: the substring matched in the text</li>
-<li>
-<code>pattern</code>, the first regex pattern matched in each row</li>
-<li>
-<code>row_id</code>, the row number of the text</li>
-<li>Additional columns from <code>data</code> specified in <code>data_return_cols</code>
-</li>
-<li>Additional columns from <code>regex_table</code> specified in <code>regex_return_cols</code>
-</li>
+<li>Additional columns from the input <code>data</code> (if <code>data_return_cols</code> specified)</li>
+<li>Additional columns from the regex <code>table</code> (if <code>regex_return_cols</code> specified)</li>
 </ul>
 </div>
 <div class="section level3">

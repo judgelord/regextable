@@ -41,6 +41,7 @@ kable(head(corporations_regex))
 | case&#124;case | 922321 | NA |  | NA | cik | \b(?:case)\b |
 | young america | 1058951 | NA |  | NA | cik | \b(?:young america)\b |
 | alliance | 1086796 | NA |  | NA | cik | \b(?:alliance)\b |
+| boyden | 1124262 | NA |  | NA | cik | \b(?:boyden)\b |
 
 ### Data Corporations
 
@@ -65,6 +66,7 @@ kable(head(project_2025_coalition_and_contributors))
 | Organization | American Accountability Foundation |  | Advisory Board Member |
 | Organization | American Center for Law and Justice |  | Advisory Board Member |
 | Organization | American Compass |  | Advisory Board Member |
+| Organization | The American Conservative |  | Advisory Board Member |
 
 ### Extracting Aliases from Corporation Crosswalk
 
@@ -92,3 +94,4 @@ kable(head(corp_df))
 | 5 | American Compass | \b(?:american)\b | American |
 | 5 | American Compass | \b(?:urban compass&#124;compass)\b | Compass |
 | 7 | American Cornerstone Institute | \b(?:american)\b | American |
+| 7 | American Cornerstone Institute | \b(?:cornerstone)\b | Cornerstone |

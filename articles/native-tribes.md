@@ -40,6 +40,7 @@ kable(head(tribes_regex))
 | American Indian Policy Institute (Arizona State University) | American Indian Policy Institute | https://nativeamericatoday.com/political-organizations-and-advocacy-groups/ | https://aipi.asu.edu/ |  | Center within University | Governance/Advocacy |
 | Center for Indian Law and Policy (Seattle University) | center for indian law and policy | Unmatched Commenters List | https://law.seattleu.edu/centers-and-institutes/center-for-indian-law-and-policy/ |  | Center within University | Law |
 | Center for Indigenous Research, Science, and Technology (Kansas University) | Center for Indigenous Research | Googling other organization | https://ipsr.ku.edu/cfirst/ |  | Center within University | Research |
+| Center for Native Peoples and the Environment (State University of New York) | Center for Native Peoples and the Environment | https://biamaps.doi.gov/resourceguide/tribes/index.html | https://www.esf.edu/nativepeoples/index.php |  | Center within University | Environment/Resources |
 
 ### Extracting Tribe Names from Directory
 
@@ -97,6 +98,7 @@ kable(head(tribes_df))
 | Pacific | Agua Caliente Band of Cahuilla Indians | Reid D. Milanovich (Chairman) | \(760\) 699-6800 | \(760\) 699-6919 | 5401 Dinah Shore Dr Palm Springs, CA 92264-5970 | \|Federally Recognize | \|CA-45 |
 | Western | Ak-Chin Indian Community | Robert Miguel (Chairman) | \(520\) 568-1000 | \(520\) 568-1001 | 42507 W Peters and Nall Road Maricopa, AZ 85138-394 | \|Federally Recognize | \|AZ-07 |
 | Alaska | Akiachak Native Community (IRA) | Phillip Peters, Sr. (President) | \(907\) 825-4626 | \(907\) 825-4029 | PO Box 70 Akiachak, AK 99551-0070 | \|Federally Recognize | \|AK-01 |
+| Alaska | Akiak Native Community (IRA) | Ivan Ivan (Chief) | \(907\) 765-7112 | \(907\) 765-7512 | PO Box 52127 Akiak, AK 99552-0127 | \|Federally Recognize | \|AK-01 |
 
 ### Extracting Tribe Names from Directory
 
@@ -130,3 +132,4 @@ kable(head(tribe_directory_df))
 | 2 | Agdaagux Tribe of King Cove | Federal Register (https://www.federalregister.gov/documents/2023/01/12/2023-00504/indian-entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of) | Agdaagux | Agdaagux |
 | 3 | Agua Caliente Band of Cahuilla Indians | Federal Register (https://www.federalregister.gov/documents/2023/01/12/2023-00504/indian-entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of) | Agua Caliente | Agua Caliente |
 | 5 | Akiachak Native Community (IRA) | Federal Register (https://www.federalregister.gov/documents/2023/01/12/2023-00504/indian-entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of) | Akiachak | Akiachak |
+| 7 | Alabama-Coushatta Tribe of Texas | Federal Register (https://www.federalregister.gov/documents/2023/01/12/2023-00504/indian-entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of) | Coushatta Tribe | Coushatta Tribe |

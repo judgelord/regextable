@@ -17,6 +17,7 @@
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="agencies_files/libs/quarto-html/popper.min.js"></script><script src="agencies_files/libs/quarto-html/tippy.umd.min.js"></script><link href="agencies_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="agencies_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<script src="agencies_files/libs/kePrint-0.0.1/kePrint.js"></script><link href="agencies_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Agencies Regex Table">
 <meta property="og:image" content="https://judgelord.github.io/regextable/logo.png">
 </head>
@@ -56,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Agencies Regex Table</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-16</p>
+      <p class="date">2026-03-18</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/agencies.qmd" class="external-link"><code>vignettes/agencies.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -67,7 +68,10 @@
 
 
 
-    <p>Install and load the package:</p>
+    <section class="level3"><h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h3>
+<p>This vignette demonstrates how to extract sub-agency names from texts using a regex lookup table that includes agencies, sub-agency names, sections, and departments. The <code><a href="../reference/extract.html">regextable::extract()</a></code> function provides a consistent workflow for identifying sub-agency names across different texts.</p>
+<p>Install and load the package:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span>
@@ -78,26 +82,232 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
+</section><section class="level3"><h3 id="agencies-data-file">Agencies Data File<a class="anchor" aria-label="anchor" href="#agencies-data-file"></a>
+</h3>
+<p>The <code>agencies_by_section</code> table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#corp_url &lt;- "https://raw.githubusercontent.com/judgelord/corporations/main/data/corporations_data_sample.rda"</span></span>
-<span><span class="co">#tmp &lt;- tempfile(fileext = ".rda")</span></span>
-<span><span class="co">#download.file(corp_url, tmp, mode = "wb")</span></span>
-<span><span class="co">#load(tmp)</span></span>
-<span><span class="co">#regex_table &lt;- corporations_data_sample</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/agencies_by_section.rda"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">agencies_by_section</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">section</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">department</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">agency</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">subagency_name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">subagency_acronym</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CHIEF OF STAFF</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">CHIEF OF STAFF</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DEPUTY CHIEFS OF STAFF</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">DEPUTY CHIEFS OF STAFF</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PRINCIPAL DEPUTY CHIEFS OF STAFF</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">DEPUTY CHIEFS OF STAFF</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SENIOR ADVISERS</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">SENIOR ADVISERS</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OFFICE OF WHITE HOUSE COUNSEL</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">OFFICE OF WHITE HOUSE COUNSEL</td>
+<td style="text-align: left;">NA</td>
+</tr>
+</tbody>
+</table>
 </div>
+</div>
+</section><section class="level3"><h3 id="body-data-files">Body Data Files<a class="anchor" aria-label="anchor" href="#body-data-files"></a>
+</h3>
+<p>The <code>body_parsed</code> dataset contains text sections along with associated organizational metadata. Each row includes the full text, the section and department it belongs to, the agency and sub-agency names, sub-agency acronyms, and any detected mentions of agencies or acronyms.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#data_url &lt;- "https://raw.githubusercontent.com/judgelord/rulemaking/main/data/UnifiedAgenda.Rdata"</span></span>
-<span><span class="co">#tmp2 &lt;- tempfile(fileext = ".Rdata")</span></span>
-<span><span class="co">#download.file(data_url, tmp2, mode = "wb")</span></span>
-<span><span class="co">#load(tmp2)</span></span>
-<span><span class="co">#data_table &lt;- UnifiedAgenda</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/body_parsed.rda"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">body_parsed</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">section</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">department</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">agency</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">subagency_name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">subagency_acronym</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">agencies_mentioned</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">acronyms_mentioned</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Section One</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">POLICY COORDINATING COMMITTEE</td>
+<td style="text-align: left;">PCC</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Section One</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">NATIONAL SECURITY COUNCIL</td>
+<td style="text-align: left;">NSC</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Section One</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">DOMESTIC POLICY COUNCIL</td>
+<td style="text-align: left;">DPC</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Section One</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">COUNCIL ON ENVIRONMENTAL QUALITY</td>
+<td style="text-align: left;">NEPA</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Section One</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">DEPARTMENT OF LABOR</td>
+<td style="text-align: left;">DOL</td>
+<td style="text-align: left;">EQUAL EMPLOYMENT OPPORTUNITY COMMISSION</td>
+<td style="text-align: left;">EEOC</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NULL</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+</tbody>
+</table>
 </div>
-
-
-
-<script id="quarto-html-after-body" type="application/javascript">
+</div>
+</section><section class="level3"><h3 id="extracting-sub-agency-names-from-body-texts">Extracting Sub-Agency Names from Body Texts<a class="anchor" aria-label="anchor" href="#extracting-sub-agency-names-from-body-texts"></a>
+</h3>
+<p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>text</code> column of the <code>body_parsed</code> dataset using patterns from the <code>subagency_name</code> column in the <code>agencies_by_section</code> regex table. It returns the matching sub-agency names for each text entry and performs Named Entity Recognition (NER) to validate that matches correspond to actual organizational entities. Additionally, it returns related columns from the dataset (<code>text</code> and <code>department</code>), as well as a column from the regex table (<code>agency</code>).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">agencies_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">body_parsed</span>,</span>
+<span>  col_name <span class="op">=</span> <span class="st">"text"</span>,</span>
+<span>  regex_table <span class="op">=</span> <span class="va">agencies_by_section</span>,</span>
+<span>  pattern_col <span class="op">=</span> <span class="st">"subagency_name"</span>,</span>
+<span>  data_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span>, <span class="st">"department"</span><span class="op">)</span>,</span>
+<span>  regex_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"agency"</span><span class="op">)</span>,</span>
+<span>  use_ner <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">agencies_df</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">row_id</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">department</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">agency</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">match</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">Since the inaugural Administration of the late 18th century, citizens have chosen to devote both their time and their talent to defending and strengthening our nation by serving at the pleasure of the President. Their shared patriotic endeavor has proven to be a noble one, not least because the jobs in what is now known as the White House Office (WHO) are among the most demanding in all of government.</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">WHITE HOUSE OFFICE</td>
+<td style="text-align: left;">White House Office</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">The Chief of Staff’s first managerial task is to establish an organizational chart for the WHO. It should be simple and contain clear lines of authority and responsibility to avoid conflicts. It should also identify specific points of contact for each element of the government outside of the White House. These contacts should include the White House Liaisons who are selected by the Office of Presidential Personnel (PPO).</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">OFFICE OF PRESIDENTIAL PERSONNEL</td>
+<td style="text-align: left;">Office of Presidential Personnel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">18</td>
+<td style="text-align: left;">* The National Economic Council (NEC);</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">NATIONAL ECONOMIC COUNCIL</td>
+<td style="text-align: left;">National Economic Council</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">* The Domestic Policy Council (DPC); and</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">DOMESTIC POLICY COUNCIL</td>
+<td style="text-align: left;">Domestic Policy Council</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">20</td>
+<td style="text-align: left;">* The National Security Council (NSC).</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">NATIONAL SECURITY COUNCIL</td>
+<td style="text-align: left;">National Security Council</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">21</td>
+<td style="text-align: left;">The President is briefed on all of his policy priorities by his Cabinet and senior staff as directed by the chief. The chief—along with senior WHO staff—maps out the issues and themes that will be covered daily and weekly. The chief then works with the policy councils, the Cabinet, and the Office of Communications and Office of Legislative Affairs (OLA) to sequence and execute the rollout of policies and announcements. White House Counsel and senior advisers and senior counselors are also intimately involved.</td>
+<td style="text-align: left;">EXECUTIVE OFFICE OF THE PRESIDENT</td>
+<td style="text-align: left;">EOP</td>
+<td style="text-align: left;">OFFICE OF COMMUNICATIONS</td>
+<td style="text-align: left;">Office of Communications</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -180,7 +390,8 @@
       }
     }
   });
-  </script></main>
+  </script></main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
