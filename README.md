@@ -125,7 +125,9 @@ are returned, one per match.
   child processes for parallel evaluation (ignored on Windows).
 - **`use_ner`**: (default `FALSE`) If TRUE, uses the ‘spacyr’ package to
   validate that matches are actual Named Entities (e.g., organizations).
-  Requires ‘spacyr’ to be installed and initialized.
+  Requires ‘spacyr’ to be installed and initialized. Note: If ‘spacyr’
+  is missing or fails to initialize, the function will perform standard
+  regex matching and issue a warning.
 - **`ner_entity_types`**: (default c(“ORG”)) Character vector; the types
   of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”,
   “PERSON”, “GPE”, “LAW”).
