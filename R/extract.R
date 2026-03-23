@@ -219,26 +219,34 @@ extract <- function(data,
         spacyr::spacy_extract_entity(matched_texts)
       },
       error = function(e) {
-        warning(paste("NER extraction failed. The exact error was:", e$message))
+        warning(paste("NER extraction failed. The exact error was:", e$message, call. = FALSE))
         return(NULL)
       }
     )
 
     if (!is.null(entities)) {
       valid_entities <- entities[entities$ent_type %in% ner_entity_types, ]
-      ent_list <- split(valid_entities$text, valid_entities$doc_id)
-      valid_rows <- sapply(seq_len(nrow(matches_found)), function(i) {
-        r_id <- as.character(matches_found$row_id[i])
-        m_text <- matches_found$match[i]
-        doc_ents <- ent_list[[r_id]]
-        if (is.null(doc_ents)) {
-          return(FALSE)
-        }
-        any(grepl(tolower(m_text), tolower(doc_ents), fixed = TRUE))
-      })
 
-      matches_found <- matches_found[valid_rows, ]
+      if (nrow(valid_entities) == 0) {
+        matches_found <- matches_found[0, ]
+      } else {
+        ent_list <- split(valid_entities$text, valid_entities$doc_id)
+        valid_rows <- sapply(seq_len(nrow(matches_found)), function(i) {
+          r_id <- as.character(matches_found$row_id[i])
+          m_text <- trimws(tolower(matches_found$match[i]))
+          doc_ents <- ent_list[[r_id]]
+
+          if (is.null(doc_ents)) {
+            return(FALSE)
+          }
+          any(grepl(m_text, tolower(doc_ents), fixed = TRUE))
+        })
+
+        matches_found <- matches_found[valid_rows, ]
+      }
       if (verbose) message(sprintf("NER Validation complete. %d validated matches retained.", nrow(matches_found)))
+    } else {
+      if (verbose) message("Skipping NER validation and returning raw regex matches.")
     }
 
     if (nrow(matches_found) == 0) {
@@ -264,7 +272,7 @@ extract <- function(data,
   if (!is.null(data_return_cols)) {
     data_cols_to_join <- c("row_id", data_return_cols[data_return_cols %in% names(data)])
   }
-  
+
   result <- dplyr::left_join(
     matches_found,
     data[, data_cols_to_join, drop = FALSE],
