@@ -1,11 +1,11 @@
 #' @title Clean Text
-#' @description Cleans a character vector by converting text to lowercase,
-#' removing selected punctuation (plus signs, em dashes, exclamation
-#' points), normalizing commas, and removing whitespace.
+#' @description Cleans a character vector by converting to lowercase, 
+#' removing or replacing specific punctuation, normalizing commas, 
+#' and squishing excess whitespace.
 #' @param text Character vector to clean.
-#' @return Cleaned character vector.
+#' @return A cleaned character vector.
 #' @examples
-#' clean_text(c("Hello  World!", "This is\tR"))
+#' clean_text(c("Hello  World!?", "This--is\tR.\nTesting: 1, 2, , 3;"))
 #' @importFrom dplyr %>%
 #' @importFrom stringr str_to_lower str_remove_all str_replace_all str_replace str_squish
 #' @export
