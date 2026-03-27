@@ -1,5 +1,5 @@
-#' @title Extract pattern matches from text
-#' @description Uses a regex lookup table to extract pattern matches.
+#' @title Extract Regex Pattern Matches from Text Data
+#' @description Matches text against a table of regular expressions and returns extracted matches with optional metadata.
 #'
 #' @details
 #' Pattern matching is performed using R's regular expression engine and is
@@ -7,11 +7,11 @@
 #' in `regex_table` and returns matches based on the `unique_match` parameter.
 #'
 #' @param data A data frame or character vector containing the text to search.
-#' @param col_name Column name in data frame containing text to search through.
-#' @param regex_table A regex lookup table with a pattern column.
-#' @param pattern_col Name of the regex pattern column in regex_table.
-#' @param data_return_cols Optional vector of column names to include from 'data'.
-#' @param regex_return_cols Optional vector of column names to include from 'regex_table'.
+#' @param col_name Character string specifying the column in `data` that contains text to search.
+#' @param regex_table A data frame containing regular expression patterns and optional metadata columns.
+#' @param pattern_col Character string specifying the column in `regex_table` that contains regex patterns.
+#' @param data_return_cols Optional vector of column names to include from `data`.
+#' @param regex_return_cols Optional vector of column names to include from `regex_table`.
 #' @param date_col Optional column in 'data' for date filtering.
 #' @param date_start Optional start date for filtering 'data'.
 #' @param date_end Optional end date for filtering 'data'.
@@ -23,13 +23,13 @@
 #' @param use_ner Logical; if TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized.
 #' @param ner_entity_types Character vector; the types of Named Entities to keep if `use_ner` is TRUE. Default is "ORG".
 #'
-#' @return A tibble (data frame) with columns:
+#' @return A tibble with the following columns:
 #' \itemize{
-#'   \item `row_id` Integer row identifier corresponding to the input data
-#'   \item  Additional columns from `data` if `data_return_cols` specified
-#'   \item  Additional columns from `regex_table` if `regex_return_cols` specified
-#'   \item `pattern` The matched regex pattern(s)
-#'   \item `match` The specific text extracted from the data (original casing preserved)
+#'   \item \code{row_id}: Integer identifier corresponding to rows in the input data.
+#'   \item Additional columns from \code{data} if \code{data_return_cols} is specified.
+#'   \item Additional columns from \code{regex_table} if \code{regex_return_cols} is specified.
+#'   \item \code{pattern}: The matched regular expression pattern(s).
+#'   \item \code{match}: The extracted text from the data (original casing preserved).
 #' }
 #' @examples
 #' # Create sample data
@@ -451,7 +451,7 @@ extract_matches_one_internal <- function(text_search,
     }
   }
 
-  # Create result dataframe
+  # Create result data frame
   result_indices <- which(!is.na(matched_patterns))
 
   if (length(result_indices) == 0) {
