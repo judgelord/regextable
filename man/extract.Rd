@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{extract}
 \alias{extract}
-\title{Extract pattern matches from text}
+\title{Extract Regex Pattern Matches from Text Data}
 \usage{
 extract(
   data,
@@ -24,50 +24,57 @@ extract(
 )
 }
 \arguments{
-\item{data}{A data frame or character vector containing the text to search.}
+\item{data}{A data frame or character vector containing the text to search. If a character vector is provided, it is internally converted to a data frame and \code{col_name} is ignored.}
 
-\item{col_name}{Column name in data frame containing text to search through.}
+\item{col_name}{Character string specifying the column in \code{data} that contains text to search. Default is "text".}
 
-\item{regex_table}{A regex lookup table with a pattern column.}
+\item{regex_table}{A data frame containing regular expression patterns and optional metadata columns.}
 
-\item{pattern_col}{Name of the regex pattern column in regex_table.}
+\item{pattern_col}{Character string specifying the column in \code{regex_table} that contains regex patterns. Default is "pattern".}
 
-\item{data_return_cols}{Optional vector of column names to include from 'data'.}
+\item{data_return_cols}{Optional vector of column names to include from \code{data}. Default is \code{NULL} (only \code{row_id} is returned).}
 
-\item{regex_return_cols}{Optional vector of column names to include from 'regex_table'.}
+\item{regex_return_cols}{Optional vector of column names to include from \code{regex_table}. Default is \code{NULL} (no metadata columns added).}
 
-\item{date_col}{Optional column in 'data' for date filtering.}
+\item{date_col}{Optional column in \code{data} for date filtering. If provided, rows are filtered by \code{date_start} and \code{date_end} before pattern matching.}
 
-\item{date_start}{Optional start date for filtering 'data'.}
+\item{date_start}{Optional start date (Date object or string like "YYYY-MM-DD") for filtering \code{data} when \code{date_col} is specified.}
 
-\item{date_end}{Optional end date for filtering 'data'.}
+\item{date_end}{Optional end date (Date object or string like "YYYY-MM-DD") for filtering \code{data} when \code{date_col} is specified.}
 
-\item{remove_acronyms}{Logical; if TRUE, removes all-uppercase patterns from regex_table.}
+\item{remove_acronyms}{Logical; if TRUE, removes patterns consisting only of uppercase letters (2 or more characters) from \code{regex_table}.}
 
 \item{do_clean_text}{Logical; if TRUE, applies basic text cleaning to the input before matching.}
 
 \item{verbose}{Logical; if TRUE, displays progress messages.}
 
-\item{unique_match}{Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.}
+\item{unique_match}{Logical; if TRUE, stops searching after the first match to
+find at most one match per row (evaluated in the order patterns appear in \code{regex_table}).
+If FALSE, returns all matches for all patterns.}
 
-\item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
+\item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer
+to indicate number of child processes (integer values are ignored on Windows).
+Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 
-\item{use_ner}{Logical; if TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized.}
+\item{use_ner}{Logical; if TRUE, uses the 'spacyr' package to validate that
+matches are actual Named Entities (e.g., organizations). Note: \code{spacyr}
+must be initialized (e.g., via \code{spacyr::spacy_initialize()}) before calling
+this function.}
 
 \item{ner_entity_types}{Character vector; the types of Named Entities to keep if \code{use_ner} is TRUE. Default is "ORG".}
 }
 \value{
-A tibble (data frame) with columns:
+A tibble with the following columns:
 \itemize{
-\item \code{row_id} Integer row identifier corresponding to the input data
-\item  Additional columns from \code{data} if \code{data_return_cols} specified
-\item  Additional columns from \code{regex_table} if \code{regex_return_cols} specified
-\item \code{pattern} The matched regex pattern(s)
-\item \code{match} The specific text extracted from the data (original casing preserved)
+\item \code{row_id}: Integer identifier corresponding to rows in the input data.
+\item Additional columns from \code{data} if \code{data_return_cols} is specified.
+\item Additional columns from \code{regex_table} if \code{regex_return_cols} is specified.
+\item \code{pattern}: The matched regular expression pattern(s).
+\item \code{match}: The extracted text from the data (original casing preserved).
 }
 }
 \description{
-Uses a regex lookup table to extract pattern matches.
+Matches text against a table of regular expressions and returns extracted matches with optional metadata.
 }
 \details{
 Pattern matching is performed using R's regular expression engine and is
