@@ -27,20 +27,21 @@ knitr::opts_chunk$set(
   R.options = list(width = 120)
 )
 ```
+
 ## Description 
 
 `regextable` extracts regular-expression-based pattern matches from a vector of text using a lookup table of regular expressions. It requires two inputs: 
 
-1. `data`: A vector of text to search (typically a data frame with a `text` column)
+1. `data`: A data frame containing a text column, or a character vector.
 2. `regex_table`: A lookup table (a data frame with a column of strings or regular expressions to search for, typically called `pattern`)
 
-For each matching substring, `regextable::extract` returns 
+For each text entry, `regextable::extract` returns:
+- the row number of the input `data`
+- the matched `pattern` 
+- the exact substring extracted from the text
+- Optionally, other metadata columns from `data` or `regex_table`
 
-- the row number of `data`  
-- the `pattern` 
-- the matched substring
-- Optionally, other columns in `data` or `regex_table`
-
+Users can choose to return *all* matches (resulting in multiple rows per text entry) or limit the output to just the first match found.
 ## Installation
 
 ```         
@@ -66,7 +67,7 @@ head(cr2007_03_01)
 
 ## Text cleaning
 
-Before matching, by default, `clean_text()` is applied to standardize text for better matching in messy text. It converts text to lowercase, removes excess punctuation, replaces line breaks and dashes with spaces, and collapses multiple spaces into a single space. Text cleaning is applied only during matching and does not modify the original input data. Users can disable this behavior by setting `do_clean_text = FALSE`.
+Before matching, by default, `clean_text()` is applied to standardize messy text. It converts text to lowercase, removes specific punctuation (`+`, `—`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. Text cleaning is applied only internally during matching and does not modify the original input data. Users can disable this behavior by setting `do_clean_text = FALSE`.
 
 ```{r}
 text <- "  HELLO---WORLD  "
@@ -87,7 +88,7 @@ print(cleaned_text)
 
 ### Optional Parameters
 
--   **`col_name`**: (default `"text"`) Column name in the data frame containing text to search through.
+-   **`col_name`**: (default `"text"`) Column name in the data frame containing text to search through. *(Note: If `data` is a character vector, it is internally converted to a data frame and this argument is ignored).*
 -   **`pattern_col`**: (default `"pattern"`) Name of the regex pattern column in `regex_table`.
 -   **`data_return_cols`**: (default `NULL`) Vector of additional columns from `data` to include in the output.
 -   **`regex_return_cols`**: (default `NULL`) Vector of additional columns from `regex_table` to include in the output.
@@ -118,12 +119,12 @@ The simplest use of `extract()` with only the required arguments and returned co
 This finds all matches in the text column using the provided regex table.
 
 ```{r}
-#Extract patterns using only required arguments
+# Extract patterns using only required arguments
 result <- extract(
   data = cr2007_03_01,
   regex_table = members,
   data_return_cols = c("text"),
-  regex_return_cols = c("icpsr") 
+  regex_return_cols = c("icpsr")
 )
 
 head(result)
@@ -139,7 +140,7 @@ This is useful when you want to narrow matches, disable text cleaning, control r
 result_advanced <- extract(
   data = cr2007_03_01,
   regex_table = members,
-  date_col = "date",               
+  date_col = "date",
   date_start = "2007-01-01",
   date_end = "2007-12-31",
   remove_acronyms = TRUE,

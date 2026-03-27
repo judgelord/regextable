@@ -10,13 +10,13 @@ clean_text(text)
 \item{text}{Character vector to clean.}
 }
 \value{
-Cleaned character vector.
+A cleaned character vector.
 }
 \description{
-Cleans a character vector by converting text to lowercase,
-removing selected punctuation (plus signs, em dashes, exclamation
-points), normalizing commas, and removing whitespace.
+Cleans a character vector by converting to lowercase,
+removing or replacing specific punctuation, normalizing commas,
+and squishing excess whitespace.
 }
 \examples{
-clean_text(c("Hello  World!", "This is\tR"))
+clean_text(c("Hello  World!?", "This--is\tR.\nTesting: 1, 2, , 3;"))
 }
