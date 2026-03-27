@@ -7,22 +7,22 @@
 #' in `regex_table` and returns matches based on the `unique_match` parameter.
 #'
 #' @param data A data frame or character vector containing the text to search.
-#' @param col_name Character string specifying the column in `data` that contains text to search.
+#' @param col_name Character string specifying the column in `data` that contains text to search. Default is "text".
 #' @param regex_table A data frame containing regular expression patterns and optional metadata columns.
-#' @param pattern_col Character string specifying the column in `regex_table` that contains regex patterns.
-#' @param data_return_cols Optional vector of column names to include from `data`.
-#' @param regex_return_cols Optional vector of column names to include from `regex_table`.
-#' @param date_col Optional column in 'data' for date filtering.
-#' @param date_start Optional start date for filtering 'data'.
-#' @param date_end Optional end date for filtering 'data'.
-#' @param remove_acronyms Logical; if TRUE, removes all-uppercase patterns from regex_table.
+#' @param pattern_col Character string specifying the column in `regex_table` that contains regex patterns. Default is "pattern".
+#' @param data_return_cols Optional vector of column names to include from `data`. Default is `NULL` (only `row_id` is returned).
+#' @param regex_return_cols Optional vector of column names to include from `regex_table`. Default is `NULL` (no metadata columns added).
+#' @param date_col Optional column in `data` for date filtering. If provided, rows are filtered by `date_start` and `date_end` before pattern matching.
+#' @param date_start Optional start date for filtering `data` when `date_col` is specified.
+#' @param date_end Optional end date for filtering `data` when `date_col` is specified.
+#' @param remove_acronyms Logical; if TRUE, removes patterns consisting only of uppercase letters (2 or more characters) from `regex_table`.
 #' @param do_clean_text Logical; if TRUE, applies basic text cleaning to the input before matching.
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @param unique_match Logical; if TRUE, stops searching after first match to find at most one match per row. If FALSE, returns all matches for all patterns.
-#' @param cl A cluster object created by `parallel::makeCluster()`, or an integer to indicate number of child-processes (integer values are ignored on Windows) for parallel evaluations. Passed to [pbapply::pblapply()].
+#' @param cl A cluster object created by `parallel::makeCluster()`, or an integer to indicate number of child processes (integer values are ignored on Windows) for parallel evaluations. Passed to [pbapply::pblapply()].
 #' @param use_ner Logical; if TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized.
 #' @param ner_entity_types Character vector; the types of Named Entities to keep if `use_ner` is TRUE. Default is "ORG".
-#'
+#' 
 #' @return A tibble with the following columns:
 #' \itemize{
 #'   \item \code{row_id}: Integer identifier corresponding to rows in the input data.
