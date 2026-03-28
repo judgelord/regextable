@@ -70,7 +70,7 @@ clean_text(text)
 
 ### Basic Extraction
 
-The simplest use of extract():
+The simplest use of `extract()`:
 ```{r}
 result <- regextable::extract(
   data = cr2007_03_01,

@@ -36,7 +36,7 @@ kable <- function(x, ...){
 
 ### Introduction
 
-This vignette demonstrates how to extract references to Native American tribes using a regex lookup table. This approach is similar to the core `regextable::extract()` workflow but uses a specialized lookup table of tribe names and name variants. 
+This vignette demonstrates how to use the `regextable` package to extract references to Native American tribes from text. It highlights the core `extract()` workflow using a specialized lookup table of tribe names and name variants.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -52,7 +52,7 @@ library(stringr)
 
 The following table contains tribe names and regex patterns used for matching. Each row represents a tribe and includes possible spelling variations or alternate names used in text.
 
-This lookup table includes:
+This lookup table includes the following columns:
 - Name
 - Strings
 - Source
@@ -66,7 +66,7 @@ tribes_regex <- read.csv("/Users/shirl/Downloads/Native_American_Tribes_Regex_Ta
 kable(head(tribes_regex))
 ```
 
-### Extracting Tribe Names from Directory
+### Gathering Sample Data
 
 To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes.
 
@@ -114,7 +114,9 @@ kable(head(tribes_df))
 
 ### Extracting Tribe Names from Directory
 
-This example demonstrates how to use `regextable::extract()` to extract Native American Tribe names in the Tribal Directory data (`tribes_df`). The `extract()` function searches the `Tribe` column using the regex patterns in the `Strings` column of `tribes_regex`. When a match is found, the function returns the original tribe name along with metadata from the regex table, such as the source reference.
+This example demonstrates how to use `regextable::extract()` to parse and standardize the Native American tribe names found within the scraped Tribal Directory data (`tribes_df`).
+
+The `extract()` function searches the `Tribe` column using the regex patterns located in the `Strings` column of `tribes_regex.` When a match is found, the function returns the original tribe name along with metadata from the regex table, such as the source reference.
 
 ```{r}
 tribe_directory_df <- extract(
