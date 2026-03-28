@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Agencies Regex Table</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-18</p>
+      <p class="date">2026-03-27</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/agencies.qmd" class="external-link"><code>vignettes/agencies.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -84,7 +84,7 @@
 </div>
 </section><section class="level3"><h3 id="agencies-data-file">Agencies Data File<a class="anchor" aria-label="anchor" href="#agencies-data-file"></a>
 </h3>
-<p>The <code>agencies_by_section</code> table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization.</p>
+<p>The <code>agencies_by_section</code> table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization. These are the regex patterns used for matching and standardization.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/agencies_by_section.rda"</span><span class="op">)</span></span>
@@ -231,7 +231,8 @@
 </div>
 </section><section class="level3"><h3 id="extracting-sub-agency-names-from-body-texts">Extracting Sub-Agency Names from Body Texts<a class="anchor" aria-label="anchor" href="#extracting-sub-agency-names-from-body-texts"></a>
 </h3>
-<p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>text</code> column of the <code>body_parsed</code> dataset using patterns from the <code>subagency_name</code> column in the <code>agencies_by_section</code> regex table. It returns the matching sub-agency names for each text entry and performs Named Entity Recognition (NER) to validate that matches correspond to actual organizational entities. Additionally, it returns related columns from the dataset (<code>text</code> and <code>department</code>), as well as a column from the regex table (<code>agency</code>).</p>
+<p>This example demonstrates how to search the <code>text</code> column of the <code>body_parsed</code> dataset using patterns from the <code>subagency_name</code> column of the <code>agencies_by_section</code> regex table.</p>
+<p>By <code>setting use_ner = TRUE</code>, the <code><a href="../reference/extract.html">extract()</a></code> function performs Named Entity Recognition (NER) to validate that the regex matches actually correspond to organizational entities in the <code>text</code>. The final output returns the matched names, retains the <code>text</code> and <code>department</code> columns from the original data, and attaches the corresponding <code>agency</code> metadata from the lookup table.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">agencies_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span></span>

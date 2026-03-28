@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="regextable">
-<meta name="description" content="Extracts information from text using lookup tables of regular expressions. Each text entry is compared against all patterns, and all matching patterns and their corresponding substrings are returned. If a text entry matches multiple patterns, multiple rows are generated to capture each match. This approach enables comprehensive pattern coverage when processing large or complex text datasets.">
-<meta property="og:description" content="Extracts information from text using lookup tables of regular expressions. Each text entry is compared against all patterns, and all matching patterns and their corresponding substrings are returned. If a text entry matches multiple patterns, multiple rows are generated to capture each match. This approach enables comprehensive pattern coverage when processing large or complex text datasets.">
+<meta name="description" content="Extracts information from text using lookup tables of regular expressions. Each text entry is compared against patterns in a lookup table, returning the extracted substrings alongside optional metadata. Users can choose to extract all matching patterns (generating multiple rows per text entry) or limit extraction to the first match. This approach enables comprehensive, standardized pattern coverage when processing large or complex text datasets.">
+<meta property="og:description" content="Extracts information from text using lookup tables of regular expressions. Each text entry is compared against patterns in a lookup table, returning the extracted substrings alongside optional metadata. Users can choose to extract all matching patterns (generating multiple rows per text entry) or limit extraction to the first match. This approach enables comprehensive, standardized pattern coverage when processing large or complex text datasets.">
 <meta property="og:image" content="https://judgelord.github.io/regextable/logo.png">
 </head>
 <body>
@@ -63,24 +63,12 @@
 <p><code>regextable</code> extracts regular-expression-based pattern matches from a vector of text using a lookup table of regular expressions. It requires two inputs:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>data</code>: A vector of text to search (typically a data frame with a <code>text</code> column)</li>
+<code>data</code>: A data frame containing a text column, or a character vector.</li>
 <li>
 <code>regex_table</code>: A lookup table (a data frame with a column of strings or regular expressions to search for, typically called <code>pattern</code>)</li>
 </ol>
-<p>For each matching substring, <code><a href="reference/extract.html">regextable::extract</a></code> returns</p>
-<ul>
-<li>the row number of <code>data</code><br>
-</li>
-<li>the <code>pattern</code>
-</li>
-<li>the matched substring</li>
-<li>Optionally, other columns in <code>data</code> or <code>regex_table</code>
-</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
+<p>For each text entry, <code><a href="reference/extract.html">regextable::extract</a></code> returns: - the row number of the input <code>data</code> - the matched <code>pattern</code> - the exact substring extracted from the text - Optionally, other metadata columns from <code>data</code> or <code>regex_table</code></p>
+<p>Users can choose to return <em>all</em> matches (resulting in multiple rows per text entry) or limit the output to just the first match found. ## Installation</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"judgelord/regextable"</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span></code></pre></div>
@@ -117,7 +105,7 @@
 <div class="section level2">
 <h2 id="text-cleaning">Text cleaning<a class="anchor" aria-label="anchor" href="#text-cleaning"></a>
 </h2>
-<p>Before matching, by default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied to standardize text for better matching in messy text. It converts text to lowercase, removes excess punctuation, replaces line breaks and dashes with spaces, and collapses multiple spaces into a single space. Text cleaning is applied only during matching and does not modify the original input data. Users can disable this behavior by setting <code>do_clean_text = FALSE</code>.</p>
+<p>Before matching, by default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied to standardize messy text. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. Text cleaning is applied only internally during matching and does not modify the original input data. Users can disable this behavior by setting <code>do_clean_text = FALSE</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="st">"  HELLO---WORLD  "</span></span>
 <span><span class="va">cleaned_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/clean_text.html">clean_text</a></span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span>
@@ -147,7 +135,8 @@
 </h3>
 <ul>
 <li>
-<strong><code>col_name</code></strong>: (default <code>"text"</code>) Column name in the data frame containing text to search through.</li>
+<strong><code>col_name</code></strong>: (default <code>"text"</code>) Column name in the data frame containing text to search through. <em>(Note: If <code>data</code> is a character vector, it is internally converted to a data frame and this argument is ignored).</em>
+</li>
 <li>
 <strong><code>pattern_col</code></strong>: (default <code>"pattern"</code>) Name of the regex pattern column in <code>regex_table</code>.</li>
 <li>
@@ -171,7 +160,7 @@
 <li>
 <strong><code>cl</code></strong>: (default <code>NULL</code>) A cluster object or integer specifying child processes for parallel evaluation (ignored on Windows).</li>
 <li>
-<strong><code>use_ner</code></strong>: (default <code>FALSE</code>) If TRUE, uses the ‘spacyr’ package to validate that matches are actual Named Entities (e.g., organizations). Requires ‘spacyr’ to be installed and initialized.</li>
+<strong><code>use_ner</code></strong>: (default <code>FALSE</code>) If TRUE, uses the ‘spacyr’ package to validate that matches are actual Named Entities (e.g., organizations). Requires ‘spacyr’ to be installed and initialized. Note: If ‘spacyr’ is missing or fails to initialize, the function will perform standard regex matching and issue a warning.</li>
 <li>
 <strong><code>ner_entity_types</code></strong>: (default c(“ORG”)) Character vector; the types of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”, “PERSON”, “GPE”, “LAW”).</li>
 </ul>
@@ -196,12 +185,12 @@
 </h3>
 <p>The simplest use of <code><a href="reference/extract.html">extract()</a></code> with only the required arguments and returned columns specified. This finds all matches in the text column using the provided regex table.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#Extract patterns using only required arguments</span></span>
+<code class="sourceCode R"><span><span class="co"># Extract patterns using only required arguments</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
 <span>  regex_table <span class="op">=</span> <span class="va">members</span>,</span>
 <span>  data_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span><span class="op">)</span>,</span>
-<span>  regex_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"icpsr"</span><span class="op">)</span> </span>
+<span>  regex_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"icpsr"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
@@ -224,7 +213,7 @@
 <span><span class="va">result_advanced</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
 <span>  regex_table <span class="op">=</span> <span class="va">members</span>,</span>
-<span>  date_col <span class="op">=</span> <span class="st">"date"</span>,               </span>
+<span>  date_col <span class="op">=</span> <span class="st">"date"</span>,</span>
 <span>  date_start <span class="op">=</span> <span class="st">"2007-01-01"</span>,</span>
 <span>  date_end <span class="op">=</span> <span class="st">"2007-12-31"</span>,</span>
 <span>  remove_acronyms <span class="op">=</span> <span class="cn">TRUE</span>,</span>

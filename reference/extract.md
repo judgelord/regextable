@@ -1,6 +1,7 @@
-# Extract pattern matches from text
+# Extract Regex Pattern Matches from Text Data
 
-Uses a regex lookup table to extract pattern matches.
+Matches text against a table of regular expressions and returns
+extracted matches with optional metadata.
 
 ## Usage
 
@@ -29,43 +30,54 @@ extract(
 
 - data:
 
-  A data frame or character vector containing the text to search.
+  A data frame or character vector containing the text to search. If a
+  character vector is provided, it is internally converted to a data
+  frame and `col_name` is ignored.
 
 - col_name:
 
-  Column name in data frame containing text to search through.
+  Character string specifying the column in `data` that contains text to
+  search. Default is "text".
 
 - regex_table:
 
-  A regex lookup table with a pattern column.
+  A data frame containing regular expression patterns and optional
+  metadata columns.
 
 - pattern_col:
 
-  Name of the regex pattern column in regex_table.
+  Character string specifying the column in `regex_table` that contains
+  regex patterns. Default is "pattern".
 
 - data_return_cols:
 
-  Optional vector of column names to include from 'data'.
+  Optional vector of column names to include from `data`. Default is
+  `NULL` (only `row_id` is returned).
 
 - regex_return_cols:
 
-  Optional vector of column names to include from 'regex_table'.
+  Optional vector of column names to include from `regex_table`. Default
+  is `NULL` (no metadata columns added).
 
 - date_col:
 
-  Optional column in 'data' for date filtering.
+  Optional column in `data` for date filtering. If provided, rows are
+  filtered by `date_start` and `date_end` before pattern matching.
 
 - date_start:
 
-  Optional start date for filtering 'data'.
+  Optional start date (Date object or string like "YYYY-MM-DD") for
+  filtering `data` when `date_col` is specified.
 
 - date_end:
 
-  Optional end date for filtering 'data'.
+  Optional end date (Date object or string like "YYYY-MM-DD") for
+  filtering `data` when `date_col` is specified.
 
 - remove_acronyms:
 
-  Logical; if TRUE, removes all-uppercase patterns from regex_table.
+  Logical; if TRUE, removes patterns consisting only of uppercase
+  letters (2 or more characters) from `regex_table`.
 
 - do_clean_text:
 
@@ -78,22 +90,25 @@ extract(
 
 - unique_match:
 
-  Logical; if TRUE, stops searching after first match to find at most
-  one match per row. If FALSE, returns all matches for all patterns.
+  Logical; if TRUE, stops searching after the first match to find at
+  most one match per row (evaluated in the order patterns appear in
+  `regex_table`). If FALSE, returns all matches for all patterns.
 
 - cl:
 
   A cluster object created by
   [`parallel::makeCluster()`](https://rdrr.io/r/parallel/makeCluster.html),
-  or an integer to indicate number of child-processes (integer values
-  are ignored on Windows) for parallel evaluations. Passed to
+  or an integer to indicate number of child processes (integer values
+  are ignored on Windows). Passed to
   [`pbapply::pblapply()`](https://peter.solymos.org/pbapply/reference/pbapply.html).
 
 - use_ner:
 
   Logical; if TRUE, uses the 'spacyr' package to validate that matches
-  are actual Named Entities (e.g., organizations). Requires 'spacyr' to
-  be installed and initialized.
+  are actual Named Entities (e.g., organizations). Note: `spacyr` must
+  be initialized (e.g., via
+  [`spacyr::spacy_initialize()`](http://spacyr.quanteda.io/reference/spacy_initialize.md))
+  before calling this function.
 
 - ner_entity_types:
 
@@ -102,18 +117,18 @@ extract(
 
 ## Value
 
-A tibble (data frame) with columns:
+A tibble with the following columns:
 
-- `row_id` Integer row identifier corresponding to the input data
+- `row_id`: Integer identifier corresponding to rows in the input data.
 
-- Additional columns from `data` if `data_return_cols` specified
+- Additional columns from `data` if `data_return_cols` is specified.
 
-- Additional columns from `regex_table` if `regex_return_cols` specified
+- Additional columns from `regex_table` if `regex_return_cols` is
+  specified.
 
-- `pattern` The matched regex pattern(s)
+- `pattern`: The matched regular expression pattern(s).
 
-- `match` The specific text extracted from the data (original casing
-  preserved)
+- `match`: The extracted text from the data (original casing preserved).
 
 ## Details
 

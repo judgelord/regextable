@@ -23,9 +23,9 @@ library(stringr)
 
 ### Regex Table of Corporations
 
-The corporations_regex table contains a sample of corporations, their
+The `corporations_regex` table contains a sample of corporations, their
 common aliases, ticker symbols, and reference sources used for matching
-and standardization. The aliases column includes alternative names,
+and standardization. The `aliases` column includes alternative names,
 abbreviations, or common variants for each corporation to ensure
 comprehensive matching.
 
@@ -43,7 +43,7 @@ kable(head(corporations_regex))
 | alliance | 1086796 | NA |  | NA | cik | \b(?:alliance)\b |
 | boyden | 1124262 | NA |  | NA | cik | \b(?:boyden)\b |
 
-### Data Corporations
+### Sample Dataset: Project 2025
 
 The following dataset contains organizations and contributors involved
 in Project 2025. It is used to demonstrate matching and standardizing
@@ -68,12 +68,12 @@ kable(head(project_2025_coalition_and_contributors))
 | Organization | American Compass |  | Advisory Board Member |
 | Organization | The American Conservative |  | Advisory Board Member |
 
-### Extracting Aliases from Corporation Crosswalk
+### Extracting Corporation Names
 
 The
 [`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
 function searches the `organization` column of the dataset using the
-`aliases` patterns in the regex table. It returns the standardized
+`patterns` column in the regex table. It returns the standardized
 corporation names while optionally removing acronym-only matches to
 reduce false positives.
 

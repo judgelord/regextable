@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Corporations Regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-18</p>
+      <p class="date">2026-03-27</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/corporations.qmd" class="external-link"><code>vignettes/corporations.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -84,7 +84,7 @@
 </div>
 </section><section class="level3"><h3 id="regex-table-of-corporations">Regex Table of Corporations<a class="anchor" aria-label="anchor" href="#regex-table-of-corporations"></a>
 </h3>
-<p>The corporations_regex table contains a sample of corporations, their common aliases, ticker symbols, and reference sources used for matching and standardization. The aliases column includes alternative names, abbreviations, or common variants for each corporation to ensure comprehensive matching.</p>
+<p>The <code>corporations_regex</code> table contains a sample of corporations, their common aliases, ticker symbols, and reference sources used for matching and standardization. The <code>aliases</code> column includes alternative names, abbreviations, or common variants for each corporation to ensure comprehensive matching.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corporations_regex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/corporations_regex.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -159,7 +159,7 @@
 </table>
 </div>
 </div>
-</section><section class="level3"><h3 id="data-corporations">Data Corporations<a class="anchor" aria-label="anchor" href="#data-corporations"></a>
+</section><section class="level3"><h3 id="sample-dataset-project-2025">Sample Dataset: Project 2025<a class="anchor" aria-label="anchor" href="#sample-dataset-project-2025"></a>
 </h3>
 <p>The following dataset contains organizations and contributors involved in Project 2025. It is used to demonstrate matching and standardizing corporation names using the regex table.</p>
 <div class="cell" data-layout-align="center">
@@ -220,9 +220,9 @@
 </table>
 </div>
 </div>
-</section><section class="level3"><h3 id="extracting-aliases-from-corporation-crosswalk">Extracting Aliases from Corporation Crosswalk<a class="anchor" aria-label="anchor" href="#extracting-aliases-from-corporation-crosswalk"></a>
+</section><section class="level3"><h3 id="extracting-corporation-names">Extracting Corporation Names<a class="anchor" aria-label="anchor" href="#extracting-corporation-names"></a>
 </h3>
-<p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>organization</code> column of the dataset using the <code>aliases</code> patterns in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.</p>
+<p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>organization</code> column of the dataset using the <code>patterns</code> column in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">corp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">project_2025_coalition_and_contributors</span>,</span>

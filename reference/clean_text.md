@@ -1,8 +1,8 @@
 # Clean Text
 
-Cleans a character vector by converting text to lowercase, removing
-selected punctuation (plus signs, em dashes, exclamation points),
-normalizing commas, and removing whitespace.
+Cleans a character vector by converting to lowercase, removing or
+replacing specific punctuation, normalizing commas, and squishing excess
+whitespace.
 
 ## Usage
 
@@ -18,11 +18,11 @@ clean_text(text)
 
 ## Value
 
-Cleaned character vector.
+A cleaned character vector.
 
 ## Examples
 
 ``` r
-clean_text(c("Hello  World!", "This is\tR"))
-#> [1] "hello world" "this is r"  
+clean_text(c("Hello  World!?", "This--is\tR.\nTesting: 1, 2, , 3;"))
+#> [1] "hello world"                 "this is r testing 1, 2, , 3"
 ```

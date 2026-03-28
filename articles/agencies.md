@@ -25,7 +25,8 @@ library(stringr)
 
 The `agencies_by_section` table contains a sample of agencies, including
 their sub-agencies, acronyms, and reference sources used for matching
-and standardization.
+and standardization. These are the regex patterns used for matching and
+standardization.
 
 ``` r
 load("/Users/shirl/Downloads/agencies_by_section.rda")
@@ -64,15 +65,17 @@ kable(head(body_parsed))
 
 ### Extracting Sub-Agency Names from Body Texts
 
-The
+This example demonstrates how to search the `text` column of the
+`body_parsed` dataset using patterns from the `subagency_name` column of
+the `agencies_by_section` regex table.
+
+By `setting use_ner = TRUE`, the
 [`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
-function searches the `text` column of the `body_parsed` dataset using
-patterns from the `subagency_name` column in the `agencies_by_section`
-regex table. It returns the matching sub-agency names for each text
-entry and performs Named Entity Recognition (NER) to validate that
-matches correspond to actual organizational entities. Additionally, it
-returns related columns from the dataset (`text` and `department`), as
-well as a column from the regex table (`agency`).
+function performs Named Entity Recognition (NER) to validate that the
+regex matches actually correspond to organizational entities in the
+`text`. The final output returns the matched names, retains the `text`
+and `department` columns from the original data, and attaches the
+corresponding `agency` metadata from the lookup table.
 
 ``` r
 agencies_df <- extract(
