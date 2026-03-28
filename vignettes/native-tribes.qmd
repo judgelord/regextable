@@ -36,7 +36,7 @@ kable <- function(x, ...){
 
 ### Introduction
 
-This vignette demonstrates how to use the `regextable` package to extract references to Native American tribes from text. It highlights the core `extract()` workflow using a specialized lookup table of tribe names and name variants.
+This vignette demonstrates how to use the `regextable` package to extract references to Native American tribes from text. It showcases the core `extract()` workflow using a lookup table of tribe names and name variants.
 
 Install and load the package:
 ```{r, message=FALSE}

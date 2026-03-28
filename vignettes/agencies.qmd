@@ -51,7 +51,7 @@ library(stringr)
 
 ### Agencies Data File
 
-The `agencies_by_section` table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization. These serve as the regex patterns used for matching and standardization.
+The `agencies_by_section` table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization. These are the regex patterns used for matching and standardization.
 
 ```{r}
 load("/Users/shirl/Downloads/agencies_by_section.rda")
@@ -71,7 +71,7 @@ kable(head(body_parsed))
 
 This example demonstrates how to search the `text` column of the `body_parsed` dataset using patterns from the `subagency_name` column of the `agencies_by_section` regex table.
 
-By `setting use_ner = TRUE`, the `extract()` function performs Named Entity Recognition (NER) to validate that the regex matches actually correspond to organizational entities in the `text`. The final output returns the matched sub-1 names, retains the text and `department` columns from the original data, and attaches the corresponding `agency` metadata from the lookup table.
+By `setting use_ner = TRUE`, the `extract()` function performs Named Entity Recognition (NER) to validate that the regex matches actually correspond to organizational entities in the `text`. The final output returns the matched names, retains the `text` and `department` columns from the original data, and attaches the corresponding `agency` metadata from the lookup table.
 
 ```{r}
 agencies_df <- extract(

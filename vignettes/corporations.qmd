@@ -51,14 +51,14 @@ library(stringr)
 
 ### Regex Table of Corporations
 
-The corporations_regex table contains a sample of corporations, their common aliases, ticker symbols, and reference sources used for matching and standardization. The aliases column includes alternative names, abbreviations, or common variants for each corporation to ensure comprehensive matching.
+The `corporations_regex` table contains a sample of corporations, their common aliases, ticker symbols, and reference sources used for matching and standardization. The `aliases` column includes alternative names, abbreviations, or common variants for each corporation to ensure comprehensive matching.
 
 ```{r}
 corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_regex.csv", stringsAsFactors = FALSE)
 kable(head(corporations_regex))
 ```
 
-### Data Corporations
+### Sample Dataset: Project 2025
 
 The following dataset contains organizations and contributors involved in Project 2025. It is used to demonstrate matching and standardizing corporation names using the regex table.
 
@@ -72,9 +72,9 @@ remove(tmp, project_2025_url)
 kable(head(project_2025_coalition_and_contributors))
 ```
 
-### Extracting Aliases from Corporation Crosswalk
+### Extracting Corporation Names
 
-The `extract()` function searches the `organization` column of the dataset using the `aliases` patterns in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.
+The `extract()` function searches the `organization` column of the dataset using the `patterns` column in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.
 
 ```{r}
 corp_df <- extract(data = project_2025_coalition_and_contributors,

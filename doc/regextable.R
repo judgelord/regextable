@@ -7,19 +7,15 @@ knitr::opts_chunk$set(
   message = FALSE,
   tidy = FALSE,
   fig.align = 'center',
-  fig.path = "man/figures/vignette-",
   R.options = list(width = 120)
 )
 
-# Format kable tables
-kable <- function(x){
+kable <- function(x, ...){
   if (knitr::is_latex_output()) {
-    head(x, 5) |>
-      knitr::kable(booktabs = TRUE, format = 'latex') |>
+    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
-    head(x, 5) |>
-      knitr::kable(escape = TRUE) |>
+    knitr::kable(x, escape = TRUE, ...) |>
       kableExtra::kable_styling()
   }
 }
@@ -32,10 +28,10 @@ library(kableExtra)
 
 ## -----------------------------------------------------------------------------
 data("members")
-kable(members)
+kable(head(members))
 
 data("cr2007_03_01")
-kable(cr2007_03_01)
+kable(head(cr2007_03_01))
 
 
 ## -----------------------------------------------------------------------------
@@ -58,6 +54,7 @@ kable(head(result))
 # result_advanced <- extract(
 #   data = cr2007_03_01,
 #   regex_table = members,
+#   unique_match = TRUE,
 #   date_col = "date",
 #   date_start = "2007-01-01",
 #   date_end = "2007-12-31",
@@ -70,6 +67,8 @@ kable(head(result))
 
 
 ## ----eval = FALSE-------------------------------------------------------------
+# spacyr::spacy_initialize()
+# 
 # result_ner <- regextable::extract(
 #   data = cr2007_03_01,
 #   regex_table = members,
