@@ -34,9 +34,9 @@ kable <- function(x, ...){
 
 ### Introduction
 
-`regextable` extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in `data_return_cols` and `regex_return_cols`. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.
+The `regextable` package extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in `data_return_cols` and `regex_return_cols`. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.
 
-The function also supports additional parameters such as `do_clean_text`, `unique_match`, `verbose`, `cl`, and optional Named Entity Recognition validation via `use_ner.` These can be used to control text cleaning, limit matches per row, show progress messages, or speed up processing on large datasets.
+The function also supports additional parameters such as `do_clean_text`, `unique_match`, `verbose`, `cl`, and optional Named Entity Recognition validation via `use_ner`. These can be used to control text cleaning, optimize performance, show progress messages, or speed up processing on large datasets.
 
 Install and load the package:
 ```{r, message=FALSE}
@@ -44,24 +44,23 @@ library(regextable)
 library(kableExtra)
 ```
 
-### Data
+### Example Data
 
-For demonstration, we use two included datasets:
-
-- `members`: A lookup table of regex patterns for member names.
-- `cr2007_03_01`: A sample text dataset to search.
+For demonstration, two included datasets are used:
+- `members`: A lookup table of regex patterns for members of Congress.
+- `cr2007_03_01`: A sample text dataset from the Congressional Record.
 
 ```{r}
 data("members")
-kable(members)
+kable(head(members))
 
 data("cr2007_03_01")
-kable(cr2007_03_01)
+kable(head(cr2007_03_01))
 ```
 
 ### Text Cleaning
 
-`extract()` performs basic text cleaning by default - standardizing spaces, punctuation, and capitalization—to improve pattern matching. This can be disabled by setting `do_clean_text = FALSE`. Cleaning standardizes spacing, punctuation, and capitalization, which helps regex pattern matching.
+By default, `extract()` performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (`+`, `—`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting `do_clean_text = FALSE`.
 
 Example of `clean_text()`:
 ```{r}
@@ -71,8 +70,7 @@ clean_text(text)
 
 ### Basic Extraction
 
-The simplest use of `extract()`:
-
+The simplest use of extract():
 ```{r}
 result <- regextable::extract(
   data = cr2007_03_01,
@@ -84,23 +82,25 @@ result <- regextable::extract(
 kable(head(result))
 ```
 
-Explanation:
-- `data`: the text dataset to search.
-- `col_name`: which column contains the text.
-- `regex_table`: the lookup table of patterns.
-- `data_return_cols`: additional columns from `data` to include in the result.
-- `regex_return_cols`: additional columns from the pattern table to attach.
+Function Arguments:
+- `data`: The text dataset to search.
+- `col_name`: Which column contains the text (defaults to `"text"`). Note: If a simple character vector is passed instead of a data frame, it is internally converted, and this argument is ignored.
+- `regex_table`: The lookup table of patterns.
+- `data_return_cols`: Additional columns from `data` to include in the result.
+- `regex_return_cols`: Additional columns from the pattern table to attach.
+
 Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.
 ---
 
 ### Advanced Usage
 
-`extract()` can also filter data by date, remove acronyms (all-uppercase patterns with 2+ characters), and select specific output columns. This is useful for more controlled extraction.
+By default, `extract()` evaluates every pattern against every text entry. If it is known that each row contains at most one match, setting `unique_match = TRUE` utilizes a faster algorithm that stops searching a row once the first match is found. This improves execution speed on large datasets.
 
 ```{r, eval = FALSE}
 result_advanced <- extract(
   data = cr2007_03_01,
   regex_table = members,
+  unique_match = TRUE,
   date_col = "date",
   date_start = "2007-01-01",
   date_end = "2007-12-31",
@@ -112,26 +112,24 @@ result_advanced <- extract(
 kable(head(result_advanced))
 ```
 
-Explanation:
-- `date_col`, `date_start`, `date_end`: filter rows by date.
-- `remove_acronyms`: skip patterns like "NASA" or "USA".
-You can combine these filters with any subset of columns for flexible outputs.
+Function Arguments:
+- `unique_match`: If TRUE, utilizes a faster algorithm that stops searching a row after the first match.
+- `date_col`, `date_start`, `date_end`: Filter rows by date before matching.
+- `remove_acronyms`: Skip patterns consisting entirely of uppercase letters (e.g., "NASA" or "USA").
+
+These filters can be combined with any subset of columns for flexible outputs.
 ---
 
 ### Named Entity Recognition (NER) Validation
 
-`extract()` optionally supports validation using Named Entity Recognition (NER).
-When `use_ner = TRUE`, the function uses the `spacyr` package to confirm that
-regex matches correspond to actual named entities in the text.
+`extract()` optionally supports validation using Named Entity Recognition (NER). When `use_ner = TRUE`, the function uses the `spacyr` package to confirm that regex matches correspond to actual named entities in the text.
 
-Two arguments used for this behavior:
-
+Function Arguments:
 - `use_ner`: Logical; if `TRUE`, validates matches using `spacyr` Named Entity Recognition.
 - `ner_entity_types`: Character vector specifying which entity types to retain.
   For example, `"ORG"` keeps only organization entities.
 
 Example:
-
 ```{r, eval = FALSE}
 spacyr::spacy_initialize()
 
@@ -147,7 +145,7 @@ result_ner <- regextable::extract(
 
 ### Parallel Matching
 
-`extract()` supports parallel processing via the `cl` parameter:
+`extract()` supports parallel processing via the `cl` parameter, which is recommended for large datasets or extensive lookup tables.
 
 ```{r, eval=FALSE}
 library(parallel)
@@ -164,7 +162,7 @@ kable(head(result_parallel))
 ```
 
 ### Summary
-- `regextable` is a tool for extracting data from text.
-- Use the included datasets to get started or supply your own lookup tables.
-- `extract()` by default handles text cleaning and efficient matching.
-- Optional parameters allow advanced control over filtering and output.
+- `regextable` is a tool for extracting data from text using lookup tables.
+- `extract()` handles text cleaning and efficient matching by default.
+- Advanced performance parameters, such as `unique_match` and `cl`, allow for significant speed improvements on large text.
+- Optional parameters allow advanced control over filtering, NER validation, and output structure.
