@@ -133,8 +133,7 @@ head(result)
 
 ### Advanced Usage
 
-Shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. 
-This is useful when you want to narrow matches, disable text cleaning, control returned columns, or suppress messages.
+This shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. It is useful when the user wants to narrow matches, disable text cleaning, control returned columns, or suppress messages.
 
 ```{r}
 # Advanced usage with optional filters
