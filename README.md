@@ -15,14 +15,17 @@ two inputs:
 2.  `regex_table`: A lookup table (a data frame with a column of strings
     or regular expressions to search for, typically called `pattern`)
 
-For each text entry, `regextable::extract` returns: - the row number of
-the input `data` - the matched `pattern` - the exact substring extracted
-from the text - Optionally, other metadata columns from `data` or
-`regex_table`
+For each text entry, `regextable::extract` returns:
+
+- the row number of the input `data`
+- the matched `pattern`
+- the exact substring extracted from the text
+- Optionally, other metadata columns from `data` or `regex_table`
 
 Users can choose to return *all* matches (resulting in multiple rows per
-text entry) or limit the output to just the first match found. \##
-Installation
+text entry) or limit the output to just the first match found.
+
+## Installation
 
     devtools::install_github("judgelord/regextable")
 
@@ -37,8 +40,7 @@ Congress, `members`, and example text data from the Congressional
 Record, `cr2007_03_01`, from the
 [`legislators`](https://judgelord.github.io/legislators/) package, which
 are also included in this package, subset to `congress == 107`, for
-illustration. Users who need to search for legislators should use the
-`legislators` package.
+illustration.
 
 ``` r
 data("members")
@@ -83,7 +85,7 @@ print(cleaned_text)
 #> [1] "hello world"
 ```
 
-## Extract regex-based matches from text
+## Extract Regex-Based Matches from Text
 
 ### Description
 
@@ -148,7 +150,7 @@ A data frame with one row per match, including:
 
 ### Basic Usage
 
-The simplest use of `extract()` with only the required arguments and
+A simple usage of `extract()` with only the required arguments and
 returned columns specified. This finds all matches in the text column
 using the provided regex table.
 
