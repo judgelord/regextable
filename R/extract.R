@@ -66,6 +66,9 @@
 extract <- function(data,
                     col_name = "text",
                     regex_table,
+                    typo_table = NULL,
+                    typo_from_col = "typo",
+                    typo_to_col = "correction",
                     pattern_col = "pattern",
                     data_return_cols = NULL,
                     regex_return_cols = NULL,
@@ -183,6 +186,18 @@ extract <- function(data,
 
   if (do_clean_text) {
     text_search <- clean_text(text_search)
+  }
+  
+  if (!is.null(typo_table)) {
+    chk::chk_data(typo_table)
+    chk::chk_subset(c(typo_from_col, typo_to_col), names(typo_table))
+    
+    text_search <- stringi::stri_replace_all_regex(
+      text_search,
+      pattern = paste0("\\b", typo_table[[typo_from_col]], "\\b"),
+      replacement = typo_table[[typo_to_col]],
+      vectorize_all = FALSE
+    )
   }
 
   if (unique_match) {
