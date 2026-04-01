@@ -12,8 +12,8 @@ two inputs:
 
 1.  `data`: A data frame containing a text column, or a character
     vector.
-2.  `regex_table`: A lookup table (a data frame with a column of strings
-    or regular expressions to search for, typically called `pattern`)
+2.  `regex_table`: A data frame with a column of strings or regular
+    expressions to search for, typically called `pattern`
 
 For each text entry, `regextable::extract` returns:
 
@@ -76,7 +76,8 @@ messy text. It converts text to lowercase, removes specific punctuation
 dashes with spaces, and normalizes commas and excess whitespace. Text
 cleaning is applied only internally during matching and does not modify
 the original input data. Users can disable this behavior by setting
-`do_clean_text = FALSE`.
+`do_clean_text = FALSE`. If `typo_table` is provided, text replacements
+are applied after text cleaning and before regex matching.
 
 ``` r
 text <- "  HELLO---WORLD  "
@@ -97,17 +98,22 @@ are returned, one per match.
 
 ### Required Parameters
 
-- **`data`**: A data frame or character vector containing the text to
+- **`data`**: Data frame or character vector containing the text to
   search.
-- **`regex_table`**: A regex lookup table with at least one pattern
+- **`regex_table`**: Regex lookup table with at least one pattern
   column.
 
 ### Optional Parameters
 
-- **`col_name`**: (default `"text"`) Column name in the data frame
-  containing text to search through. *(Note: If `data` is a character
-  vector, it is internally converted to a data frame and this argument
-  is ignored).*
+- **`typo_table`**: (default `NULL`) Data frame with text replacements
+  applied before matching.
+- **`typo_from_col`**: (default `"typo"`) Column in `typo_table` with
+  text to replace.
+- **`typo_to_col`**: (default `"correction"`) Column in `typo_table`
+  with replacement text.
+- **`col_name`**: (default `"text"`) Column in `data` containing text to
+  search. *(Note: If `data` is a character vector, it is internally
+  converted to a data frame and this argument is ignored).*
 - **`pattern_col`**: (default `"pattern"`) Name of the regex pattern
   column in `regex_table`.
 - **`data_return_cols`**: (default `NULL`) Vector of additional columns
@@ -209,8 +215,6 @@ head(result_advanced)
 
 ### Future Development
 
-- Add support for `typo_table` to correct known text errors before
-  matching.
 - Improve strict matching rules for patterns that may need more
   inclusive or more restrictive word boundaries.
 - Enable user-defined ID systems (e.g., corporations, campaigns) and
