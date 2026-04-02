@@ -337,9 +337,30 @@ test_that("use_ner accurately filters out non-entities", {
 test_that("use_ner warns on invalid spaCy tags", {
   df <- data.frame(text = "Apple hired John")
   regex_table <- data.frame(pattern = "Apple")
-  
+
   expect_warning(
     extract(df, "text", regex_table, use_ner = TRUE, ner_entity_types = "FAKE_TAG", verbose = FALSE),
     "One or more 'ner_entity_types' are not standard spaCy tags"
   )
+})
+
+test_that("typo_table replaces text before matching", {
+  df <- data.frame(text = "I like appsle", stringsAsFactors = FALSE)
+
+  regex_table <- data.frame(pattern = "apples")
+  typo_table <- data.frame(
+    typo = "appsle",
+    correction = "apples",
+    stringsAsFactors = FALSE
+  )
+  result <- extract(
+    df,
+    "text",
+    regex_table,
+    typo_table = typo_table,
+    verbose = FALSE
+  )
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$match, "apples")
 })
