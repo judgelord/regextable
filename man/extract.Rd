@@ -8,6 +8,9 @@ extract(
   data,
   col_name = "text",
   regex_table,
+  typo_table = NULL,
+  typo_from_col = "typo",
+  typo_to_col = "correction",
   pattern_col = "pattern",
   data_return_cols = NULL,
   regex_return_cols = NULL,
@@ -29,6 +32,12 @@ extract(
 \item{col_name}{Character string specifying the column in \code{data} that contains text to search. Default is "text".}
 
 \item{regex_table}{A data frame containing regular expression patterns and optional metadata columns.}
+
+\item{typo_table}{Optional data frame with text replacements for corrections.}
+
+\item{typo_from_col}{Optional column in \code{typo_table} with text to replace. Default is "typo".}
+
+\item{typo_to_col}{Optional column in \code{typo_table} with replacement text. Default is "correction".}
 
 \item{pattern_col}{Character string specifying the column in \code{regex_table} that contains regex patterns. Default is "pattern".}
 

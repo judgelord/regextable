@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Shirlyn Dong">
-<meta name="dcterms.date" content="2026-03-27">
+<meta name="dcterms.date" content="2026-04-01">
 
 <title>regextable</title>
 <style>
@@ -437,13 +437,13 @@ text-decoration: underline; }
 <h1 class="title">regextable</h1>
 <p class="author">Shirlyn Dong</p>
 
-<p class="date">2026-03-27</p>
+<p class="date">2026-04-01</p>
 </header>
 
 
 <h3 id="introduction">Introduction</h3>
 <p>The <code>regextable</code> package extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in <code>data_return_cols</code> and <code>regex_return_cols</code>. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.</p>
-<p>The function also supports additional parameters such as <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, <code>cl</code>, and optional Named Entity Recognition validation via <code>use_ner</code>. These can be used to control text cleaning, optimize performance, show progress messages, or speed up processing on large datasets.</p>
+<p>The function also supports additional parameters such as <code>typo_table</code>, <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, <code>cl</code>, and optional Named Entity Recognition validation via <code>use_ner</code>. These can be used to control text cleaning, optimize performance, show progress messages, or speed up processing on large datasets.</p>
 <p>Install and load the package:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(regextable)</span>
@@ -608,7 +608,7 @@ text-decoration: underline; }
 </div>
 </div>
 <h3 id="text-cleaning">Text Cleaning</h3>
-<p>By default, <code>extract()</code> performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting <code>do_clean_text = FALSE</code>.</p>
+<p>By default, <code>extract()</code> performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting <code>do_clean_text = FALSE</code>. Additionally, the typo_table parameter allows users to specify common misspellings and their corrections. When provided, matches are performed on the corrected text rather than the original text.</p>
 <p>Example of <code>clean_text()</code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> <span class="st">&quot;  HELLO---WORLD  &quot;</span></span>
