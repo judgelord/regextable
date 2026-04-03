@@ -9,7 +9,7 @@
 #' @param data A data frame or character vector containing the text to search. If a character vector is provided, it is internally converted to a data frame and `col_name` is ignored.
 #' @param col_name Character string specifying the column in `data` that contains text to search. Default is "text".
 #' @param regex_table A data frame containing regular expression patterns and optional metadata columns.
-#' @param typo_table Optional data frame with text replacements for corrections.
+#' @param typo_table Optional data frame with text replacements for corrections. Replacements are applied sequentially to the text using regex (with word boundaries) before pattern matching.
 #' @param typo_from_col Optional column in `typo_table` with text to replace. Default is "typo".
 #' @param typo_to_col Optional column in `typo_table` with replacement text. Default is "correction".
 #' @param pattern_col Character string specifying the column in `regex_table` that contains regex patterns. Default is "pattern".
