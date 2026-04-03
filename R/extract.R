@@ -190,16 +190,26 @@ extract <- function(data,
   if (do_clean_text) {
     text_search <- clean_text(text_search)
   }
-  
+
   if (!is.null(typo_table)) {
     chk::chk_data(typo_table)
     chk::chk_subset(c(typo_from_col, typo_to_col), names(typo_table))
-    
-    text_search <- stringi::stri_replace_all_regex(
-      text_search,
-      pattern = paste0("\\b", typo_table[[typo_from_col]], "\\b"),
-      replacement = typo_table[[typo_to_col]],
-      vectorize_all = FALSE
+    chk::chk_character(typo_table[[typo_from_col]])
+    chk::chk_character(typo_table[[typo_to_col]])
+
+    for (i in seq_len(nrow(typo_table))) {
+      pat <- gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", typo_table[[typo_from_col]][i])
+      pattern <- paste0("\\b", pat, "\\b")
+      
+      text_search <- stringi::stri_replace_all_regex(
+        text_search,
+        pattern,
+        typo_table[[typo_to_col]][i]
+      )
+    }
+
+    text_search <- stringi::stri_trim_both(
+      stringi::stri_replace_all_regex(text_search, "\\s+", " ")
     )
   }
 
