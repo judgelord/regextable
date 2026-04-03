@@ -33,7 +33,7 @@ extract(
 
 \item{regex_table}{A data frame containing regular expression patterns and optional metadata columns.}
 
-\item{typo_table}{Optional data frame with text replacements for corrections.}
+\item{typo_table}{Optional data frame with text replacements for corrections. Replacements are applied sequentially to the text using regex (with word boundaries) before pattern matching.}
 
 \item{typo_from_col}{Optional column in \code{typo_table} with text to replace. Default is "typo".}
 

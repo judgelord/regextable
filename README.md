@@ -76,14 +76,52 @@ messy text. It converts text to lowercase, removes specific punctuation
 dashes with spaces, and normalizes commas and excess whitespace. Text
 cleaning is applied only internally during matching and does not modify
 the original input data. Users can disable this behavior by setting
-`do_clean_text = FALSE`. If `typo_table` is provided, text replacements
-are applied after text cleaning and before regex matching.
+`do_clean_text = FALSE`.
 
 ``` r
 text <- "  HELLO---WORLD  "
 cleaned_text <- clean_text(text)
 print(cleaned_text)
 #> [1] "hello world"
+```
+
+## Typo Correction
+
+Users can optionally provide a `typo_table` to correct typos in the
+input text before pattern matching. This is useful for correcting
+misspellings or normalizing inconsistent text. Replacements are applied
+sequentially to the cleaned text before regex matching and use word
+boundaries to avoid partial matches within larger words.
+
+The `typo_table` must contain:
+
+- A column of text to replace (default `"typo"`)
+- A column of replacement text (default `"correction"`)
+
+``` r
+typos <- data.frame(
+  typo = c("appl", "bananna"),
+  correction = c("apple", "banana")
+)
+
+patterns <- data.frame(
+  pattern = c("apple", "banana")
+)
+
+text <- c("I like appl", "bananna is good")
+
+typo_result <- extract(
+  data = text, 
+  regex_table = patterns, 
+  typo_table = typos
+)
+
+head(typo_result)
+#> # A tibble: 2 × 3
+#>   row_id pattern match 
+#>    <int> <chr>   <chr> 
+#> 1      1 apple   apple 
+#> 2      2 banana  banana
 ```
 
 ## Extract Regex-Based Matches from Text
