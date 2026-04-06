@@ -46,7 +46,7 @@ Users can choose to return *all* matches (resulting in multiple rows per text en
 
 ## Installation
 
-```         
+```{r}         
 devtools::install_github("judgelord/regextable")
 ```
 

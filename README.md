@@ -27,7 +27,32 @@ text entry) or limit the output to just the first match found.
 
 ## Installation
 
-    devtools::install_github("judgelord/regextable")
+``` r
+devtools::install_github("judgelord/regextable")
+#> rlang    (1.1.7 -> 1.2.0) [CRAN]
+#> vctrs    (0.7.1 -> 0.7.2) [CRAN]
+#> magrittr (2.0.4 -> 2.0.5) [CRAN]
+#> dplyr    (1.2.0 -> 1.2.1) [CRAN]
+#> 
+#>   There are binary versions available but the source versions are later:
+#>          binary source needs_compilation
+#> rlang     1.1.7  1.2.0              TRUE
+#> magrittr  2.0.4  2.0.5              TRUE
+#> dplyr     1.2.0  1.2.1              TRUE
+#> 
+#> package 'vctrs' successfully unpacked and MD5 sums checked
+#> 
+#> The downloaded binary packages are in
+#>  C:\Users\shirl\AppData\Local\Temp\Rtmp4WFVeD\downloaded_packages
+#> ── R CMD build ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+#> * checking for file 'C:\Users\shirl\AppData\Local\Temp\Rtmp4WFVeD\remotes347c77b624e8\judgelord-regextable-bcc998c/DESCRIPTION' ... OK
+#> * preparing 'regextable':
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * building 'regextable_0.1.2.tar.gz'
+#> 
+```
 
 ``` r
 library(regextable)
