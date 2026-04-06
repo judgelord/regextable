@@ -72,7 +72,7 @@ head(cr2007_03_01)
 
 Before matching, by default, `clean_text()` is applied to standardize
 messy text. It converts text to lowercase, removes specific punctuation
-(`+`, `—`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and
+(`+`, `-`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and
 dashes with spaces, and normalizes commas and excess whitespace. Text
 cleaning is applied only internally during matching and does not modify
 the original input data. Users can disable this behavior by setting
