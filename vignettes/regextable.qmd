@@ -60,7 +60,7 @@ kable(head(cr2007_03_01))
 
 ### Text Cleaning
 
-By default, `extract()` performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (`+`, `—`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting `do_clean_text = FALSE`. Additionally, the typo_table parameter allows users to specify common misspellings and their corrections. When provided, matches are performed on the corrected text rather than the original text.
+By default, `extract()` performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (`+`, `—`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting `do_clean_text = FALSE`. Additionally, the `typo_table` parameter allows users to specify common misspellings and their corrections. When provided, matches are performed on the corrected text rather than the original text.
 
 Example of `clean_text()`:
 ```{r}
@@ -74,6 +74,7 @@ The simplest use of `extract()`:
 ```{r}
 result <- regextable::extract(
   data = cr2007_03_01,
+  col_name = "text",
   regex_table = members,
   data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
@@ -90,13 +91,14 @@ Function Arguments:
 - `regex_return_cols`: Additional columns from the pattern table to attach.
 
 Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.
+
 ---
 
 ### Advanced Usage
 
 By default, `extract()` evaluates every pattern against every text entry. If it is known that each row contains at most one match, setting `unique_match = TRUE` utilizes a faster algorithm that stops searching a row once the first match is found. This improves execution speed on large datasets.
 
-```{r, eval = FALSE}
+```{r}
 result_advanced <- extract(
   data = cr2007_03_01,
   regex_table = members,
