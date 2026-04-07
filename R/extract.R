@@ -197,14 +197,17 @@ extract <- function(data,
     chk::chk_character(typo_table[[typo_from_col]])
     chk::chk_character(typo_table[[typo_to_col]])
 
+    escaped_typos <- gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", typo_table[[typo_from_col]])
+    typo_patterns <- paste0("\\b", escaped_typos, "\\b")
+
+    typo_regex_opts <- stringi::stri_opts_regex(case_insensitive = TRUE)
+
     for (i in seq_len(nrow(typo_table))) {
-      pat <- gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", typo_table[[typo_from_col]][i])
-      pattern <- paste0("\\b", pat, "\\b")
-      
       text_search <- stringi::stri_replace_all_regex(
         text_search,
-        pattern,
-        typo_table[[typo_to_col]][i]
+        typo_patterns[i],
+        typo_table[[typo_to_col]][i],
+        opts_regex = typo_regex_opts
       )
     }
 
