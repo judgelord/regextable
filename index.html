@@ -65,18 +65,33 @@
 <li>
 <code>data</code>: A data frame containing a text column, or a character vector.</li>
 <li>
-<code>regex_table</code>: A lookup table (a data frame with a column of strings or regular expressions to search for, typically called <code>pattern</code>)</li>
+<code>regex_table</code>: A data frame with a column of strings or regular expressions to search for, typically called <code>pattern</code>
+</li>
 </ol>
-<p>For each text entry, <code><a href="reference/extract.html">regextable::extract</a></code> returns: - the row number of the input <code>data</code> - the matched <code>pattern</code> - the exact substring extracted from the text - Optionally, other metadata columns from <code>data</code> or <code>regex_table</code></p>
-<p>Users can choose to return <em>all</em> matches (resulting in multiple rows per text entry) or limit the output to just the first match found. ## Installation</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"judgelord/regextable"</span>)</span></code></pre></div>
+<p>For each text entry, <code><a href="reference/extract.html">regextable::extract</a></code> returns:</p>
+<ul>
+<li>the row number of the input <code>data</code>
+</li>
+<li>the matched <code>pattern</code>
+</li>
+<li>the exact substring extracted from the text</li>
+<li>Optionally, other metadata columns from <code>data</code> or <code>regex_table</code>
+</li>
+</ul>
+<p>Users can choose to return <em>all</em> matches (resulting in multiple rows per text entry) or limit the output to just the first match found.</p>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"judgelord/regextable"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
-<p>The examples below use an example regex lookup table of members of Congress, <code>members</code>, and example text data from the Congressional Record, <code>cr2007_03_01</code>, from the <a href="https://judgelord.github.io/legislators/" class="external-link"><code>legislators</code></a> package, which are also included in this package, subset to <code>congress == 107</code>, for illustration. Users who need to search for legislators should use the <code>legislators</code> package.</p>
+<p>The examples below use an example regex lookup table of members of Congress, <code>members</code>, and example text data from the Congressional Record, <code>cr2007_03_01</code>, from the <a href="https://judgelord.github.io/legislators/" class="external-link"><code>legislators</code></a> package, which are also included in this package, subset to <code>congress == 107</code>, for illustration.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"members"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">members</span><span class="op">)</span></span>
@@ -105,7 +120,7 @@
 <div class="section level2">
 <h2 id="text-cleaning">Text cleaning<a class="anchor" aria-label="anchor" href="#text-cleaning"></a>
 </h2>
-<p>Before matching, by default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied to standardize messy text. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. Text cleaning is applied only internally during matching and does not modify the original input data. Users can disable this behavior by setting <code>do_clean_text = FALSE</code>.</p>
+<p>Before matching, by default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied to standardize messy text. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>-</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. Text cleaning is applied only internally during matching and does not modify the original input data. Users can disable this behavior by setting <code>do_clean_text = FALSE</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="st">"  HELLO---WORLD  "</span></span>
 <span><span class="va">cleaned_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/clean_text.html">clean_text</a></span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span>
@@ -113,7 +128,41 @@
 <span><span class="co">#&gt; [1] "hello world"</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="extract-regex-based-matches-from-text">Extract regex-based matches from text<a class="anchor" aria-label="anchor" href="#extract-regex-based-matches-from-text"></a>
+<h2 id="typo-correction">Typo Correction<a class="anchor" aria-label="anchor" href="#typo-correction"></a>
+</h2>
+<p>Users can optionally provide a <code>typo_table</code> to correct typos in the input text before pattern matching. This is useful for correcting misspellings or normalizing inconsistent text. Replacements are applied sequentially to the cleaned text before regex matching and use word boundaries to avoid partial matches within larger words.</p>
+<p>The <code>typo_table</code> must contain:</p>
+<ul>
+<li>A column of text to replace (default <code>"typo"</code>)</li>
+<li>A column of replacement text (default <code>"correction"</code>)</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">typos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  typo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"appl"</span>, <span class="st">"bananna"</span><span class="op">)</span>,</span>
+<span>  correction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apple"</span>, <span class="st">"banana"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">patterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apple"</span>, <span class="st">"banana"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"I like appl"</span>, <span class="st">"bananna is good"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">typo_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">text</span>, </span>
+<span>  regex_table <span class="op">=</span> <span class="va">patterns</span>, </span>
+<span>  typo_table <span class="op">=</span> <span class="va">typos</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">typo_result</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 2 × 3</span></span>
+<span><span class="co">#&gt;   row_id pattern match </span></span>
+<span><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; </span></span>
+<span><span class="co">#&gt; 1      1 apple   apple </span></span>
+<span><span class="co">#&gt; 2      2 banana  banana</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="extract-regex-based-matches-from-text">Extract Regex-Based Matches from Text<a class="anchor" aria-label="anchor" href="#extract-regex-based-matches-from-text"></a>
 </h2>
 <div class="section level3">
 <h3 id="description-1">Description<a class="anchor" aria-label="anchor" href="#description-1"></a>
@@ -125,9 +174,9 @@
 </h3>
 <ul>
 <li>
-<strong><code>data</code></strong>: A data frame or character vector containing the text to search.</li>
+<strong><code>data</code></strong>: Data frame or character vector containing the text to search.</li>
 <li>
-<strong><code>regex_table</code></strong>: A regex lookup table with at least one pattern column.</li>
+<strong><code>regex_table</code></strong>: Regex lookup table with at least one pattern column.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -135,7 +184,13 @@
 </h3>
 <ul>
 <li>
-<strong><code>col_name</code></strong>: (default <code>"text"</code>) Column name in the data frame containing text to search through. <em>(Note: If <code>data</code> is a character vector, it is internally converted to a data frame and this argument is ignored).</em>
+<strong><code>typo_table</code></strong>: (default <code>NULL</code>) Data frame with text replacements applied before matching.</li>
+<li>
+<strong><code>typo_from_col</code></strong>: (default <code>"typo"</code>) Column in <code>typo_table</code> with text to replace.</li>
+<li>
+<strong><code>typo_to_col</code></strong>: (default <code>"correction"</code>) Column in <code>typo_table</code> with replacement text.</li>
+<li>
+<strong><code>col_name</code></strong>: (default <code>"text"</code>) Column in <code>data</code> containing text to search. <em>(Note: If <code>data</code> is a character vector, it is internally converted to a data frame and this argument is ignored).</em>
 </li>
 <li>
 <strong><code>pattern_col</code></strong>: (default <code>"pattern"</code>) Name of the regex pattern column in <code>regex_table</code>.</li>
@@ -183,8 +238,8 @@
 <div class="section level3">
 <h3 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h3>
-<p>The simplest use of <code><a href="reference/extract.html">extract()</a></code> with only the required arguments and returned columns specified. This finds all matches in the text column using the provided regex table.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>A simple usage of <code><a href="reference/extract.html">extract()</a></code> with only the required arguments and returned columns specified. This finds all matches in the text column using the provided regex table.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract patterns using only required arguments</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
@@ -207,8 +262,8 @@
 <div class="section level3">
 <h3 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
 </h3>
-<p>Shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. This is useful when you want to narrow matches, disable text cleaning, control returned columns, or suppress messages.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>This shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. It is useful when the user wants to narrow matches, disable text cleaning, control returned columns, or suppress messages.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Advanced usage with optional filters</span></span>
 <span><span class="va">result_advanced</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
@@ -236,7 +291,6 @@
 <h3 id="future-development">Future Development<a class="anchor" aria-label="anchor" href="#future-development"></a>
 </h3>
 <ul>
-<li>Add support for <code>typo_table</code> to correct known text errors before matching.</li>
 <li>Improve strict matching rules for patterns that may need more inclusive or more restrictive word boundaries.</li>
 <li>Enable user-defined ID systems (e.g., corporations, campaigns) and control whether text is returned with matches.</li>
 <li>Allow users to plug in their own regex_table without requiring a wrapper function.</li>

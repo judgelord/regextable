@@ -10,7 +10,7 @@ in `data_return_cols` and `regex_return_cols`. Optional metadata from
 the pattern table can also be included. Multiple rows may be returned
 for a single text if it matches multiple patterns.
 
-The function also supports additional parameters such as
+The function also supports additional parameters such as `typo_table`,
 `do_clean_text`, `unique_match`, `verbose`, `cl`, and optional Named
 Entity Recognition validation via `use_ner`. These can be used to
 control text cleaning, optimize performance, show progress messages, or
@@ -66,7 +66,10 @@ performs basic text cleaning to improve pattern matching. It converts
 text to lowercase, removes specific punctuation (`+`, `—`, `!`, `?`,
 `:`, `;`), replaces line breaks, tabs, periods, and dashes with spaces,
 and normalizes commas and excess whitespace. This can be disabled by
-setting `do_clean_text = FALSE`.
+setting `do_clean_text = FALSE`. Additionally, the `typo_table`
+parameter allows users to specify common misspellings and their
+corrections. When provided, matches are performed on the corrected text
+rather than the original text.
 
 Example of
 [`clean_text()`](https://judgelord.github.io/regextable/reference/clean_text.md):
@@ -85,6 +88,7 @@ The simplest use of
 ``` r
 result <- regextable::extract(
   data = cr2007_03_01,
+  col_name = "text",
   regex_table = members,
   data_return_cols = c("text"),
   regex_return_cols = c("icpsr")
@@ -110,7 +114,10 @@ table of patterns. - `data_return_cols`: Additional columns from `data`
 to include in the result. - `regex_return_cols`: Additional columns from
 the pattern table to attach.
 
-## Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.
+Each row in the output corresponds to a detected match, and includes
+both the original text and the matching pattern.
+
+------------------------------------------------------------------------
 
 ### Advanced Usage
 
@@ -136,6 +143,15 @@ result_advanced <- extract(
 
 kable(head(result_advanced))
 ```
+
+| row_id | text | icpsr | pattern | match |
+|---:|:---|---:|:---|:---|
+| 1 | HON. SAM GRAVES;Mr. GRAVES | 20124 | samuel graves&#124;\bs graves&#124;sam graves&#124;(^&#124;senator &#124;representative )graves\b&#124;graves, sam&#124;graves, samuel&#124;graves samuel&#124;graves, s\b&#124;representative graves\b | SAM GRAVES |
+| 2 | HON. MARK UDALL;Mr. UDALL | 29906 | mark udall&#124;\bm udall&#124;mark e udall&#124;\bna udall&#124;(^&#124;senator &#124;representative )udall\b.{1,4}co&#124;udall, mark&#124;udall mark&#124;udall, m\b&#124;representative udall\b.{1,4}co&#124;m e udall | MARK UDALL |
+| 3 | HON. JAMES R. LANGEVIN;Mr. LANGEVIN | 20136 | james langevin&#124;\bj langevin&#124;james r langevin&#124;jim langevin&#124;jim r langevin&#124;(^&#124;senator &#124;representative )langevin\b&#124;langevin, jim&#124;langevin, james&#124;langevin james&#124;langevin, j\b&#124;representative langevin\b&#124;j r langevin | james r langevin |
+| 5 | HON. SAM GRAVES;Mr. GRAVES | 20124 | samuel graves&#124;\bs graves&#124;sam graves&#124;(^&#124;senator &#124;representative )graves\b&#124;graves, sam&#124;graves, samuel&#124;graves samuel&#124;graves, s\b&#124;representative graves\b | SAM GRAVES |
+| 6 | HON. SANFORD D. BISHOP;Mr. BISHOP | 29339 | sanford bishop&#124;sanford dixon bishop&#124;\bs bishop&#124;sanford d bishop&#124;\bna bishop&#124;(^&#124;senator &#124;representative )bishop\b.{1,4}ga&#124;bishop, sanford&#124;bishop sanford&#124;bishop, s\b&#124;representative bishop\b.{1,4}ga&#124;s d bishop | sanford d bishop |
+| 7 | HON. EDOLPHUS TOWNS;Mr. TOWNS | 15072 | edolphus towns&#124;\be towns&#124;ed towns&#124;(^&#124;senator &#124;representative )towns\b&#124;towns, ed&#124;towns, edolphus&#124;towns edolphus&#124;towns, e\b&#124;representative towns\b | EDOLPHUS TOWNS |
 
 Function Arguments: - `unique_match`: If TRUE, utilizes a faster
 algorithm that stops searching a row after the first match. -

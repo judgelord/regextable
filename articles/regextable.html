@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-27</p>
+      <p class="date">2026-04-08</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/regextable.qmd" class="external-link"><code>vignettes/regextable.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -71,7 +71,7 @@
     <section class="level3"><h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h3>
 <p>The <code>regextable</code> package extracts regex-based pattern matches from a data frame or character vector using a pattern lookup table. For each input row, all matching patterns are returned, along with the matched substring, an internal row identifier, and additional columns specified in <code>data_return_cols</code> and <code>regex_return_cols</code>. Optional metadata from the pattern table can also be included. Multiple rows may be returned for a single text if it matches multiple patterns.</p>
-<p>The function also supports additional parameters such as <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, <code>cl</code>, and optional Named Entity Recognition validation via <code>use_ner</code>. These can be used to control text cleaning, optimize performance, show progress messages, or speed up processing on large datasets.</p>
+<p>The function also supports additional parameters such as <code>typo_table</code>, <code>do_clean_text</code>, <code>unique_match</code>, <code>verbose</code>, <code>cl</code>, and optional Named Entity Recognition validation via <code>use_ner</code>. These can be used to control text cleaning, optimize performance, show progress messages, or speed up processing on large datasets.</p>
 <p>Install and load the package:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
@@ -237,7 +237,7 @@
 </div>
 </section><section class="level3"><h3 id="text-cleaning">Text Cleaning<a class="anchor" aria-label="anchor" href="#text-cleaning"></a>
 </h3>
-<p>By default, <code><a href="../reference/extract.html">extract()</a></code> performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting <code>do_clean_text = FALSE</code>.</p>
+<p>By default, <code><a href="../reference/extract.html">extract()</a></code> performs basic text cleaning to improve pattern matching. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>—</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. This can be disabled by setting <code>do_clean_text = FALSE</code>. Additionally, the <code>typo_table</code> parameter allows users to specify common misspellings and their corrections. When provided, matches are performed on the corrected text rather than the original text.</p>
 <p>Example of <code><a href="../reference/clean_text.html">clean_text()</a></code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
@@ -252,6 +252,7 @@
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">regextable</span><span class="fu">::</span><span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
+<span>  col_name <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  regex_table <span class="op">=</span> <span class="va">members</span>,</span>
 <span>  data_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span><span class="op">)</span>,</span>
 <span>  regex_return_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"icpsr"</span><span class="op">)</span></span>
@@ -315,9 +316,8 @@
 </div>
 </div>
 <p>Function Arguments: - <code>data</code>: The text dataset to search. - <code>col_name</code>: Which column contains the text (defaults to <code>"text"</code>). Note: If a simple character vector is passed instead of a data frame, it is internally converted, and this argument is ignored. - <code>regex_table</code>: The lookup table of patterns. - <code>data_return_cols</code>: Additional columns from <code>data</code> to include in the result. - <code>regex_return_cols</code>: Additional columns from the pattern table to attach.</p>
-</section><section class="level2"><h2 id="each-row-in-the-output-corresponds-to-a-detected-match-and-includes-both-the-original-text-and-the-matching-pattern-">Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.<a class="anchor" aria-label="anchor" href="#each-row-in-the-output-corresponds-to-a-detected-match-and-includes-both-the-original-text-and-the-matching-pattern-"></a>
-</h2>
-<section class="level3"><h3 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
+<p>Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.</p>
+<hr></section><section class="level3"><h3 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
 </h3>
 <p>By default, <code><a href="../reference/extract.html">extract()</a></code> evaluates every pattern against every text entry. If it is known that each row contains at most one match, setting <code>unique_match = TRUE</code> utilizes a faster algorithm that stops searching a row once the first match is found. This improves execution speed on large datasets.</p>
 <div class="cell" data-layout-align="center">
@@ -335,9 +335,64 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result_advanced</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
+<thead><tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">row_id</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">text</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">icpsr</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">pattern</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">match</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">HON. MARK UDALL;Mr. UDALL</td>
+<td style="text-align: right;">29906</td>
+<td style="text-align: left;">mark udall&amp;#124;\bm udall&amp;#124;mark e udall&amp;#124;\bna udall&amp;#124;(^&amp;#124;senator &amp;#124;representative )udall\b.{1,4}co&amp;#124;udall, mark&amp;#124;udall mark&amp;#124;udall, m\b&amp;#124;representative udall\b.{1,4}co&amp;#124;m e udall</td>
+<td style="text-align: left;">MARK UDALL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">HON. JAMES R. LANGEVIN;Mr. LANGEVIN</td>
+<td style="text-align: right;">20136</td>
+<td style="text-align: left;">james langevin&amp;#124;\bj langevin&amp;#124;james r langevin&amp;#124;jim langevin&amp;#124;jim r langevin&amp;#124;(^&amp;#124;senator &amp;#124;representative )langevin\b&amp;#124;langevin, jim&amp;#124;langevin, james&amp;#124;langevin james&amp;#124;langevin, j\b&amp;#124;representative langevin\b&amp;#124;j r langevin</td>
+<td style="text-align: left;">james r langevin</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">HON. SAM GRAVES;Mr. GRAVES</td>
+<td style="text-align: right;">20124</td>
+<td style="text-align: left;">samuel graves&amp;#124;\bs graves&amp;#124;sam graves&amp;#124;(^&amp;#124;senator &amp;#124;representative )graves\b&amp;#124;graves, sam&amp;#124;graves, samuel&amp;#124;graves samuel&amp;#124;graves, s\b&amp;#124;representative graves\b</td>
+<td style="text-align: left;">SAM GRAVES</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">HON. SANFORD D. BISHOP;Mr. BISHOP</td>
+<td style="text-align: right;">29339</td>
+<td style="text-align: left;">sanford bishop&amp;#124;sanford dixon bishop&amp;#124;\bs bishop&amp;#124;sanford d bishop&amp;#124;\bna bishop&amp;#124;(^&amp;#124;senator &amp;#124;representative )bishop\b.{1,4}ga&amp;#124;bishop, sanford&amp;#124;bishop sanford&amp;#124;bishop, s\b&amp;#124;representative bishop\b.{1,4}ga&amp;#124;s d bishop</td>
+<td style="text-align: left;">sanford d bishop</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">HON. EDOLPHUS TOWNS;Mr. TOWNS</td>
+<td style="text-align: right;">15072</td>
+<td style="text-align: left;">edolphus towns&amp;#124;\be towns&amp;#124;ed towns&amp;#124;(^&amp;#124;senator &amp;#124;representative )towns\b&amp;#124;towns, ed&amp;#124;towns, edolphus&amp;#124;towns edolphus&amp;#124;towns, e\b&amp;#124;representative towns\b</td>
+<td style="text-align: left;">EDOLPHUS TOWNS</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <p>Function Arguments: - <code>unique_match</code>: If TRUE, utilizes a faster algorithm that stops searching a row after the first match. - <code>date_col</code>, <code>date_start</code>, <code>date_end</code>: Filter rows by date before matching. - <code>remove_acronyms</code>: Skip patterns consisting entirely of uppercase letters (e.g., “NASA” or “USA”).</p>
-</section></section><section class="level2"><h2 id="these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-">These filters can be combined with any subset of columns for flexible outputs.<a class="anchor" aria-label="anchor" href="#these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-"></a>
+</section><section class="level2"><h2 id="these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-">These filters can be combined with any subset of columns for flexible outputs.<a class="anchor" aria-label="anchor" href="#these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-"></a>
 </h2>
 <section class="level3"><h3 id="named-entity-recognition-ner-validation">Named Entity Recognition (NER) Validation<a class="anchor" aria-label="anchor" href="#named-entity-recognition-ner-validation"></a>
 </h3>

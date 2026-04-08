@@ -14,11 +14,6 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
-library(rvest)
-library(pbapply)
-library(purrr)
-library(tibble)
-library(stringr)
 ```
 
 ### Regex Table of Corporations
@@ -78,6 +73,8 @@ corporation names while optionally removing acronym-only matches to
 reduce false positives.
 
 ``` r
+spacyr::spacy_initialize()
+
 corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,

@@ -14,19 +14,13 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
-library(rvest)
-library(googlesheets4)
-library(purrr)
-library(tibble)
-library(stringr)
 ```
 
 ### Agencies Data File
 
 The `agencies_by_section` table contains a sample of agencies, including
 their sub-agencies, acronyms, and reference sources used for matching
-and standardization. These are the regex patterns used for matching and
-standardization.
+and standardization.
 
 ``` r
 load("/Users/shirl/Downloads/agencies_by_section.rda")
@@ -78,6 +72,8 @@ and `department` columns from the original data, and attaches the
 corresponding `agency` metadata from the lookup table.
 
 ``` r
+spacyr::spacy_initialize()
+
 agencies_df <- extract(
   data = body_parsed,
   col_name = "text",

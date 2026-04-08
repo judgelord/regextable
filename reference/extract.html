@@ -42,6 +42,9 @@
 <span>  <span class="va">data</span>,</span>
 <span>  col_name <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  <span class="va">regex_table</span>,</span>
+<span>  typo_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  typo_from_col <span class="op">=</span> <span class="st">"typo"</span>,</span>
+<span>  typo_to_col <span class="op">=</span> <span class="st">"correction"</span>,</span>
 <span>  pattern_col <span class="op">=</span> <span class="st">"pattern"</span>,</span>
 <span>  data_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  regex_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -72,6 +75,18 @@
 
 <dt id="arg-regex-table">regex_table<a class="anchor" aria-label="anchor" href="#arg-regex-table"></a></dt>
 <dd><p>A data frame containing regular expression patterns and optional metadata columns.</p></dd>
+
+
+<dt id="arg-typo-table">typo_table<a class="anchor" aria-label="anchor" href="#arg-typo-table"></a></dt>
+<dd><p>Optional data frame with text replacements for corrections. Replacements are applied sequentially to the text using regex (with word boundaries) before pattern matching.</p></dd>
+
+
+<dt id="arg-typo-from-col">typo_from_col<a class="anchor" aria-label="anchor" href="#arg-typo-from-col"></a></dt>
+<dd><p>Optional column in <code>typo_table</code> with text to replace. Default is "typo".</p></dd>
+
+
+<dt id="arg-typo-to-col">typo_to_col<a class="anchor" aria-label="anchor" href="#arg-typo-to-col"></a></dt>
+<dd><p>Optional column in <code>typo_table</code> with replacement text. Default is "correction".</p></dd>
 
 
 <dt id="arg-pattern-col">pattern_col<a class="anchor" aria-label="anchor" href="#arg-pattern-col"></a></dt>

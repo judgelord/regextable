@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Corporations Regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-03-27</p>
+      <p class="date">2026-04-08</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/corporations.qmd" class="external-link"><code>vignettes/corporations.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -75,12 +75,7 @@
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/" class="external-link">rvest</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/psolymos/pbapply" class="external-link">pbapply</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="level3"><h3 id="regex-table-of-corporations">Regex Table of Corporations<a class="anchor" aria-label="anchor" href="#regex-table-of-corporations"></a>
 </h3>
@@ -225,7 +220,9 @@
 <p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>organization</code> column of the dataset using the <code>patterns</code> column in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">corp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">project_2025_coalition_and_contributors</span>,</span>
+<code class="sourceCode R"><span><span class="fu">spacyr</span><span class="fu">::</span><span class="fu"><a href="http://spacyr.quanteda.io/reference/spacy_initialize.html" class="external-link">spacy_initialize</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">corp_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">project_2025_coalition_and_contributors</span>,</span>
 <span>                   col_name <span class="op">=</span> <span class="st">"organization"</span>,</span>
 <span>                   regex_table <span class="op">=</span> <span class="va">corporations_regex</span>,</span>
 <span>                   data_return_cols <span class="op">=</span> <span class="st">"organization"</span>,</span>

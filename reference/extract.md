@@ -10,6 +10,9 @@ extract(
   data,
   col_name = "text",
   regex_table,
+  typo_table = NULL,
+  typo_from_col = "typo",
+  typo_to_col = "correction",
   pattern_col = "pattern",
   data_return_cols = NULL,
   regex_return_cols = NULL,
@@ -43,6 +46,22 @@ extract(
 
   A data frame containing regular expression patterns and optional
   metadata columns.
+
+- typo_table:
+
+  Optional data frame with text replacements for corrections.
+  Replacements are applied sequentially to the text using regex (with
+  word boundaries) before pattern matching.
+
+- typo_from_col:
+
+  Optional column in `typo_table` with text to replace. Default is
+  "typo".
+
+- typo_to_col:
+
+  Optional column in `typo_table` with replacement text. Default is
+  "correction".
 
 - pattern_col:
 

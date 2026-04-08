@@ -8,20 +8,24 @@ two inputs:
 
 1.  `data`: A data frame containing a text column, or a character
     vector.
-2.  `regex_table`: A lookup table (a data frame with a column of strings
-    or regular expressions to search for, typically called `pattern`)
+2.  `regex_table`: A data frame with a column of strings or regular
+    expressions to search for, typically called `pattern`
 
 For each text entry,
 [`regextable::extract`](https://judgelord.github.io/regextable/reference/extract.md)
-returns: - the row number of the input `data` - the matched `pattern` -
-the exact substring extracted from the text - Optionally, other metadata
-columns from `data` or `regex_table`
+returns:
+
+- the row number of the input `data`
+- the matched `pattern`
+- the exact substring extracted from the text
+- Optionally, other metadata columns from `data` or `regex_table`
 
 Users can choose to return *all* matches (resulting in multiple rows per
-text entry) or limit the output to just the first match found. \##
-Installation
+text entry) or limit the output to just the first match found.
 
-``` R
+## Installation
+
+``` r
 devtools::install_github("judgelord/regextable")
 ```
 
@@ -36,8 +40,7 @@ Congress, `members`, and example text data from the Congressional
 Record, `cr2007_03_01`, from the
 [`legislators`](https://judgelord.github.io/legislators/) package, which
 are also included in this package, subset to `congress == 107`, for
-illustration. Users who need to search for legislators should use the
-`legislators` package.
+illustration.
 
 ``` r
 data("members")
@@ -70,7 +73,7 @@ head(cr2007_03_01)
 Before matching, by default,
 [`clean_text()`](https://judgelord.github.io/regextable/reference/clean_text.md)
 is applied to standardize messy text. It converts text to lowercase,
-removes specific punctuation (`+`, `—`, `!`, `?`, `:`, `;`), replaces
+removes specific punctuation (`+`, `-`, `!`, `?`, `:`, `;`), replaces
 line breaks, tabs, periods, and dashes with spaces, and normalizes
 commas and excess whitespace. Text cleaning is applied only internally
 during matching and does not modify the original input data. Users can
@@ -83,7 +86,46 @@ print(cleaned_text)
 #> [1] "hello world"
 ```
 
-## Extract regex-based matches from text
+## Typo Correction
+
+Users can optionally provide a `typo_table` to correct typos in the
+input text before pattern matching. This is useful for correcting
+misspellings or normalizing inconsistent text. Replacements are applied
+sequentially to the cleaned text before regex matching and use word
+boundaries to avoid partial matches within larger words.
+
+The `typo_table` must contain:
+
+- A column of text to replace (default `"typo"`)
+- A column of replacement text (default `"correction"`)
+
+``` r
+typos <- data.frame(
+  typo = c("appl", "bananna"),
+  correction = c("apple", "banana")
+)
+
+patterns <- data.frame(
+  pattern = c("apple", "banana")
+)
+
+text <- c("I like appl", "bananna is good")
+
+typo_result <- extract(
+  data = text, 
+  regex_table = patterns, 
+  typo_table = typos
+)
+
+head(typo_result)
+#> # A tibble: 2 × 3
+#>   row_id pattern match 
+#>    <int> <chr>   <chr> 
+#> 1      1 apple   apple 
+#> 2      2 banana  banana
+```
+
+## Extract Regex-Based Matches from Text
 
 ### Description
 
@@ -96,17 +138,22 @@ per match.
 
 ### Required Parameters
 
-- **`data`**: A data frame or character vector containing the text to
+- **`data`**: Data frame or character vector containing the text to
   search.
-- **`regex_table`**: A regex lookup table with at least one pattern
+- **`regex_table`**: Regex lookup table with at least one pattern
   column.
 
 ### Optional Parameters
 
-- **`col_name`**: (default `"text"`) Column name in the data frame
-  containing text to search through. *(Note: If `data` is a character
-  vector, it is internally converted to a data frame and this argument
-  is ignored).*
+- **`typo_table`**: (default `NULL`) Data frame with text replacements
+  applied before matching.
+- **`typo_from_col`**: (default `"typo"`) Column in `typo_table` with
+  text to replace.
+- **`typo_to_col`**: (default `"correction"`) Column in `typo_table`
+  with replacement text.
+- **`col_name`**: (default `"text"`) Column in `data` containing text to
+  search. *(Note: If `data` is a character vector, it is internally
+  converted to a data frame and this argument is ignored).*
 - **`pattern_col`**: (default `"pattern"`) Name of the regex pattern
   column in `regex_table`.
 - **`data_return_cols`**: (default `NULL`) Vector of additional columns
@@ -149,7 +196,7 @@ A data frame with one row per match, including:
 
 ### Basic Usage
 
-The simplest use of
+A simple usage of
 [`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
 with only the required arguments and returned columns specified. This
 finds all matches in the text column using the provided regex table.
@@ -177,10 +224,10 @@ head(result)
 
 ### Advanced Usage
 
-Shows how to use optional arguments for more control, such as filtering
-by date ranges and removing acronyms. This is useful when you want to
-narrow matches, disable text cleaning, control returned columns, or
-suppress messages.
+This shows how to use optional arguments for more control, such as
+filtering by date ranges and removing acronyms. It is useful when the
+user wants to narrow matches, disable text cleaning, control returned
+columns, or suppress messages.
 
 ``` r
 # Advanced usage with optional filters
@@ -209,8 +256,6 @@ head(result_advanced)
 
 ### Future Development
 
-- Add support for `typo_table` to correct known text errors before
-  matching.
 - Improve strict matching rules for patterns that may need more
   inclusive or more restrictive word boundaries.
 - Enable user-defined ID systems (e.g., corporations, campaigns) and
