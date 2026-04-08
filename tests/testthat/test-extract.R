@@ -168,7 +168,6 @@ test_that("extract handles NA text safely", {
   df <- data.frame(id = 1:3, text = c("ACME", NA, "XYZ"))
   regex_table <- data.frame(pattern = c("ACME", "XYZ"))
   
-  # This previously crashed because NA inputs propagated to array indices
   result <- extract(df, regex_table, "text", verbose = FALSE)
   
   expect_equal(nrow(result), 2)
