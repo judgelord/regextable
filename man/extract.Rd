@@ -6,32 +6,34 @@
 \usage{
 extract(
   data,
-  col_name = "text",
   regex_table,
+  col_name = "text",
+  pattern_col = "pattern",
   typo_table = NULL,
   typo_from_col = "typo",
   typo_to_col = "correction",
-  pattern_col = "pattern",
-  data_return_cols = NULL,
-  regex_return_cols = NULL,
   date_col = NULL,
   date_start = NULL,
   date_end = NULL,
+  data_return_cols = NULL,
+  regex_return_cols = NULL,
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
-  verbose = TRUE,
   unique_match = FALSE,
-  cl = NULL,
   use_ner = FALSE,
-  ner_entity_types = c("ORG")
+  ner_entity_types = c("ORG"),
+  verbose = TRUE,
+  cl = NULL
 )
 }
 \arguments{
 \item{data}{A data frame or character vector containing the text to search. If a character vector is provided, it is internally converted to a data frame and \code{col_name} is ignored.}
 
+\item{regex_table}{A data frame containing regular expression patterns and optional metadata columns.}
+
 \item{col_name}{Character string specifying the column in \code{data} that contains text to search. Default is "text".}
 
-\item{regex_table}{A data frame containing regular expression patterns and optional metadata columns.}
+\item{pattern_col}{Character string specifying the column in \code{regex_table} that contains regex patterns. Default is "pattern".}
 
 \item{typo_table}{Optional data frame with text replacements for corrections. Replacements are applied sequentially to the text using regex (with word boundaries) before pattern matching.}
 
@@ -39,31 +41,23 @@ extract(
 
 \item{typo_to_col}{Optional column in \code{typo_table} with replacement text. Default is "correction".}
 
-\item{pattern_col}{Character string specifying the column in \code{regex_table} that contains regex patterns. Default is "pattern".}
-
-\item{data_return_cols}{Optional vector of column names to include from \code{data}. Default is \code{NULL} (only \code{row_id} is returned).}
-
-\item{regex_return_cols}{Optional vector of column names to include from \code{regex_table}. Default is \code{NULL} (no metadata columns added).}
-
 \item{date_col}{Optional column in \code{data} for date filtering. If provided, rows are filtered by \code{date_start} and \code{date_end} before pattern matching.}
 
 \item{date_start}{Optional start date (Date object or string like "YYYY-MM-DD") for filtering \code{data} when \code{date_col} is specified.}
 
 \item{date_end}{Optional end date (Date object or string like "YYYY-MM-DD") for filtering \code{data} when \code{date_col} is specified.}
 
+\item{data_return_cols}{Optional vector of column names to include from \code{data}. Default is \code{NULL} (only \code{row_id} is returned).}
+
+\item{regex_return_cols}{Optional vector of column names to include from \code{regex_table}. Default is \code{NULL} (no metadata columns added).}
+
 \item{remove_acronyms}{Logical; if TRUE, removes patterns consisting only of uppercase letters (2 or more characters) from \code{regex_table}.}
 
 \item{do_clean_text}{Logical; if TRUE, applies basic text cleaning to the input before matching.}
 
-\item{verbose}{Logical; if TRUE, displays progress messages.}
-
 \item{unique_match}{Logical; if TRUE, stops searching after the first match to
 find at most one match per row (evaluated in the order patterns appear in \code{regex_table}).
 If FALSE, returns all matches for all patterns.}
-
-\item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer
-to indicate number of child processes (integer values are ignored on Windows).
-Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 
 \item{use_ner}{Logical; if TRUE, uses the 'spacyr' package to validate that
 matches are actual Named Entities (e.g., organizations). Note: \code{spacyr}
@@ -71,6 +65,12 @@ must be initialized (e.g., via \code{spacyr::spacy_initialize()}) before calling
 this function.}
 
 \item{ner_entity_types}{Character vector; the types of Named Entities to keep if \code{use_ner} is TRUE. Default is "ORG".}
+
+\item{verbose}{Logical; if TRUE, displays progress messages.}
+
+\item{cl}{A cluster object created by \code{parallel::makeCluster()}, or an integer
+to indicate number of child processes (integer values are ignored on Windows).
+Passed to \code{\link[pbapply:pbapply]{pbapply::pblapply()}}.}
 }
 \value{
 A tibble with the following columns:
@@ -105,8 +105,8 @@ patterns <- data.frame(
 )
 
 # Extract all matches
-extract(data, "text", patterns)
+extract(data, patterns)
 
 # Extract one match per row
-extract(data, "text", patterns, unique_match = TRUE)
+extract(data, patterns, unique_match = TRUE)
 }
