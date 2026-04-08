@@ -42,11 +42,6 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
-library(rvest)
-library(pbapply)
-library(purrr)
-library(tibble)
-library(stringr)
 ```
 
 ### Regex Table of Corporations
@@ -77,6 +72,8 @@ kable(head(project_2025_coalition_and_contributors))
 The `extract()` function searches the `organization` column of the dataset using the `patterns` column in the regex table. It returns the standardized corporation names while optionally removing acronym-only matches to reduce false positives.
 
 ```{r}
+spacyr::spacy_initialize()
+
 corp_df <- extract(data = project_2025_coalition_and_contributors,
                    col_name = "organization",
                    regex_table = corporations_regex,
