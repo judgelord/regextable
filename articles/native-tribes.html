@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Native American Tribes Regex Table</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-04-08</p>
+      <p class="date">2026-04-13</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/native-tribes.qmd" class="external-link"><code>vignettes/native-tribes.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -76,18 +76,25 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/judgelord/regextable" class="external-link">regextable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/" class="external-link">rvest</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="level3"><h3 id="regex-table-of-native-american-tribes">Regex Table of Native American Tribes<a class="anchor" aria-label="anchor" href="#regex-table-of-native-american-tribes"></a>
 </h3>
 <p>The following table contains tribe names and regex patterns used for matching. Each row represents a tribe and includes possible spelling variations or alternate names used in text.</p>
-<p>This lookup table includes the following columns: - Name - Strings - Source - Website - Notes - Type - Emphasis</p>
+<p>This lookup table includes the following columns:</p>
+<ul>
+<li>Name</li>
+<li>Strings</li>
+<li>Source</li>
+<li>Website</li>
+<li>Notes</li>
+<li>Type</li>
+<li>Emphasis</li>
+</ul>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tribes_regex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"/Users/shirl/Downloads/Native_American_Tribes_Regex_Table.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">tribes_regex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1_946hi1zXeRvlGWIztrZDKJEcPM2jUY0"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tribes_regex</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output-display">
 <table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
@@ -161,57 +168,51 @@
 </div>
 </section><section class="level3"><h3 id="gathering-sample-data">Gathering Sample Data<a class="anchor" aria-label="anchor" href="#gathering-sample-data"></a>
 </h3>
-<p>To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes.</p>
+<p>To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes. The scraping example uses the <code>rvest</code> and <code>purrr</code> packages for HTML parsing and iteration. The code is included for reference only and is not evaluated in this vignette.</p>
+<p>The following code can be run to scrape the live directory directly from the website:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">max_page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html" class="external-link">read_html</a></span><span class="op">(</span><span class="st">"https://www.ncai.org/tribal-directory"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_elements</a></span><span class="op">(</span><span class="st">".Pagination_numberButton__vLhpm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">max_page</span> <span class="op">&lt;-</span> <span class="fu">read_html</span><span class="op">(</span><span class="st">"https://www.ncai.org/tribal-directory"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">html_elements</span><span class="op">(</span><span class="st">".Pagination_numberButton__vLhpm"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">html_text</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">all_pages</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"https://www.ncai.org/tribal-directory/page/"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">max_page</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tribes_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">map_df</a></span><span class="op">(</span><span class="va">all_pages</span>, <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">tribes_df</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="va">all_pages</span>, <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Scraping: "</span>, <span class="va">url</span><span class="op">)</span></span>
-<span>  <span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html" class="external-link">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
-<span>  <span class="va">cards</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_elements</a></span><span class="op">(</span><span class="st">"article.TribeCard_tribeCard__UJcdx"</span><span class="op">)</span></span>
+<span>  <span class="va">html</span> <span class="op">&lt;-</span> <span class="fu">read_html</span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="va">cards</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_elements</span><span class="op">(</span><span class="st">"article.TribeCard_tribeCard__UJcdx"</span><span class="op">)</span></span>
 <span>  </span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">map_df</a></span><span class="op">(</span><span class="va">cards</span>, <span class="kw">function</span><span class="op">(</span><span class="va">card</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">map_df</span><span class="op">(</span><span class="va">cards</span>, <span class="kw">function</span><span class="op">(</span><span class="va">card</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
-<span>      Region <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">".TribeCard_regionLabel___OVFL"</span><span class="op">)</span> </span>
-<span>                    <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
+<span>      Region <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_element</span><span class="op">(</span><span class="st">".TribeCard_regionLabel___OVFL"</span><span class="op">)</span> </span>
+<span>                    <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_text</span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
 <span>                    <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="st">" Region"</span><span class="op">)</span>,</span>
-<span>      Tribe <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">"h2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>      Leader <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">"section:nth-of-type(1) p:nth-of-type(1)"</span><span class="op">)</span> </span>
-<span>                    <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>      Tel <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span>xpath <span class="op">=</span> <span class="st">".//p[strong[contains(., 'Tel:')]]"</span><span class="op">)</span> </span>
-<span>                 <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
-<span>                 <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="st">"Tel: "</span><span class="op">)</span>,</span>
-<span>      Fax <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span>xpath <span class="op">=</span> <span class="st">".//p[strong[contains(., 'Fax:')]]"</span><span class="op">)</span> </span>
-<span>                 <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
-<span>                 <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="st">"Fax: "</span><span class="op">)</span>,</span>
-<span>      Address <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">"section:nth-of-type(2)"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text2</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>      Recognition <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">".TribeCard_federal__bQB0g"</span><span class="op">)</span> </span>
-<span>                         <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span>      District <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_element.html" class="external-link">html_element</a></span><span class="op">(</span><span class="st">".TribeCard_generic__MLwRU"</span><span class="op">)</span> </span>
-<span>                      <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html" class="external-link">html_text</a></span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>      Tribe <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_element</span><span class="op">(</span><span class="st">"h2"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_text</span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      Recognition <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_element</span><span class="op">(</span><span class="st">".TribeCard_federal__bQB0g"</span><span class="op">)</span> </span>
+<span>                         <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_text</span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>      District <span class="op">=</span> <span class="va">card</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_element</span><span class="op">(</span><span class="st">".TribeCard_generic__MLwRU"</span><span class="op">)</span> </span>
+<span>                      <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">html_text</span><span class="op">(</span>trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>                      <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove</a></span><span class="op">(</span><span class="st">"Congressional District "</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
-<span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+</div>
+<p>Live web scraping may take a long time to complete and is sensitive to changes in website structure. For reproducibility and convenience, a pre-scraped version of the dataset is available for download at:</p>
+<p><a href="https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view" class="external-link">Tribes data frame</a></p>
+<p>For this example, a smaller sample of the full dataset is used:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tribes_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"https://drive.google.com/uc?export=download&amp;id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tribes_df</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output-display">
 <table class="table table caption-top" style="margin-left: auto; margin-right: auto;">
 <thead><tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">Region</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Tribe</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Leader</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Tel</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Fax</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Address</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">Recognition</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">District</th>
 </tr></thead>
@@ -219,60 +220,36 @@
 <tr class="odd">
 <td style="text-align: left;">Southern Plains</td>
 <td style="text-align: left;">Absentee-Shawnee Tribe of Indians of Oklahoma</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">OK-05</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Alaska</td>
 <td style="text-align: left;">Agdaagux Tribe of King Cove</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">AK-01</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Pacific</td>
 <td style="text-align: left;">Agua Caliente Band of Cahuilla Indians</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">CA-45</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Western</td>
 <td style="text-align: left;">Ak-Chin Indian Community</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">AZ-07</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Alaska</td>
 <td style="text-align: left;">Akiachak Native Community (IRA)</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">AK-01</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Alaska</td>
 <td style="text-align: left;">Akiak Native Community (IRA)</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NA</td>
 <td style="text-align: left;">Federally Recognized</td>
 <td style="text-align: left;">AK-01</td>
 </tr>
@@ -285,7 +262,7 @@
 <p>This example demonstrates how to use <code><a href="../reference/extract.html">regextable::extract()</a></code> to parse and standardize the Native American tribe names found within the scraped Tribal Directory data (<code>tribes_df</code>).</p>
 <p>The <code><a href="../reference/extract.html">extract()</a></code> function searches the <code>Tribe</code> column using the regex patterns located in the <code>Strings</code> column of <code>tribes_regex</code>. When a match is found, the function returns the original tribe name along with metadata from the regex table, such as the source reference.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tribe_directory_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">tribes_df</span>,</span>
 <span>    regex_table <span class="op">=</span> <span class="va">tribes_regex</span>,</span>

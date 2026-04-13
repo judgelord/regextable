@@ -13,8 +13,6 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
-library(rvest)
-library(purrr)
 library(tibble)
 library(stringr)
 ```
@@ -25,11 +23,18 @@ The following table contains tribe names and regex patterns used for
 matching. Each row represents a tribe and includes possible spelling
 variations or alternate names used in text.
 
-This lookup table includes the following columns: - Name - Strings -
-Source - Website - Notes - Type - Emphasis
+This lookup table includes the following columns:
+
+- Name
+- Strings
+- Source
+- Website
+- Notes
+- Type
+- Emphasis
 
 ``` r
-tribes_regex <- read.csv("/Users/shirl/Downloads/Native_American_Tribes_Regex_Table.csv", stringsAsFactors = FALSE)
+tribes_regex <- read.csv("https://drive.google.com/uc?export=download&id=1_946hi1zXeRvlGWIztrZDKJEcPM2jUY0", stringsAsFactors = FALSE)
 kable(head(tribes_regex))
 ```
 
@@ -47,7 +52,12 @@ kable(head(tribes_regex))
 To demonstrate extraction, this vignette collects tribe names from the
 National Congress of American Indians (NCAI) Tribal Directory. The
 directory provides publicly available information about federally
-recognized tribes.
+recognized tribes. The scraping example uses the `rvest` and `purrr`
+packages for HTML parsing and iteration. The code is included for
+reference only and is not evaluated in this vignette.
+
+The following code can be run to scrape the live directory directly from
+the website:
 
 ``` r
 max_page <- read_html("https://www.ncai.org/tribal-directory") %>%
@@ -70,15 +80,6 @@ tribes_df <- map_df(all_pages, function(url) {
                     %>% html_text(trim = TRUE) 
                     %>% str_remove(" Region"),
       Tribe = card %>% html_element("h2") %>% html_text(trim = TRUE),
-      Leader = card %>% html_element("section:nth-of-type(1) p:nth-of-type(1)") 
-                    %>% html_text(trim = TRUE),
-      Tel = card %>% html_element(xpath = ".//p[strong[contains(., 'Tel:')]]") 
-                 %>% html_text(trim = TRUE) 
-                 %>% str_remove("Tel: "),
-      Fax = card %>% html_element(xpath = ".//p[strong[contains(., 'Fax:')]]") 
-                 %>% html_text(trim = TRUE) 
-                 %>% str_remove("Fax: "),
-      Address = card %>% html_element("section:nth-of-type(2)") %>% html_text2(),
       Recognition = card %>% html_element(".TribeCard_federal__bQB0g") 
                          %>% html_text(trim = TRUE),
       District = card %>% html_element(".TribeCard_generic__MLwRU") 
@@ -87,18 +88,30 @@ tribes_df <- map_df(all_pages, function(url) {
     )
   })
 })
+```
 
+Live web scraping may take a long time to complete and is sensitive to
+changes in website structure. For reproducibility and convenience, a
+pre-scraped version of the dataset is available for download at:
+
+[Tribes data
+frame](https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view)
+
+For this example, a smaller sample of the full dataset is used:
+
+``` r
+tribes_df <- read.csv("https://drive.google.com/uc?export=download&id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl", stringsAsFactors = FALSE)
 kable(head(tribes_df))
 ```
 
-| Region | Tribe | Leader | Tel | Fax | Address | Recognition | District |
-|:---|:---|:---|:---|:---|:---|:---|:---|
-| Southern Plains | Absentee-Shawnee Tribe of Indians of Oklahoma | NA | NA | NA | NA | Federally Recognized | OK-05 |
-| Alaska | Agdaagux Tribe of King Cove | NA | NA | NA | NA | Federally Recognized | AK-01 |
-| Pacific | Agua Caliente Band of Cahuilla Indians | NA | NA | NA | NA | Federally Recognized | CA-45 |
-| Western | Ak-Chin Indian Community | NA | NA | NA | NA | Federally Recognized | AZ-07 |
-| Alaska | Akiachak Native Community (IRA) | NA | NA | NA | NA | Federally Recognized | AK-01 |
-| Alaska | Akiak Native Community (IRA) | NA | NA | NA | NA | Federally Recognized | AK-01 |
+| Region | Tribe | Recognition | District |
+|:---|:---|:---|:---|
+| Southern Plains | Absentee-Shawnee Tribe of Indians of Oklahoma | Federally Recognized | OK-05 |
+| Alaska | Agdaagux Tribe of King Cove | Federally Recognized | AK-01 |
+| Pacific | Agua Caliente Band of Cahuilla Indians | Federally Recognized | CA-45 |
+| Western | Ak-Chin Indian Community | Federally Recognized | AZ-07 |
+| Alaska | Akiachak Native Community (IRA) | Federally Recognized | AK-01 |
+| Alaska | Akiak Native Community (IRA) | Federally Recognized | AK-01 |
 
 ### Extracting Tribe Names from Directory
 

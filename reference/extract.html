@@ -40,24 +40,24 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extract</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
-<span>  col_name <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  <span class="va">regex_table</span>,</span>
+<span>  col_name <span class="op">=</span> <span class="st">"text"</span>,</span>
+<span>  pattern_col <span class="op">=</span> <span class="st">"pattern"</span>,</span>
 <span>  typo_table <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  typo_from_col <span class="op">=</span> <span class="st">"typo"</span>,</span>
 <span>  typo_to_col <span class="op">=</span> <span class="st">"correction"</span>,</span>
-<span>  pattern_col <span class="op">=</span> <span class="st">"pattern"</span>,</span>
-<span>  data_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  regex_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  date_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  date_start <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  date_end <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  data_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  regex_return_cols <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  remove_acronyms <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  do_clean_text <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  unique_match <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  cl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_ner <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  ner_entity_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORG"</span><span class="op">)</span></span>
+<span>  ner_entity_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORG"</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  cl <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -69,12 +69,16 @@
 <dd><p>A data frame or character vector containing the text to search. If a character vector is provided, it is internally converted to a data frame and <code>col_name</code> is ignored.</p></dd>
 
 
+<dt id="arg-regex-table">regex_table<a class="anchor" aria-label="anchor" href="#arg-regex-table"></a></dt>
+<dd><p>A data frame containing regular expression patterns and optional metadata columns.</p></dd>
+
+
 <dt id="arg-col-name">col_name<a class="anchor" aria-label="anchor" href="#arg-col-name"></a></dt>
 <dd><p>Character string specifying the column in <code>data</code> that contains text to search. Default is "text".</p></dd>
 
 
-<dt id="arg-regex-table">regex_table<a class="anchor" aria-label="anchor" href="#arg-regex-table"></a></dt>
-<dd><p>A data frame containing regular expression patterns and optional metadata columns.</p></dd>
+<dt id="arg-pattern-col">pattern_col<a class="anchor" aria-label="anchor" href="#arg-pattern-col"></a></dt>
+<dd><p>Character string specifying the column in <code>regex_table</code> that contains regex patterns. Default is "pattern".</p></dd>
 
 
 <dt id="arg-typo-table">typo_table<a class="anchor" aria-label="anchor" href="#arg-typo-table"></a></dt>
@@ -89,18 +93,6 @@
 <dd><p>Optional column in <code>typo_table</code> with replacement text. Default is "correction".</p></dd>
 
 
-<dt id="arg-pattern-col">pattern_col<a class="anchor" aria-label="anchor" href="#arg-pattern-col"></a></dt>
-<dd><p>Character string specifying the column in <code>regex_table</code> that contains regex patterns. Default is "pattern".</p></dd>
-
-
-<dt id="arg-data-return-cols">data_return_cols<a class="anchor" aria-label="anchor" href="#arg-data-return-cols"></a></dt>
-<dd><p>Optional vector of column names to include from <code>data</code>. Default is <code>NULL</code> (only <code>row_id</code> is returned).</p></dd>
-
-
-<dt id="arg-regex-return-cols">regex_return_cols<a class="anchor" aria-label="anchor" href="#arg-regex-return-cols"></a></dt>
-<dd><p>Optional vector of column names to include from <code>regex_table</code>. Default is <code>NULL</code> (no metadata columns added).</p></dd>
-
-
 <dt id="arg-date-col">date_col<a class="anchor" aria-label="anchor" href="#arg-date-col"></a></dt>
 <dd><p>Optional column in <code>data</code> for date filtering. If provided, rows are filtered by <code>date_start</code> and <code>date_end</code> before pattern matching.</p></dd>
 
@@ -113,6 +105,14 @@
 <dd><p>Optional end date (Date object or string like "YYYY-MM-DD") for filtering <code>data</code> when <code>date_col</code> is specified.</p></dd>
 
 
+<dt id="arg-data-return-cols">data_return_cols<a class="anchor" aria-label="anchor" href="#arg-data-return-cols"></a></dt>
+<dd><p>Optional vector of column names to include from <code>data</code>. Default is <code>NULL</code> (only <code>row_id</code> is returned).</p></dd>
+
+
+<dt id="arg-regex-return-cols">regex_return_cols<a class="anchor" aria-label="anchor" href="#arg-regex-return-cols"></a></dt>
+<dd><p>Optional vector of column names to include from <code>regex_table</code>. Default is <code>NULL</code> (no metadata columns added).</p></dd>
+
+
 <dt id="arg-remove-acronyms">remove_acronyms<a class="anchor" aria-label="anchor" href="#arg-remove-acronyms"></a></dt>
 <dd><p>Logical; if TRUE, removes patterns consisting only of uppercase letters (2 or more characters) from <code>regex_table</code>.</p></dd>
 
@@ -121,20 +121,10 @@
 <dd><p>Logical; if TRUE, applies basic text cleaning to the input before matching.</p></dd>
 
 
-<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Logical; if TRUE, displays progress messages.</p></dd>
-
-
 <dt id="arg-unique-match">unique_match<a class="anchor" aria-label="anchor" href="#arg-unique-match"></a></dt>
 <dd><p>Logical; if TRUE, stops searching after the first match to
 find at most one match per row (evaluated in the order patterns appear in <code>regex_table</code>).
 If FALSE, returns all matches for all patterns.</p></dd>
-
-
-<dt id="arg-cl">cl<a class="anchor" aria-label="anchor" href="#arg-cl"></a></dt>
-<dd><p>A cluster object created by <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code>, or an integer
-to indicate number of child processes (integer values are ignored on Windows).
-Passed to <code><a href="https://peter.solymos.org/pbapply/reference/pbapply.html" class="external-link">pbapply::pblapply()</a></code>.</p></dd>
 
 
 <dt id="arg-use-ner">use_ner<a class="anchor" aria-label="anchor" href="#arg-use-ner"></a></dt>
@@ -146,6 +136,16 @@ this function.</p></dd>
 
 <dt id="arg-ner-entity-types">ner_entity_types<a class="anchor" aria-label="anchor" href="#arg-ner-entity-types"></a></dt>
 <dd><p>Character vector; the types of Named Entities to keep if <code>use_ner</code> is TRUE. Default is "ORG".</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical; if TRUE, displays progress messages.</p></dd>
+
+
+<dt id="arg-cl">cl<a class="anchor" aria-label="anchor" href="#arg-cl"></a></dt>
+<dd><p>A cluster object created by <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code>, or an integer
+to indicate number of child processes (integer values are ignored on Windows).
+Passed to <code><a href="https://peter.solymos.org/pbapply/reference/pbapply.html" class="external-link">pbapply::pblapply()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -179,7 +179,7 @@ in <code>regex_table</code> and returns matches based on the <code>unique_match<
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract all matches</span></span></span>
-<span class="r-in"><span><span class="fu">extract</span><span class="op">(</span><span class="va">data</span>, <span class="st">"text"</span>, <span class="va">patterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">extract</span><span class="op">(</span><span class="va">data</span>, <span class="va">patterns</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scanning 3 patterns against 3 text entries...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Number of rows with matches: 4</span>
@@ -192,7 +192,7 @@ in <code>regex_table</code> and returns matches based on the <code>unique_match<
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>      3 oranges Oranges</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Extract one match per row</span></span></span>
-<span class="r-in"><span><span class="fu">extract</span><span class="op">(</span><span class="va">data</span>, <span class="st">"text"</span>, <span class="va">patterns</span>, unique_match <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">extract</span><span class="op">(</span><span class="va">data</span>, <span class="va">patterns</span>, unique_match <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scanning: 3 patterns against 3 text entries...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Number of rows with matches: 3</span>

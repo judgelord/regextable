@@ -8,24 +8,24 @@ extracted matches with optional metadata.
 ``` r
 extract(
   data,
-  col_name = "text",
   regex_table,
+  col_name = "text",
+  pattern_col = "pattern",
   typo_table = NULL,
   typo_from_col = "typo",
   typo_to_col = "correction",
-  pattern_col = "pattern",
-  data_return_cols = NULL,
-  regex_return_cols = NULL,
   date_col = NULL,
   date_start = NULL,
   date_end = NULL,
+  data_return_cols = NULL,
+  regex_return_cols = NULL,
   remove_acronyms = FALSE,
   do_clean_text = TRUE,
-  verbose = TRUE,
   unique_match = FALSE,
-  cl = NULL,
   use_ner = FALSE,
-  ner_entity_types = c("ORG")
+  ner_entity_types = c("ORG"),
+  verbose = TRUE,
+  cl = NULL
 )
 ```
 
@@ -37,15 +37,20 @@ extract(
   character vector is provided, it is internally converted to a data
   frame and `col_name` is ignored.
 
+- regex_table:
+
+  A data frame containing regular expression patterns and optional
+  metadata columns.
+
 - col_name:
 
   Character string specifying the column in `data` that contains text to
   search. Default is "text".
 
-- regex_table:
+- pattern_col:
 
-  A data frame containing regular expression patterns and optional
-  metadata columns.
+  Character string specifying the column in `regex_table` that contains
+  regex patterns. Default is "pattern".
 
 - typo_table:
 
@@ -63,21 +68,6 @@ extract(
   Optional column in `typo_table` with replacement text. Default is
   "correction".
 
-- pattern_col:
-
-  Character string specifying the column in `regex_table` that contains
-  regex patterns. Default is "pattern".
-
-- data_return_cols:
-
-  Optional vector of column names to include from `data`. Default is
-  `NULL` (only `row_id` is returned).
-
-- regex_return_cols:
-
-  Optional vector of column names to include from `regex_table`. Default
-  is `NULL` (no metadata columns added).
-
 - date_col:
 
   Optional column in `data` for date filtering. If provided, rows are
@@ -93,6 +83,16 @@ extract(
   Optional end date (Date object or string like "YYYY-MM-DD") for
   filtering `data` when `date_col` is specified.
 
+- data_return_cols:
+
+  Optional vector of column names to include from `data`. Default is
+  `NULL` (only `row_id` is returned).
+
+- regex_return_cols:
+
+  Optional vector of column names to include from `regex_table`. Default
+  is `NULL` (no metadata columns added).
+
 - remove_acronyms:
 
   Logical; if TRUE, removes patterns consisting only of uppercase
@@ -103,23 +103,11 @@ extract(
   Logical; if TRUE, applies basic text cleaning to the input before
   matching.
 
-- verbose:
-
-  Logical; if TRUE, displays progress messages.
-
 - unique_match:
 
   Logical; if TRUE, stops searching after the first match to find at
   most one match per row (evaluated in the order patterns appear in
   `regex_table`). If FALSE, returns all matches for all patterns.
-
-- cl:
-
-  A cluster object created by
-  [`parallel::makeCluster()`](https://rdrr.io/r/parallel/makeCluster.html),
-  or an integer to indicate number of child processes (integer values
-  are ignored on Windows). Passed to
-  [`pbapply::pblapply()`](https://peter.solymos.org/pbapply/reference/pbapply.html).
 
 - use_ner:
 
@@ -133,6 +121,18 @@ extract(
 
   Character vector; the types of Named Entities to keep if `use_ner` is
   TRUE. Default is "ORG".
+
+- verbose:
+
+  Logical; if TRUE, displays progress messages.
+
+- cl:
+
+  A cluster object created by
+  [`parallel::makeCluster()`](https://rdrr.io/r/parallel/makeCluster.html),
+  or an integer to indicate number of child processes (integer values
+  are ignored on Windows). Passed to
+  [`pbapply::pblapply()`](https://peter.solymos.org/pbapply/reference/pbapply.html).
 
 ## Value
 
@@ -173,7 +173,7 @@ patterns <- data.frame(
 )
 
 # Extract all matches
-extract(data, "text", patterns)
+extract(data, patterns)
 #> Scanning 3 patterns against 3 text entries...
 #>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
 #> Number of rows with matches: 4
@@ -186,7 +186,7 @@ extract(data, "text", patterns)
 #> 4      3 oranges Oranges
 
 # Extract one match per row
-extract(data, "text", patterns, unique_match = TRUE)
+extract(data, patterns, unique_match = TRUE)
 #> Scanning: 3 patterns against 3 text entries...
 #>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
 #> Number of rows with matches: 3
