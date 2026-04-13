@@ -31,8 +31,6 @@ Suggests:
     quarto,
     spelling,
     testthat (>= 3.0.0),
-    rvest,
-    purrr,
     spacyr,
     tibble,
     googlesheets4

@@ -42,8 +42,6 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
-library(rvest)
-library(purrr)
 library(tibble)
 library(stringr)
 ```
@@ -53,6 +51,7 @@ library(stringr)
 The following table contains tribe names and regex patterns used for matching. Each row represents a tribe and includes possible spelling variations or alternate names used in text.
 
 This lookup table includes the following columns:
+
 - Name
 - Strings
 - Source
@@ -62,13 +61,13 @@ This lookup table includes the following columns:
 - Emphasis
 
 ```{r}
-tribes_regex <- read.csv("/Users/shirl/Downloads/Native_American_Tribes_Regex_Table.csv", stringsAsFactors = FALSE)
+tribes_regex <- read.csv("https://drive.google.com/uc?export=download&id=1_946hi1zXeRvlGWIztrZDKJEcPM2jUY0", stringsAsFactors = FALSE)
 kable(head(tribes_regex))
 ```
 
 ### Gathering Sample Data
 
-To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes.
+To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes. The scraping example uses the `rvest` and `purrr` packages for HTML parsing and iteration. The code is included for reference only and is not evaluated in this vignette.
 
 The following code can be run to scrape the live directory directly from the website:
 
@@ -105,12 +104,13 @@ tribes_df <- map_df(all_pages, function(url) {
 
 Live web scraping may take a long time to complete and is sensitive to changes in website structure. For reproducibility and convenience, a pre-scraped version of the dataset is available for download at: 
 
-https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view?usp=drive_link. 
+[Tribes data frame](https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view)
 
 For this example, a smaller sample of the full dataset is used:
 
 ```{r}
-tribes_df <- read.csv("https://drive.google.com/uc?export=download&id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl")
+tribes_df <- read.csv("https://drive.google.com/uc?export=download&id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl", stringsAsFactors = FALSE)
+kable(head(tribes_df))
 ```
 
 ### Extracting Tribe Names from Directory
