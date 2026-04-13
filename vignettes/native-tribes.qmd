@@ -70,7 +70,9 @@ kable(head(tribes_regex))
 
 To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes.
 
-```{r}
+The following code can be run to scrape the live directory directly from the website:
+
+```{r, eval = FALSE}
 max_page <- read_html("https://www.ncai.org/tribal-directory") %>%
   html_elements(".Pagination_numberButton__vLhpm") %>%
   html_text() %>%
@@ -91,15 +93,6 @@ tribes_df <- map_df(all_pages, function(url) {
                     %>% html_text(trim = TRUE) 
                     %>% str_remove(" Region"),
       Tribe = card %>% html_element("h2") %>% html_text(trim = TRUE),
-      Leader = card %>% html_element("section:nth-of-type(1) p:nth-of-type(1)") 
-                    %>% html_text(trim = TRUE),
-      Tel = card %>% html_element(xpath = ".//p[strong[contains(., 'Tel:')]]") 
-                 %>% html_text(trim = TRUE) 
-                 %>% str_remove("Tel: "),
-      Fax = card %>% html_element(xpath = ".//p[strong[contains(., 'Fax:')]]") 
-                 %>% html_text(trim = TRUE) 
-                 %>% str_remove("Fax: "),
-      Address = card %>% html_element("section:nth-of-type(2)") %>% html_text2(),
       Recognition = card %>% html_element(".TribeCard_federal__bQB0g") 
                          %>% html_text(trim = TRUE),
       District = card %>% html_element(".TribeCard_generic__MLwRU") 
@@ -108,8 +101,16 @@ tribes_df <- map_df(all_pages, function(url) {
     )
   })
 })
+```
 
-kable(head(tribes_df))
+Live web scraping may take a long time to complete and is sensitive to changes in website structure. For reproducibility and convenience, a pre-scraped version of the dataset is available for download at: 
+
+https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view?usp=drive_link. 
+
+For this example, a smaller sample of the full dataset is used:
+
+```{r}
+tribes_df <- read.csv("https://drive.google.com/uc?export=download&id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl")
 ```
 
 ### Extracting Tribe Names from Directory
