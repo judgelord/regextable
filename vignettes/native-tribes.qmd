@@ -42,8 +42,6 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
-library(tibble)
-library(stringr)
 library(googledrive)
 ```
 
@@ -76,7 +74,7 @@ kable(head(tribes_regex))
 
 ### Gathering Sample Data
 
-To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes. The scraping example uses the `rvest`, `dplyr` and `purrr` packages for HTML parsing and iteration. The code is included for reference only and is not evaluated in this vignette.
+To demonstrate extraction, this vignette collects tribe names from the National Congress of American Indians (NCAI) Tribal Directory. The directory provides publicly available information about federally recognized tribes. The scraping example uses the rvest, dplyr, purrr, tibble, and stringr packages for HTML parsing and iteration. The code is included for reference only and is not evaluated in this vignette.
 
 The following code can be run to scrape the live directory directly from the website:
 

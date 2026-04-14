@@ -52,8 +52,8 @@ The `agencies_by_section` table contains a sample of agencies, including their s
 ```{r}
 googledrive::drive_deauth()
 googledrive::drive_download(
-  googledrive::as_id("1O51ItAquJ4ErmepNXBU9ZCQVXc4npVPN"), 
-  path = "agencies_by_section.rda", 
+  googledrive::as_id("1O51ItAquJ4ErmepNXBU9ZCQVXc4npVPN"),
+  path = "agencies_by_section.rda",
   overwrite = TRUE
 )
 load("agencies_by_section.rda")
@@ -66,8 +66,8 @@ The `body_parsed` dataset contains text sections along with associated organizat
 
 ```{r}
 googledrive::drive_download(
-  googledrive::as_id("1Dvu0VAOWrgiqYX5SPnv_uw7QtqvHjtUw"), 
-  path = "body_parsed.rda", 
+  googledrive::as_id("1Dvu0VAOWrgiqYX5SPnv_uw7QtqvHjtUw"),
+  path = "body_parsed.rda",
   overwrite = TRUE
 )
 load("body_parsed.rda")
@@ -93,4 +93,9 @@ agencies_df <- extract(
   use_ner = TRUE
 )
 kable(head(agencies_df))
+```
+
+```{r cleanup, include = FALSE}
+# Deletes the temporary RDA files so they don't clutter the project folder
+unlink(c("agencies_by_section.rda", "body_parsed.rda"))
 ```

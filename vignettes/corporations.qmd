@@ -19,13 +19,13 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   tidy = FALSE,
-  fig.align = 'center',
+  fig.align = "center",
   R.options = list(width = 120)
 )
 
-kable <- function(x, ...){
+kable <- function(x, ...) {
   if (knitr::is_latex_output()) {
-    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
+    knitr::kable(x, booktabs = TRUE, format = "latex", ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
     knitr::kable(x, escape = TRUE, ...) |>
@@ -42,6 +42,7 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
+library(googledrive)
 ```
 
 ### Regex Table of Corporations
@@ -49,7 +50,15 @@ library(kableExtra)
 The `corporations_regex` table contains a sample of corporations, their common aliases, ticker symbols, and reference sources used for matching and standardization. The `aliases` column includes alternative names, abbreviations, or common variants for each corporation to ensure comprehensive matching.
 
 ```{r}
-corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_regex.csv", stringsAsFactors = FALSE)
+googledrive::drive_deauth()
+
+googledrive::drive_download(
+  googledrive::as_id("1CgrHKy3jkWFffJN-cjNBzlHdoIIxO62t"),
+  path = "corporations_regex.csv",
+  overwrite = TRUE
+)
+
+corporations_regex <- read.csv("corporations_regex.csv", stringsAsFactors = FALSE)
 kable(head(corporations_regex))
 ```
 
@@ -74,11 +83,17 @@ The `extract()` function searches the `organization` column of the dataset using
 ```{r}
 spacyr::spacy_initialize()
 
-corp_df <- extract(data = project_2025_coalition_and_contributors,
-                   col_name = "organization",
-                   regex_table = corporations_regex,
-                   data_return_cols = "organization",
-                   remove_acronyms = TRUE,
-                   use_ner = TRUE)
+corp_df <- extract(
+  data = project_2025_coalition_and_contributors,
+  col_name = "organization",
+  regex_table = corporations_regex,
+  data_return_cols = "organization",
+  remove_acronyms = TRUE,
+  use_ner = TRUE
+)
 kable(head(corp_df))
+```
+
+```{r, include=FALSE}
+unlink("corporations_regex.csv")
 ```
