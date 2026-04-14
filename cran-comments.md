@@ -1,4 +1,14 @@
 ## Version 0.1.2
 
-- Fixed invalid URLs in vignettes causing 404 errors.
-- Updated vignette to use `subset()` in `kable()` instead of removing columns from original data.
+### New Features
+* **Typo Correction:** Added `typo_table`, `typo_from_col`, and `typo_to_col` parameters to `extract()`. Text replacements are applied sequentially prior to pattern matching using strict word boundaries ('\b') for text replacements.
+* **Unique Matching:** Added `unique_match` to stop after the first match per row for faster performance when only one match is expected.
+* **NER Post-Match Validation:** Added optional Named Entity Recognition via `spacyr` (`use_ner`). Matches are kept only if they align with specified entity types (via `ner_entity_types`, e.g., `"ORG"`, `"PERSON"`).
+
+### Data Updates
+* Updated `members` and `cr2007_03_01` datasets (filtered to `congress == 107`).
+
+### Documentation & Maintenance
+* Fixed invalid URLs in vignettes causing 404 errors.
+* Added `NEWS.md` for version tracking.
+* Updated `roxygen2` documentation.
