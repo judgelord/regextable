@@ -19,13 +19,13 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   tidy = FALSE,
-  fig.align = 'center',
+  fig.align = "center",
   R.options = list(width = 120)
 )
 
-kable <- function(x, ...){
+kable <- function(x, ...) {
   if (knitr::is_latex_output()) {
-    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
+    knitr::kable(x, booktabs = TRUE, format = "latex", ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
     knitr::kable(x, escape = TRUE, ...) |>
@@ -42,6 +42,7 @@ Install and load the package:
 ```{r, message=FALSE}
 library(regextable)
 library(kableExtra)
+library(googledrive)
 ```
 
 ### Agencies Data File
@@ -49,7 +50,13 @@ library(kableExtra)
 The `agencies_by_section` table contains a sample of agencies, including their sub-agencies, acronyms, and reference sources used for matching and standardization.
 
 ```{r}
-load("/Users/shirl/Downloads/agencies_by_section.rda")
+googledrive::drive_deauth()
+googledrive::drive_download(
+  googledrive::as_id("1O51ItAquJ4ErmepNXBU9ZCQVXc4npVPN"), 
+  path = "agencies_by_section.rda", 
+  overwrite = TRUE
+)
+load("agencies_by_section.rda")
 kable(head(agencies_by_section))
 ```
 
@@ -58,7 +65,12 @@ kable(head(agencies_by_section))
 The `body_parsed` dataset contains text sections along with associated organizational metadata. Each row includes the full text, the section and department it belongs to, the agency and sub-agency names, sub-agency acronyms, and any detected mentions of agencies or acronyms.
 
 ```{r}
-load("/Users/shirl/Downloads/body_parsed.rda")
+googledrive::drive_download(
+  googledrive::as_id("1Dvu0VAOWrgiqYX5SPnv_uw7QtqvHjtUw"), 
+  path = "body_parsed.rda", 
+  overwrite = TRUE
+)
+load("body_parsed.rda")
 kable(head(body_parsed))
 ```
 
@@ -66,7 +78,7 @@ kable(head(body_parsed))
 
 This example demonstrates how to search the `text` column of the `body_parsed` dataset using patterns from the `subagency_name` column of the `agencies_by_section` regex table.
 
-By `setting use_ner = TRUE`, the `extract()` function performs Named Entity Recognition (NER) to validate that the regex matches actually correspond to organizational entities in the `text`. The final output returns the matched names, retains the `text` and `department` columns from the original data, and attaches the corresponding `agency` metadata from the lookup table.
+By setting `use_ner = TRUE`, the `extract()` function performs Named Entity Recognition (NER) to validate that the regex matches actually correspond to organizational entities in the `text`. The final output returns the matched names, retains the `text` and `department` columns from the original data, and attaches the corresponding `agency` metadata from the lookup table.
 
 ```{r}
 spacyr::spacy_initialize()
