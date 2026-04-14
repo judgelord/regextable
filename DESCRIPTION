@@ -33,6 +33,7 @@ Suggests:
     testthat (>= 3.0.0),
     spacyr,
     tibble,
+    googledrive,
     googlesheets4
 VignetteBuilder: quarto
 URL: https://github.com/judgelord/regextable, https://judgelord.github.io/regextable/
