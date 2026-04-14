@@ -14,6 +14,7 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
+library(googledrive)
 ```
 
 ### Regex Table of Corporations
@@ -25,7 +26,15 @@ abbreviations, or common variants for each corporation to ensure
 comprehensive matching.
 
 ``` r
-corporations_regex <- read.csv("/Users/shirl/Downloads/corporations_regex.csv", stringsAsFactors = FALSE)
+googledrive::drive_deauth()
+
+googledrive::drive_download(
+  googledrive::as_id("1CgrHKy3jkWFffJN-cjNBzlHdoIIxO62t"),
+  path = "corporations_regex.csv",
+  overwrite = TRUE
+)
+
+corporations_regex <- read.csv("corporations_regex.csv", stringsAsFactors = FALSE)
 kable(head(corporations_regex))
 ```
 
@@ -75,12 +84,14 @@ reduce false positives.
 ``` r
 spacyr::spacy_initialize()
 
-corp_df <- extract(data = project_2025_coalition_and_contributors,
-                   col_name = "organization",
-                   regex_table = corporations_regex,
-                   data_return_cols = "organization",
-                   remove_acronyms = TRUE,
-                   use_ner = TRUE)
+corp_df <- extract(
+  data = project_2025_coalition_and_contributors,
+  col_name = "organization",
+  regex_table = corporations_regex,
+  data_return_cols = "organization",
+  remove_acronyms = TRUE,
+  use_ner = TRUE
+)
 kable(head(corp_df))
 ```
 

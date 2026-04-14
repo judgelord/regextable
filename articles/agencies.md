@@ -14,6 +14,7 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
+library(googledrive)
 ```
 
 ### Agencies Data File
@@ -23,7 +24,13 @@ their sub-agencies, acronyms, and reference sources used for matching
 and standardization.
 
 ``` r
-load("/Users/shirl/Downloads/agencies_by_section.rda")
+googledrive::drive_deauth()
+googledrive::drive_download(
+  googledrive::as_id("1O51ItAquJ4ErmepNXBU9ZCQVXc4npVPN"),
+  path = "agencies_by_section.rda",
+  overwrite = TRUE
+)
+load("agencies_by_section.rda")
 kable(head(agencies_by_section))
 ```
 
@@ -44,7 +51,12 @@ and department it belongs to, the agency and sub-agency names,
 sub-agency acronyms, and any detected mentions of agencies or acronyms.
 
 ``` r
-load("/Users/shirl/Downloads/body_parsed.rda")
+googledrive::drive_download(
+  googledrive::as_id("1Dvu0VAOWrgiqYX5SPnv_uw7QtqvHjtUw"),
+  path = "body_parsed.rda",
+  overwrite = TRUE
+)
+load("body_parsed.rda")
 kable(head(body_parsed))
 ```
 
@@ -63,7 +75,7 @@ This example demonstrates how to search the `text` column of the
 `body_parsed` dataset using patterns from the `subagency_name` column of
 the `agencies_by_section` regex table.
 
-By `setting use_ner = TRUE`, the
+By setting `use_ner = TRUE`, the
 [`extract()`](https://judgelord.github.io/regextable/reference/extract.md)
 function performs Named Entity Recognition (NER) to validate that the
 regex matches actually correspond to organizational entities in the

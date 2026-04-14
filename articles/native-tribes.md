@@ -13,8 +13,7 @@ Install and load the package:
 ``` r
 library(regextable)
 library(kableExtra)
-library(tibble)
-library(stringr)
+library(googledrive)
 ```
 
 ### Regex Table of Native American Tribes
@@ -34,7 +33,15 @@ This lookup table includes the following columns:
 - Emphasis
 
 ``` r
-tribes_regex <- read.csv("https://drive.google.com/uc?export=download&id=1_946hi1zXeRvlGWIztrZDKJEcPM2jUY0", stringsAsFactors = FALSE)
+googledrive::drive_deauth()
+
+googledrive::drive_download(
+  googledrive::as_id("1_946hi1zXeRvlGWIztrZDKJEcPM2jUY0"),
+  path = "tribes_regex.csv",
+  overwrite = TRUE
+)
+
+tribes_regex <- read.csv("tribes_regex.csv", stringsAsFactors = FALSE)
 kable(head(tribes_regex))
 ```
 
@@ -52,9 +59,9 @@ kable(head(tribes_regex))
 To demonstrate extraction, this vignette collects tribe names from the
 National Congress of American Indians (NCAI) Tribal Directory. The
 directory provides publicly available information about federally
-recognized tribes. The scraping example uses the `rvest` and `purrr`
-packages for HTML parsing and iteration. The code is included for
-reference only and is not evaluated in this vignette.
+recognized tribes. The scraping example uses the rvest, dplyr, purrr,
+tibble, and stringr packages for HTML parsing and iteration. The code is
+included for reference only and is not evaluated in this vignette.
 
 The following code can be run to scrape the live directory directly from
 the website:
@@ -69,22 +76,21 @@ max_page <- read_html("https://www.ncai.org/tribal-directory") %>%
 all_pages <- paste0("https://www.ncai.org/tribal-directory/page/", 1:max_page)
 
 tribes_df <- map_df(all_pages, function(url) {
-  
   message("Scraping: ", url)
   html <- read_html(url)
   cards <- html %>% html_elements("article.TribeCard_tribeCard__UJcdx")
-  
+
   map_df(cards, function(card) {
     tibble(
-      Region = card %>% html_element(".TribeCard_regionLabel___OVFL") 
-                    %>% html_text(trim = TRUE) 
-                    %>% str_remove(" Region"),
+      Region = card %>% html_element(".TribeCard_regionLabel___OVFL")
+        %>% html_text(trim = TRUE)
+        %>% str_remove(" Region"),
       Tribe = card %>% html_element("h2") %>% html_text(trim = TRUE),
-      Recognition = card %>% html_element(".TribeCard_federal__bQB0g") 
-                         %>% html_text(trim = TRUE),
-      District = card %>% html_element(".TribeCard_generic__MLwRU") 
-                      %>% html_text(trim = TRUE)
-                      %>% str_remove("Congressional District ")
+      Recognition = card %>% html_element(".TribeCard_federal__bQB0g")
+        %>% html_text(trim = TRUE),
+      District = card %>% html_element(".TribeCard_generic__MLwRU")
+        %>% html_text(trim = TRUE)
+        %>% str_remove("Congressional District ")
     )
   })
 })
@@ -100,7 +106,13 @@ frame](https://drive.google.com/file/d/1vL_dI4SuvnxwIXr40X12uBoGSSDn_xL-/view)
 For this example, a smaller sample of the full dataset is used:
 
 ``` r
-tribes_df <- read.csv("https://drive.google.com/uc?export=download&id=1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl", stringsAsFactors = FALSE)
+googledrive::drive_download(
+  googledrive::as_id("1y4PwIYBdXoW6RmlGUeA9Qk3Josp0P0dl"),
+  path = "tribes_df.csv",
+  overwrite = TRUE
+)
+
+tribes_df <- read.csv("tribes_df.csv", stringsAsFactors = FALSE)
 kable(head(tribes_df))
 ```
 
@@ -129,12 +141,12 @@ regex table, such as the source reference.
 
 ``` r
 tribe_directory_df <- extract(
-    data = tribes_df,
-    regex_table = tribes_regex,
-    col_name = "Tribe",
-    pattern_col = "Strings",
-    data_return_cols = "Tribe",
-    regex_return_cols = "Source"
+  data = tribes_df,
+  regex_table = tribes_regex,
+  col_name = "Tribe",
+  pattern_col = "Strings",
+  data_return_cols = "Tribe",
+  regex_return_cols = "Source"
 )
 
 kable(head(tribe_directory_df))

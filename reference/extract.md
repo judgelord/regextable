@@ -174,26 +174,9 @@ patterns <- data.frame(
 
 # Extract all matches
 extract(data, patterns)
-#> Scanning 3 patterns against 3 text entries...
-#>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
-#> Number of rows with matches: 4
-#> # A tibble: 4 × 3
-#>   row_id pattern match  
-#>    <int> <chr>   <chr>  
-#> 1      1 apples  apples 
-#> 2      2 bananas Bananas
-#> 3      3 apples  apples 
-#> 4      3 oranges Oranges
+#> Error in extract(data, patterns): argument "regex_table" is missing, with no default
 
 # Extract one match per row
 extract(data, patterns, unique_match = TRUE)
-#> Scanning: 3 patterns against 3 text entries...
-#>   |                                                  | 0 % ~calculating    |+++++++++++++++++                                 | 33% ~00s            |++++++++++++++++++++++++++++++++++                | 67% ~00s            |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed=00s  
-#> Number of rows with matches: 3
-#> # A tibble: 3 × 3
-#>   row_id pattern match  
-#>    <int> <chr>   <chr>  
-#> 1      1 apples  apples 
-#> 2      2 bananas Bananas
-#> 3      3 apples  apples 
+#> Error in extract(data, patterns, unique_match = TRUE): argument "regex_table" is missing, with no default
 ```
