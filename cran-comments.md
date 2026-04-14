@@ -1,14 +1,13 @@
-## Version 0.1.2
+## regextable 0.1.2 (draft)
 
-### New Features
-* **Typo Correction:** Added `typo_table`, `typo_from_col`, and `typo_to_col` parameters to `extract()`. Text replacements are applied sequentially prior to pattern matching using strict word boundaries ('\b') for text replacements.
-* **Unique Matching:** Added `unique_match` to stop after the first match per row for faster performance when only one match is expected.
-* **NER Post-Match Validation:** Added optional Named Entity Recognition via `spacyr` (`use_ner`). Matches are kept only if they align with specified entity types (via `ner_entity_types`, e.g., `"ORG"`, `"PERSON"`).
+- Initial draft of changes for next CRAN submission.
 
-### Data Updates
-* Updated `members` and `cr2007_03_01` datasets (filtered to `congress == 107`).
+### Changes
+- Added typo correction parameters to `extract()`
+- Added `unique_match` for early stopping
+- Added optional NER validation via `spacyr`
+- Updated datasets (`members`, `cr2007_03_01`)
 
-### Documentation & Maintenance
-* Fixed invalid URLs in vignettes causing 404 errors.
-* Added `NEWS.md` for version tracking.
-* Updated `roxygen2` documentation.
+### Notes
+- All checks pass locally:
+  - 0 errors | 0 warnings | 0 notes
