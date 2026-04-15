@@ -32,7 +32,7 @@
 #' @param cl A cluster object created by `parallel::makeCluster()`, or an integer
 #'   to indicate number of child processes (integer values are ignored on Windows).
 #'   Passed to [pbapply::pblapply()].
-#' 
+#'
 #' @return A tibble with the following columns:
 #' \itemize{
 #'   \item \code{row_id}: Integer identifier corresponding to rows in the input data.
