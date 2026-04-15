@@ -106,6 +106,37 @@ typo_result <- extract(
 head(typo_result)
 ```
 
+## Named Entity Recognition (NER) Validation
+
+If the `spacyr` package is installed and initialized, `extract()` can use Named Entity Recognition (NER) to validate that regex matches are actual entities (such as Organizations or People) in the text.
+
+Users can specify which types of entities to keep using **`ner_entity_types`** (default is `"ORG"`), and control the timing of the validation using **`ner_timing`**:
+
+- **`ner_timing = "after"` (Default):** The function finds all regex matches first, and then uses spaCy to validate whether the matched word is a valid entity type. This is generally the faster approach.
+- **`ner_timing = "before"`:** The function extracts all valid entities from the text first, and then restricts regex searches to only those extracted entities. This is useful for reducing the search space before matching.
+
+```{r, eval=FALSE}
+# Example: Only extract "Apple" if it is recognized as an Organization (ORG)
+spacyr::spacy_initialize()
+
+df <- data.frame(text = c("Tom works at Apple.", "I ate a green apple today."))
+patterns <- data.frame(pattern = "Apple")
+
+ner_result <- extract(
+  data = df, 
+  regex_table = patterns, 
+  use_ner = TRUE, 
+  ner_timing = "after",
+  ner_entity_types = "ORG"
+)
+
+head(ner_result)
+#>   row_id pattern match
+#> 1      1   Apple Apple
+
+spacyr::spacy_finalize()
+```
+
 ## Extract Regex-Based Matches from Text
 
 ### Description
@@ -135,6 +166,7 @@ head(typo_result)
 -   **`unique_match`** (default `FALSE`) If `TRUE`, stops searching after first match to find at most one match per row.
 -   **`cl`**: (default `NULL`) A cluster object or integer specifying child processes for parallel evaluation (ignored on Windows).
 -   **`use_ner`**: (default `FALSE`) If TRUE, uses the 'spacyr' package to validate that matches are actual Named Entities (e.g., organizations). Requires 'spacyr' to be installed and initialized. Note: If 'spacyr' is missing or fails to initialize, the function will perform standard regex matching and issue a warning.
+-   **`ner_timing`**: (default `"after"`) Character string (`"after"` or `"before"`). `"after"` validates regex matches with spaCy. `"before"` restricts regex searches to entities pre-extracted by spaCy.
 -   **`ner_entity_types`**: (default c("ORG")) Character vector; the types of spaCy Named Entities to keep if use_ner is TRUE (e.g., "ORG", "PERSON", "GPE", "LAW").
 
 ### Returns
