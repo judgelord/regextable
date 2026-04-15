@@ -21,6 +21,7 @@ extract(
   do_clean_text = TRUE,
   unique_match = FALSE,
   use_ner = FALSE,
+  ner_timing = "after",
   ner_entity_types = c("ORG"),
   verbose = TRUE,
   cl = NULL
@@ -63,6 +64,10 @@ If FALSE, returns all matches for all patterns.}
 matches are actual Named Entities (e.g., organizations). Note: \code{spacyr}
 must be initialized (e.g., via \code{spacyr::spacy_initialize()}) before calling
 this function.}
+
+\item{ner_timing}{Character string; either "after" or "before". If "after" (default),
+regex matches are found first, then validated with NER. If "before", NER extracts
+entities first, and regex searches only within those entities.}
 
 \item{ner_entity_types}{Character vector; the types of Named Entities to keep if \code{use_ner} is TRUE. Default is "ORG".}
 

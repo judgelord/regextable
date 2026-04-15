@@ -27,6 +27,9 @@
 #'   matches are actual Named Entities (e.g., organizations). Note: `spacyr`
 #'   must be initialized (e.g., via `spacyr::spacy_initialize()`) before calling
 #'   this function.
+#' @param ner_timing Character string; either "after" or "before". If "after" (default),
+#'   regex matches are found first, then validated with NER. If "before", NER extracts 
+#'   entities first, and regex searches only within those entities.
 #' @param ner_entity_types Character vector; the types of Named Entities to keep if `use_ner` is TRUE. Default is "ORG".
 #' @param verbose Logical; if TRUE, displays progress messages.
 #' @param cl A cluster object created by `parallel::makeCluster()`, or an integer
@@ -82,6 +85,7 @@ extract <- function(data,
                     do_clean_text = TRUE,
                     unique_match = FALSE,
                     use_ner = FALSE,
+                    ner_timing = "after",
                     ner_entity_types = c("ORG"),
                     verbose = TRUE,
                     cl = NULL) {
@@ -104,6 +108,7 @@ extract <- function(data,
   chk::chk_flag(verbose)
   chk::chk_flag(use_ner)
   chk::chk_character(ner_entity_types)
+  ner_timing <- match.arg(ner_timing, c("after", "before"))
 
   if (use_ner) {
     if (!requireNamespace("spacyr", quietly = TRUE)) {
@@ -216,6 +221,45 @@ extract <- function(data,
     )
   }
 
+  # Entity Extraction Before Matching
+  if (use_ner && ner_timing == "before") {
+    if (verbose) message("Extracting Named Entities (NER) before matching...")
+
+    names(text_search) <- as.character(data$row_id)
+
+    entities <- tryCatch(
+      {
+        spacyr::spacy_extract_entity(text_search)
+      },
+      error = function(e) {
+        warning(paste("NER extraction failed. The exact error was:", e$message, call. = FALSE))
+        return(NULL)
+      }
+    )
+
+    if (!is.null(entities)) {
+      valid_entities <- entities[entities$ent_type %in% ner_entity_types, ]
+      if (nrow(valid_entities) == 0) {
+        if (verbose) message("No entities found matching ner_entity_types. Returning empty.")
+        return(dplyr::tibble())
+      }
+
+      ent_df <- data.frame(
+        doc_id = valid_entities$doc_id,
+        text = valid_entities$text,
+        stringsAsFactors = FALSE
+      )
+      ent_collapsed <- stats::aggregate(text ~ doc_id, data = ent_df, FUN = paste, collapse = "  ")
+      new_text_search <- rep("", length(text_search))
+      idx <- match(ent_collapsed$doc_id, as.character(data$row_id))
+      new_text_search[idx] <- ent_collapsed$text
+      text_search <- new_text_search
+      text_raw <- new_text_search
+    } else {
+      if (verbose) message("Skipping NER due to error.")
+    }
+  }
+
   if (unique_match) {
     # Stop searching after first match
     matches_found <- extract_matches_one_internal(
@@ -244,8 +288,8 @@ extract <- function(data,
     return(dplyr::tibble())
   }
 
-  # Preprocessing Entity Extraction
-  if (use_ner) {
+  # After Match Entity Extraction
+  if (use_ner && ner_timing == "after") {
     if (verbose) message("Validating matches using Named Entity Recognition (NER)...")
 
     unique_row_ids <- unique(matches_found$row_id)
