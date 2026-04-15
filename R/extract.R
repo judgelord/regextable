@@ -28,7 +28,7 @@
 #'   must be initialized (e.g., via `spacyr::spacy_initialize()`) before calling
 #'   this function.
 #' @param ner_timing Character string; either "after" or "before". If "after" (default),
-#'   regex matches are found first, then validated with NER. If "before", NER extracts 
+#'   regex matches are found first, then validated with NER. If "before", NER extracts
 #'   entities first, and regex searches only within those entities.
 #' @param ner_entity_types Character vector; the types of Named Entities to keep if `use_ner` is TRUE. Default is "ORG".
 #' @param verbose Logical; if TRUE, displays progress messages.
