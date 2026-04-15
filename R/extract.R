@@ -225,11 +225,11 @@ extract <- function(data,
   if (use_ner && ner_timing == "before") {
     if (verbose) message("Extracting Named Entities (NER) before matching...")
 
-    names(text_search) <- as.character(data$row_id)
+    names(text_raw) <- as.character(data$row_id)
 
     entities <- tryCatch(
       {
-        spacyr::spacy_extract_entity(text_search)
+        spacyr::spacy_extract_entity(text_raw)
       },
       error = function(e) {
         warning(paste("NER extraction failed. The exact error was:", e$message, call. = FALSE))

@@ -343,8 +343,16 @@ test_that("use_ner accurately filters out non-entities", {
     use_ner = TRUE, ner_entity_types = "ORG", verbose = FALSE
   )
   
+  result2 <- extract(
+    df, regex_table, "text",
+    use_ner = TRUE, ner_timing = "before",
+    ner_entity_types = "ORG", verbose = FALSE
+  )
+  
   expect_equal(nrow(result), 1)
   expect_equal(result$row_id, 1)
+  expect_equal(nrow(result2), 1)
+  expect_equal(result2$row_id, 1)
   
   spacyr::spacy_finalize()
 })
