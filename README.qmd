@@ -30,19 +30,12 @@ knitr::opts_chunk$set(
 
 ## Description 
 
-`regextable` extracts regular-expression-based pattern matches from a vector of text using a lookup table of regular expressions. It requires two inputs: 
+`regextable` extracts pattern matches from text using a lookup table of regular expressions.
 
-1. `data`: A data frame containing a text column, or a character vector.
-2. `regex_table`: A data frame with a column of strings or regular expressions to search for, typically called `pattern`
+It requires two inputs: 
 
-For each text entry, `regextable::extract` returns:
-
-- the row number of the input `data`
-- the matched `pattern` 
-- the exact substring extracted from the text
-- Optionally, other metadata columns from `data` or `regex_table`
-
-Users can choose to return *all* matches (resulting in multiple rows per text entry) or limit the output to just the first match found.
+1. `data`: A data frame with a text column, or a character vector.
+2. `regex_table`: A data frame containing regex patterns (in a column named `pattern` by default), along with any associated metadata.
 
 ## Installation
 
