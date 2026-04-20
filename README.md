@@ -32,7 +32,7 @@ The examples below use two datasets included in this package:
 - `members`: a regex lookup table of members of Congress  
 - `cr2007_03_01`: text data from the Congressional Record
 
-These are adapted from the
+These are from the
 [`legislators`](https://judgelord.github.io/legislators/) package and
 subset to `congress == 107`.
 
