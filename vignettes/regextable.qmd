@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   tidy = FALSE,
-  fig.align = 'center',
+  fig.align = "center",
   R.options = list(width = 120)
 )
 
-kable <- function(x, ...){
+kable <- function(x, ...) {
   if (knitr::is_latex_output()) {
-    knitr::kable(x, booktabs = TRUE, format = 'latex', ...) |>
+    knitr::kable(x, booktabs = TRUE, format = "latex", ...) |>
       kableExtra::kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
   } else {
     knitr::kable(x, escape = TRUE, ...) |>
@@ -128,8 +128,8 @@ These filters can be combined with any subset of columns for flexible outputs.
 
 Function Arguments:
 - `use_ner`: Logical; if `TRUE`, validates matches using `spacyr` Named Entity Recognition.
-- `ner_entity_types`: Character vector specifying which entity types to retain.
-  For example, `"ORG"` keeps only organization entities.
+- `ner_timing`: Character string (`"after"` or `"before"`). Determines when NER is applied. `"after"` (default) validates regex matches with spaCy. `"before"` extracts entities with spaCy first, restricting regex searches to only those extracted entities.
+- `ner_entity_types`: Character vector specifying which entity types to retain. For example, `"ORG"` keeps only organization entities.
 
 Example:
 ```{r, eval = FALSE}
@@ -143,6 +143,8 @@ result_ner <- regextable::extract(
   data_return_cols = "text",
   regex_return_cols = "icpsr"
 )
+
+spacyr::spacy_finalize()
 ```
 
 ### Parallel Matching
