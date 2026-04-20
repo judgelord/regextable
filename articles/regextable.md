@@ -25,9 +25,10 @@ library(kableExtra)
 
 ### Example Data
 
-For demonstration, two included datasets are used: - `members`: A lookup
-table of regex patterns for members of Congress. - `cr2007_03_01`: A
-sample text dataset from the Congressional Record.
+For demonstration, two included datasets are used:
+
+- `members`: A lookup table of regex patterns for members of Congress.
+- `cr2007_03_01`: A sample text dataset from the Congressional Record.
 
 ``` r
 data("members")
@@ -106,13 +107,17 @@ kable(head(result))
 | 6 | HON. SANFORD D. BISHOP;Mr. BISHOP | 29339 | sanford bishop&#124;sanford dixon bishop&#124;\bs bishop&#124;sanford d bishop&#124;\bna bishop&#124;(^&#124;senator &#124;representative )bishop\b.{1,4}ga&#124;bishop, sanford&#124;bishop sanford&#124;bishop, s\b&#124;representative bishop\b.{1,4}ga&#124;s d bishop | sanford d bishop |
 | 7 | HON. EDOLPHUS TOWNS;Mr. TOWNS | 15072 | edolphus towns&#124;\be towns&#124;ed towns&#124;(^&#124;senator &#124;representative )towns\b&#124;towns, ed&#124;towns, edolphus&#124;towns edolphus&#124;towns, e\b&#124;representative towns\b | EDOLPHUS TOWNS |
 
-Function Arguments: - `data`: The text dataset to search. - `col_name`:
-Which column contains the text (defaults to `"text"`). Note: If a simple
-character vector is passed instead of a data frame, it is internally
-converted, and this argument is ignored. - `regex_table`: The lookup
-table of patterns. - `data_return_cols`: Additional columns from `data`
-to include in the result. - `regex_return_cols`: Additional columns from
-the pattern table to attach.
+Function Arguments:
+
+- `data`: The text dataset to search.
+- `col_name`: Which column contains the text (defaults to `"text"`).
+  Note: If a simple character vector is passed instead of a data frame,
+  it is internally converted, and this argument is ignored.
+- `regex_table`: The lookup table of patterns.
+- `data_return_cols`: Additional columns from `data` to include in the
+  result.
+- `regex_return_cols`: Additional columns from the pattern table to
+  attach.
 
 Each row in the output corresponds to a detected match, and includes
 both the original text and the matching pattern.
@@ -153,13 +158,19 @@ kable(head(result_advanced))
 | 6 | HON. SANFORD D. BISHOP;Mr. BISHOP | 29339 | sanford bishop&#124;sanford dixon bishop&#124;\bs bishop&#124;sanford d bishop&#124;\bna bishop&#124;(^&#124;senator &#124;representative )bishop\b.{1,4}ga&#124;bishop, sanford&#124;bishop sanford&#124;bishop, s\b&#124;representative bishop\b.{1,4}ga&#124;s d bishop | sanford d bishop |
 | 7 | HON. EDOLPHUS TOWNS;Mr. TOWNS | 15072 | edolphus towns&#124;\be towns&#124;ed towns&#124;(^&#124;senator &#124;representative )towns\b&#124;towns, ed&#124;towns, edolphus&#124;towns edolphus&#124;towns, e\b&#124;representative towns\b | EDOLPHUS TOWNS |
 
-Function Arguments: - `unique_match`: If TRUE, utilizes a faster
-algorithm that stops searching a row after the first match. -
-`date_col`, `date_start`, `date_end`: Filter rows by date before
-matching. - `remove_acronyms`: Skip patterns consisting entirely of
-uppercase letters (e.g., “NASA” or “USA”).
+Function Arguments:
 
-## These filters can be combined with any subset of columns for flexible outputs.
+- `unique_match`: If TRUE, utilizes a faster algorithm that stops
+  searching a row after the first match.
+- `date_col`, `date_start`, `date_end`: Filter rows by date before
+  matching.
+- `remove_acronyms`: Skip patterns consisting entirely of uppercase
+  letters (e.g., “NASA” or “USA”).
+
+These filters can be combined with any subset of columns for flexible
+outputs.
+
+------------------------------------------------------------------------
 
 ### Named Entity Recognition (NER) Validation
 
@@ -168,10 +179,16 @@ optionally supports validation using Named Entity Recognition (NER).
 When `use_ner = TRUE`, the function uses the `spacyr` package to confirm
 that regex matches correspond to actual named entities in the text.
 
-Function Arguments: - `use_ner`: Logical; if `TRUE`, validates matches
-using `spacyr` Named Entity Recognition. - `ner_entity_types`: Character
-vector specifying which entity types to retain. For example, `"ORG"`
-keeps only organization entities.
+Function Arguments:
+
+- `use_ner`: Logical; if `TRUE`, validates matches using `spacyr` Named
+  Entity Recognition.
+- `ner_timing`: Character string (`"after"` or `"before"`). Determines
+  when NER is applied. `"after"` (default) validates regex matches with
+  spaCy. `"before"` extracts entities with spaCy first, restricting
+  regex searches to only those extracted entities.
+- `ner_entity_types`: Character vector specifying which entity types to
+  retain. For example, `"ORG"` keeps only organization entities.
 
 Example:
 
@@ -186,6 +203,8 @@ result_ner <- regextable::extract(
   data_return_cols = "text",
   regex_return_cols = "icpsr"
 )
+
+spacyr::spacy_finalize()
 ```
 
 ### Parallel Matching

@@ -57,7 +57,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>regextable</h1>
 
       <p class="author">Shirlyn Dong</p>
-      <p class="date">2026-04-14</p>
+      <p class="date">2026-04-20</p>
 
       <small class="dont-index">Source: <a href="https://github.com/judgelord/regextable/blob/HEAD/vignettes/regextable.qmd" class="external-link"><code>vignettes/regextable.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
@@ -80,7 +80,13 @@
 </div>
 </section><section class="level3"><h3 id="example-data">Example Data<a class="anchor" aria-label="anchor" href="#example-data"></a>
 </h3>
-<p>For demonstration, two included datasets are used: - <code>members</code>: A lookup table of regex patterns for members of Congress. - <code>cr2007_03_01</code>: A sample text dataset from the Congressional Record.</p>
+<p>For demonstration, two included datasets are used:</p>
+<ul>
+<li>
+<code>members</code>: A lookup table of regex patterns for members of Congress.</li>
+<li>
+<code>cr2007_03_01</code>: A sample text dataset from the Congressional Record.</li>
+</ul>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"members"</span><span class="op">)</span></span>
@@ -315,7 +321,19 @@
 </table>
 </div>
 </div>
-<p>Function Arguments: - <code>data</code>: The text dataset to search. - <code>col_name</code>: Which column contains the text (defaults to <code>"text"</code>). Note: If a simple character vector is passed instead of a data frame, it is internally converted, and this argument is ignored. - <code>regex_table</code>: The lookup table of patterns. - <code>data_return_cols</code>: Additional columns from <code>data</code> to include in the result. - <code>regex_return_cols</code>: Additional columns from the pattern table to attach.</p>
+<p>Function Arguments:</p>
+<ul>
+<li>
+<code>data</code>: The text dataset to search.</li>
+<li>
+<code>col_name</code>: Which column contains the text (defaults to <code>"text"</code>). Note: If a simple character vector is passed instead of a data frame, it is internally converted, and this argument is ignored.</li>
+<li>
+<code>regex_table</code>: The lookup table of patterns.</li>
+<li>
+<code>data_return_cols</code>: Additional columns from <code>data</code> to include in the result.</li>
+<li>
+<code>regex_return_cols</code>: Additional columns from the pattern table to attach.</li>
+</ul>
 <p>Each row in the output corresponds to a detected match, and includes both the original text and the matching pattern.</p>
 <hr></section><section class="level3"><h3 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
 </h3>
@@ -391,13 +409,28 @@
 </table>
 </div>
 </div>
-<p>Function Arguments: - <code>unique_match</code>: If TRUE, utilizes a faster algorithm that stops searching a row after the first match. - <code>date_col</code>, <code>date_start</code>, <code>date_end</code>: Filter rows by date before matching. - <code>remove_acronyms</code>: Skip patterns consisting entirely of uppercase letters (e.g., “NASA” or “USA”).</p>
-</section><section class="level2"><h2 id="these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-">These filters can be combined with any subset of columns for flexible outputs.<a class="anchor" aria-label="anchor" href="#these-filters-can-be-combined-with-any-subset-of-columns-for-flexible-outputs-"></a>
-</h2>
-<section class="level3"><h3 id="named-entity-recognition-ner-validation">Named Entity Recognition (NER) Validation<a class="anchor" aria-label="anchor" href="#named-entity-recognition-ner-validation"></a>
+<p>Function Arguments:</p>
+<ul>
+<li>
+<code>unique_match</code>: If TRUE, utilizes a faster algorithm that stops searching a row after the first match.</li>
+<li>
+<code>date_col</code>, <code>date_start</code>, <code>date_end</code>: Filter rows by date before matching.</li>
+<li>
+<code>remove_acronyms</code>: Skip patterns consisting entirely of uppercase letters (e.g., “NASA” or “USA”).</li>
+</ul>
+<p>These filters can be combined with any subset of columns for flexible outputs.</p>
+<hr></section><section class="level3"><h3 id="named-entity-recognition-ner-validation">Named Entity Recognition (NER) Validation<a class="anchor" aria-label="anchor" href="#named-entity-recognition-ner-validation"></a>
 </h3>
 <p><code><a href="../reference/extract.html">extract()</a></code> optionally supports validation using Named Entity Recognition (NER). When <code>use_ner = TRUE</code>, the function uses the <code>spacyr</code> package to confirm that regex matches correspond to actual named entities in the text.</p>
-<p>Function Arguments: - <code>use_ner</code>: Logical; if <code>TRUE</code>, validates matches using <code>spacyr</code> Named Entity Recognition. - <code>ner_entity_types</code>: Character vector specifying which entity types to retain. For example, <code>"ORG"</code> keeps only organization entities.</p>
+<p>Function Arguments:</p>
+<ul>
+<li>
+<code>use_ner</code>: Logical; if <code>TRUE</code>, validates matches using <code>spacyr</code> Named Entity Recognition.</li>
+<li>
+<code>ner_timing</code>: Character string (<code>"after"</code> or <code>"before"</code>). Determines when NER is applied. <code>"after"</code> (default) validates regex matches with spaCy. <code>"before"</code> extracts entities with spaCy first, restricting regex searches to only those extracted entities.</li>
+<li>
+<code>ner_entity_types</code>: Character vector specifying which entity types to retain. For example, <code>"ORG"</code> keeps only organization entities.</li>
+</ul>
 <p>Example:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
@@ -410,7 +443,9 @@
 <span>  ner_entity_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PERSON"</span><span class="op">)</span>,</span>
 <span>  data_return_cols <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>  regex_return_cols <span class="op">=</span> <span class="st">"icpsr"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">spacyr</span><span class="fu">::</span><span class="fu"><a href="http://spacyr.quanteda.io/reference/spacy_finalize.html" class="external-link">spacy_finalize</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 </section><section class="level3"><h3 id="parallel-matching">Parallel Matching<a class="anchor" aria-label="anchor" href="#parallel-matching"></a>
 </h3>
@@ -438,7 +473,7 @@
 <code><a href="../reference/extract.html">extract()</a></code> handles text cleaning and efficient matching by default.</li>
 <li>Advanced performance parameters, such as <code>unique_match</code> and <code>cl</code>, allow for significant speed improvements on large text.</li>
 <li>Optional parameters allow advanced control over filtering, NER validation, and output structure.</li>
-</ul></section></section><script id="quarto-html-after-body" type="application/javascript">
+</ul></section><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);

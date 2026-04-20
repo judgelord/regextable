@@ -55,6 +55,7 @@
 <span>  do_clean_text <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  unique_match <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  use_ner <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ner_timing <span class="op">=</span> <span class="st">"after"</span>,</span>
 <span>  ner_entity_types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORG"</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  cl <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -132,6 +133,12 @@ If FALSE, returns all matches for all patterns.</p></dd>
 matches are actual Named Entities (e.g., organizations). Note: <code>spacyr</code>
 must be initialized (e.g., via <code><a href="http://spacyr.quanteda.io/reference/spacy_initialize.html" class="external-link">spacyr::spacy_initialize()</a></code>) before calling
 this function.</p></dd>
+
+
+<dt id="arg-ner-timing">ner_timing<a class="anchor" aria-label="anchor" href="#arg-ner-timing"></a></dt>
+<dd><p>Character string; either "after" or "before". If "after" (default),
+regex matches are found first, then validated with NER. If "before", NER extracts
+entities first, and regex searches only within those entities.</p></dd>
 
 
 <dt id="arg-ner-entity-types">ner_entity_types<a class="anchor" aria-label="anchor" href="#arg-ner-entity-types"></a></dt>

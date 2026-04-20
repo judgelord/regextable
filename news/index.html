@@ -36,11 +36,11 @@
 <div class="section level3">
 <h3 id="new-features-0-1-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-2"></a></h3>
 <ul><li>
-<strong>Typo Correction:</strong> Added <code>typo_table</code>, <code>typo_from_col</code>, and <code>typo_to_col</code> parameters to <code><a href="../reference/extract.html">extract()</a></code>. Text replacements are applied sequentially prior to pattern matching using strict word boundaries (‘\b’), ensuring automated normalization of text replacements.</li>
+<strong>Typo Correction:</strong> Added <code>typo_table</code>, <code>typo_from_col</code>, and <code>typo_to_col</code> parameters to <code><a href="../reference/extract.html">extract()</a></code>. Text replacements are applied sequentially prior to pattern matching using strict word boundaries (‘\b’).</li>
 <li>
 <strong>Unique Matching:</strong> Added <code>unique_match</code> to stop after the first match per row for faster performance when only one match is expected.</li>
 <li>
-<strong>NER Post-Match Validation:</strong> Added optional Named Entity Recognition via <code>spacyr</code> (<code>use_ner</code>). Matches are retained only if they align with specified entity types (via <code>ner_entity_types</code>, e.g., <code>"ORG"</code>, <code>"PERSON"</code>).</li>
+<strong>Named Entity Recognition (NER):</strong> Added optional NER validation via <code>spacyr</code> (<code>use_ner</code>). Added the <code>ner_timing</code> parameter to control whether validation happens <code>"after"</code> regex matching (post-match validation) or <code>"before"</code> (restricting regex searches only to pre-extracted entities). Matches are filtered by specified entity types using <code>ner_entity_types</code> (e.g., <code>"ORG"</code>, <code>"PERSON"</code>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="data-updates-0-1-2">Data Updates<a class="anchor" aria-label="anchor" href="#data-updates-0-1-2"></a></h3>

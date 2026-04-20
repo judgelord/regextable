@@ -60,25 +60,14 @@
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p><code>regextable</code> extracts regular-expression-based pattern matches from a vector of text using a lookup table of regular expressions. It requires two inputs:</p>
+<p><code>regextable</code> extracts pattern matches from text using a lookup table of regular expressions.</p>
+<p>It requires two inputs:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>data</code>: A data frame containing a text column, or a character vector.</li>
+<code>data</code>: A data frame with a text column, or a character vector.</li>
 <li>
-<code>regex_table</code>: A data frame with a column of strings or regular expressions to search for, typically called <code>pattern</code>
-</li>
+<code>regex_table</code>: A data frame containing regex patterns (in a column named <code>pattern</code> by default), along with any associated metadata.</li>
 </ol>
-<p>For each text entry, <code><a href="reference/extract.html">regextable::extract</a></code> returns:</p>
-<ul>
-<li>the row number of the input <code>data</code>
-</li>
-<li>the matched <code>pattern</code>
-</li>
-<li>the exact substring extracted from the text</li>
-<li>Optionally, other metadata columns from <code>data</code> or <code>regex_table</code>
-</li>
-</ul>
-<p>Users can choose to return <em>all</em> matches (resulting in multiple rows per text entry) or limit the output to just the first match found.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -91,7 +80,15 @@
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
-<p>The examples below use an example regex lookup table of members of Congress, <code>members</code>, and example text data from the Congressional Record, <code>cr2007_03_01</code>, from the <a href="https://judgelord.github.io/legislators/" class="external-link"><code>legislators</code></a> package, which are also included in this package, subset to <code>congress == 107</code>, for illustration.</p>
+<p>The examples below use two datasets included in this package:</p>
+<ul>
+<li>
+<code>members</code>: a regex lookup table of members of Congress<br>
+</li>
+<li>
+<code>cr2007_03_01</code>: text data from the Congressional Record</li>
+</ul>
+<p>These are from the <a href="https://judgelord.github.io/legislators/" class="external-link"><code>legislators</code></a> package and subset to <code>congress == 107</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"members"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">members</span><span class="op">)</span></span>
@@ -118,9 +115,9 @@
 <span><span class="co">#&gt; 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AME… http…</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="text-cleaning">Text cleaning<a class="anchor" aria-label="anchor" href="#text-cleaning"></a>
+<h2 id="text-cleaning">Text Cleaning<a class="anchor" aria-label="anchor" href="#text-cleaning"></a>
 </h2>
-<p>Before matching, by default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied to standardize messy text. It converts text to lowercase, removes specific punctuation (<code>+</code>, <code>-</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), replaces line breaks, tabs, periods, and dashes with spaces, and normalizes commas and excess whitespace. Text cleaning is applied only internally during matching and does not modify the original input data. Users can disable this behavior by setting <code>do_clean_text = FALSE</code>.</p>
+<p>By default, <code><a href="reference/clean_text.html">clean_text()</a></code> is applied before matching to standardize input text. This includes lowercasing, removing specific punctuation (<code>+</code>, <code>-</code>, <code>!</code>, <code>?</code>, <code>:</code>, <code>;</code>), and normalizing whitespace. Text cleaning is applied internally during matching and does not modify the original input data. To disable this behavior, set <code>do_clean_text = FALSE</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">text</span> <span class="op">&lt;-</span> <span class="st">"  HELLO---WORLD  "</span></span>
 <span><span class="va">cleaned_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/clean_text.html">clean_text</a></span><span class="op">(</span><span class="va">text</span><span class="op">)</span></span>
@@ -130,11 +127,11 @@
 <div class="section level2">
 <h2 id="typo-correction">Typo Correction<a class="anchor" aria-label="anchor" href="#typo-correction"></a>
 </h2>
-<p>Users can optionally provide a <code>typo_table</code> to correct typos in the input text before pattern matching. This is useful for correcting misspellings or normalizing inconsistent text. Replacements are applied sequentially to the cleaned text before regex matching and use word boundaries to avoid partial matches within larger words.</p>
-<p>The <code>typo_table</code> must contain:</p>
+<p>Users can optionally provide a <code>typo_table</code> to replace misspellings before pattern matching. Replacements are applied sequentially after text cleaning and use word boundaries to avoid partial matches.</p>
+<p>The <code>typo_table</code> must include:</p>
 <ul>
-<li>A column of text to replace (default <code>"typo"</code>)</li>
-<li>A column of replacement text (default <code>"correction"</code>)</li>
+<li>a column of terms to replace (default <code>"typo"</code>)</li>
+<li>a column of replacement values (default <code>"correction"</code>)</li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">typos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -160,6 +157,38 @@
 <span><span class="co">#&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; </span></span>
 <span><span class="co">#&gt; 1      1 apple   apple </span></span>
 <span><span class="co">#&gt; 2      2 banana  banana</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="named-entity-recognition-ner-validation">Named Entity Recognition (NER) Validation<a class="anchor" aria-label="anchor" href="#named-entity-recognition-ner-validation"></a>
+</h2>
+<p>If the <code>spacyr</code> package is installed and initialized, <code><a href="reference/extract.html">extract()</a></code> can use Named Entity Recognition (NER) to validate that regex matches are actual entities in the text.</p>
+<p>Users can specify which types of entities to keep using <strong><code>ner_entity_types</code></strong> (default is <code>"ORG"</code>), and control the timing of the validation using <strong><code>ner_timing</code></strong>:</p>
+<ul>
+<li>
+<strong><code>ner_timing = "after"</code> (Default):</strong> The function finds all regex matches first, and then uses spaCy to validate whether the matched word is a valid entity type. This is generally the faster approach.</li>
+<li>
+<strong><code>ner_timing = "before"</code>:</strong> The function extracts all valid entities from the text first, and then restricts regex searches to only those extracted entities. This is useful for reducing the search space before matching.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Example: Only extract "Apple" if it is recognized as an Organization (ORG)</span></span>
+<span><span class="fu">spacyr</span><span class="fu">::</span><span class="fu"><a href="http://spacyr.quanteda.io/reference/spacy_initialize.html" class="external-link">spacy_initialize</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tom works at Apple."</span>, <span class="st">"I ate a green apple today."</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">patterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"Apple"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ner_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">df</span>, </span>
+<span>  regex_table <span class="op">=</span> <span class="va">patterns</span>, </span>
+<span>  use_ner <span class="op">=</span> <span class="cn">TRUE</span>, </span>
+<span>  ner_timing <span class="op">=</span> <span class="st">"after"</span>,</span>
+<span>  ner_entity_types <span class="op">=</span> <span class="st">"ORG"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ner_result</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   row_id pattern match</span></span>
+<span><span class="co">#&gt; 1      1   Apple Apple</span></span>
+<span></span>
+<span><span class="fu">spacyr</span><span class="fu">::</span><span class="fu"><a href="http://spacyr.quanteda.io/reference/spacy_finalize.html" class="external-link">spacy_finalize</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="extract-regex-based-matches-from-text">Extract Regex-Based Matches from Text<a class="anchor" aria-label="anchor" href="#extract-regex-based-matches-from-text"></a>
@@ -217,6 +246,8 @@
 <li>
 <strong><code>use_ner</code></strong>: (default <code>FALSE</code>) If TRUE, uses the ‘spacyr’ package to validate that matches are actual Named Entities (e.g., organizations). Requires ‘spacyr’ to be installed and initialized. Note: If ‘spacyr’ is missing or fails to initialize, the function will perform standard regex matching and issue a warning.</li>
 <li>
+<strong><code>ner_timing</code></strong>: (default <code>"after"</code>) Character string (<code>"after"</code> or <code>"before"</code>). <code>"after"</code> validates regex matches with spaCy. <code>"before"</code> restricts regex searches to entities pre-extracted by spaCy.</li>
+<li>
 <strong><code>ner_entity_types</code></strong>: (default c(“ORG”)) Character vector; the types of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”, “PERSON”, “GPE”, “LAW”).</li>
 </ul>
 </div>
@@ -239,7 +270,7 @@
 <h3 id="basic-usage">Basic Usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
 </h3>
 <p>A simple usage of <code><a href="reference/extract.html">extract()</a></code> with only the required arguments and returned columns specified. This finds all matches in the text column using the provided regex table.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract patterns using only required arguments</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>
@@ -263,7 +294,7 @@
 <h3 id="advanced-usage">Advanced Usage<a class="anchor" aria-label="anchor" href="#advanced-usage"></a>
 </h3>
 <p>This shows how to use optional arguments for more control, such as filtering by date ranges and removing acronyms. It is useful when the user wants to narrow matches, disable text cleaning, control returned columns, or suppress messages.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Advanced usage with optional filters</span></span>
 <span><span class="va">result_advanced</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/extract.html">extract</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">cr2007_03_01</span>,</span>

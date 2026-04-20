@@ -23,6 +23,7 @@ extract(
   do_clean_text = TRUE,
   unique_match = FALSE,
   use_ner = FALSE,
+  ner_timing = "after",
   ner_entity_types = c("ORG"),
   verbose = TRUE,
   cl = NULL
@@ -116,6 +117,13 @@ extract(
   be initialized (e.g., via
   [`spacyr::spacy_initialize()`](http://spacyr.quanteda.io/reference/spacy_initialize.md))
   before calling this function.
+
+- ner_timing:
+
+  Character string; either "after" or "before". If "after" (default),
+  regex matches are found first, then validated with NER. If "before",
+  NER extracts entities first, and regex searches only within those
+  entities.
 
 - ner_entity_types:
 

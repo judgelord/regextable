@@ -1,9 +1,8 @@
 # Articles
 
-### Native American Tribes Regex Table
+### Regex Lookup Tables in Practice
 
-Example of extracting tribe names using regextable and a regex lookup
-table
+Demonstration of extracting patterns using regextable
 
 - [Native American Tribes Regex
   Table](https://judgelord.github.io/regextable/articles/native-tribes.md):
