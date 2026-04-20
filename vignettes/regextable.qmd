@@ -47,6 +47,7 @@ library(kableExtra)
 ### Example Data
 
 For demonstration, two included datasets are used:
+
 - `members`: A lookup table of regex patterns for members of Congress.
 - `cr2007_03_01`: A sample text dataset from the Congressional Record.
 
@@ -84,6 +85,7 @@ kable(head(result))
 ```
 
 Function Arguments:
+
 - `data`: The text dataset to search.
 - `col_name`: Which column contains the text (defaults to `"text"`). Note: If a simple character vector is passed instead of a data frame, it is internally converted, and this argument is ignored.
 - `regex_table`: The lookup table of patterns.
@@ -115,11 +117,13 @@ kable(head(result_advanced))
 ```
 
 Function Arguments:
+
 - `unique_match`: If TRUE, utilizes a faster algorithm that stops searching a row after the first match.
 - `date_col`, `date_start`, `date_end`: Filter rows by date before matching.
 - `remove_acronyms`: Skip patterns consisting entirely of uppercase letters (e.g., "NASA" or "USA").
 
 These filters can be combined with any subset of columns for flexible outputs.
+
 ---
 
 ### Named Entity Recognition (NER) Validation
@@ -127,6 +131,7 @@ These filters can be combined with any subset of columns for flexible outputs.
 `extract()` optionally supports validation using Named Entity Recognition (NER). When `use_ner = TRUE`, the function uses the `spacyr` package to confirm that regex matches correspond to actual named entities in the text.
 
 Function Arguments:
+
 - `use_ner`: Logical; if `TRUE`, validates matches using `spacyr` Named Entity Recognition.
 - `ner_timing`: Character string (`"after"` or `"before"`). Determines when NER is applied. `"after"` (default) validates regex matches with spaCy. `"before"` extracts entities with spaCy first, restricting regex searches to only those extracted entities.
 - `ner_entity_types`: Character vector specifying which entity types to retain. For example, `"ORG"` keeps only organization entities.
@@ -166,6 +171,7 @@ kable(head(result_parallel))
 ```
 
 ### Summary
+
 - `regextable` is a tool for extracting data from text using lookup tables.
 - `extract()` handles text cleaning and efficient matching by default.
 - Advanced performance parameters, such as `unique_match` and `cl`, allow for significant speed improvements on large text.

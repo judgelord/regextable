@@ -9,8 +9,8 @@ navbar:
     - reference
     - articles
 articles:
-- title: Native American Tribes Regex Table
-  desc: Example of extracting tribe names using regextable and a regex lookup table
+- title: Regex Lookup Tables in Practice
+  desc: Demonstration of extracting patterns using regextable
   contents:
   - native-tribes
   - agencies
