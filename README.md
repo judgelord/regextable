@@ -6,24 +6,14 @@
 
 ## Description
 
-`regextable` extracts regular-expression-based pattern matches from a
-vector of text using a lookup table of regular expressions. It requires
-two inputs:
+`regextable` extracts pattern matches from text using a lookup table of
+regular expressions.
 
-1.  `data`: A data frame containing a text column, or a character
-    vector.
-2.  `regex_table`: A data frame with a column of strings or regular
-    expressions to search for, typically called `pattern`
+It requires two inputs:
 
-For each text entry, `regextable::extract` returns:
-
-- the row number of the input `data`
-- the matched `pattern`
-- the exact substring extracted from the text
-- Optionally, other metadata columns from `data` or `regex_table`
-
-Users can choose to return *all* matches (resulting in multiple rows per
-text entry) or limit the output to just the first match found.
+1.  `data`: A data frame with a text column, or a character vector.
+2.  `regex_table`: A data frame containing regex patterns (in a column
+    named `pattern` by default), along with any associated metadata.
 
 ## Installation
 
@@ -37,12 +27,14 @@ library(regextable)
 
 ## Data
 
-The examples below use an example regex lookup table of members of
-Congress, `members`, and example text data from the Congressional
-Record, `cr2007_03_01`, from the
-[`legislators`](https://judgelord.github.io/legislators/) package, which
-are also included in this package, subset to `congress == 107`, for
-illustration.
+The examples below use two datasets included in this package:
+
+- `members`: a regex lookup table of members of Congress  
+- `cr2007_03_01`: text data from the Congressional Record
+
+These are adapted from the
+[`legislators`](https://judgelord.github.io/legislators/) package and
+subset to `congress == 107`.
 
 ``` r
 data("members")
@@ -70,14 +62,13 @@ head(cr2007_03_01)
 #> 6 2007-03-01 HON. SANFORD D. BISHOP;Mr. BISHOP   IN HONOR OF SYNOVUS BEING NAMED ONE OF THE BEST COMPANIES IN AME… http…
 ```
 
-## Text cleaning
+## Text Cleaning
 
-Before matching, by default, `clean_text()` is applied to standardize
-messy text. It converts text to lowercase, removes specific punctuation
-(`+`, `-`, `!`, `?`, `:`, `;`), replaces line breaks, tabs, periods, and
-dashes with spaces, and normalizes commas and excess whitespace. Text
-cleaning is applied only internally during matching and does not modify
-the original input data. Users can disable this behavior by setting
+By default, `clean_text()` is applied before matching to standardize
+input text. This includes lowercasing, removing specific punctuation
+(`+`, `-`, `!`, `?`, `:`, `;`), and normalizing whitespace. Text
+cleaning is applied internally during matching and does not modify the
+original input data. To disable this behavior, set
 `do_clean_text = FALSE`.
 
 ``` r
@@ -89,16 +80,14 @@ print(cleaned_text)
 
 ## Typo Correction
 
-Users can optionally provide a `typo_table` to correct typos in the
-input text before pattern matching. This is useful for correcting
-misspellings or normalizing inconsistent text. Replacements are applied
-sequentially to the cleaned text before regex matching and use word
-boundaries to avoid partial matches within larger words.
+Users can optionally provide a `typo_table` to replace misspellings
+before pattern matching. Replacements are applied sequentially after
+text cleaning and use word boundaries to avoid partial matches.
 
-The `typo_table` must contain:
+The `typo_table` must include:
 
-- A column of text to replace (default `"typo"`)
-- A column of replacement text (default `"correction"`)
+- a column of terms to replace (default `"typo"`)
+- a column of replacement values (default `"correction"`)
 
 ``` r
 typos <- data.frame(
@@ -124,6 +113,46 @@ head(typo_result)
 #>    <int> <chr>   <chr> 
 #> 1      1 apple   apple 
 #> 2      2 banana  banana
+```
+
+## Named Entity Recognition (NER) Validation
+
+If the `spacyr` package is installed and initialized, `extract()` can
+use Named Entity Recognition (NER) to validate that regex matches are
+actual entities in the text.
+
+Users can specify which types of entities to keep using
+**`ner_entity_types`** (default is `"ORG"`), and control the timing of
+the validation using **`ner_timing`**:
+
+- **`ner_timing = "after"` (Default):** The function finds all regex
+  matches first, and then uses spaCy to validate whether the matched
+  word is a valid entity type. This is generally the faster approach.
+- **`ner_timing = "before"`:** The function extracts all valid entities
+  from the text first, and then restricts regex searches to only those
+  extracted entities. This is useful for reducing the search space
+  before matching.
+
+``` r
+# Example: Only extract "Apple" if it is recognized as an Organization (ORG)
+spacyr::spacy_initialize()
+
+df <- data.frame(text = c("Tom works at Apple.", "I ate a green apple today."))
+patterns <- data.frame(pattern = "Apple")
+
+ner_result <- extract(
+  data = df, 
+  regex_table = patterns, 
+  use_ner = TRUE, 
+  ner_timing = "after",
+  ner_entity_types = "ORG"
+)
+
+head(ner_result)
+#>   row_id pattern match
+#> 1      1   Apple Apple
+
+spacyr::spacy_finalize()
 ```
 
 ## Extract Regex-Based Matches from Text
@@ -178,6 +207,9 @@ are returned, one per match.
   Requires ‘spacyr’ to be installed and initialized. Note: If ‘spacyr’
   is missing or fails to initialize, the function will perform standard
   regex matching and issue a warning.
+- **`ner_timing`**: (default `"after"`) Character string (`"after"` or
+  `"before"`). `"after"` validates regex matches with spaCy. `"before"`
+  restricts regex searches to entities pre-extracted by spaCy.
 - **`ner_entity_types`**: (default c(“ORG”)) Character vector; the types
   of spaCy Named Entities to keep if use_ner is TRUE (e.g., “ORG”,
   “PERSON”, “GPE”, “LAW”).
